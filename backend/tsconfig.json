@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "es2021",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -16,6 +16,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@root/*": ["src/*"],
+      "@contracts/*": ["src/domain/*"],
+      "@impl/*": ["src/data/*"],
+      "@usecases/*": ["src/data/usecases/*"],
+      "@resolvers/*": ["src/presentation/resolvers"],
+      "@utils/*": ["src/shared/*"],
+      "@core/*": ["src/core/*"]
+
+    }
   }
 }
