@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  db_academy:
+    image: postgres:alpine
+    container_name: academy_db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+    volumes:
+      - ./db/scripts:/docker-entrypoint-initdb.d
+    networks:
+      - academy_network
+
+  academy_backend:
+    build: ./backend
+    container_name: academy_backend
+    restart: always
+    environment:
+      - DATABASE_URL=$DATABASE_URL
+      - TOKEN_SECRET=$TOKEN_SECRET
+    ports:
+      - 3308:3308
+      - 9229:9229
+    volumes:
+      - ./backend:/usr/academy/backend
+    links:
+      - db_academy
+    depends_on:
+      - db_academy
+    networks:
+      - academy_network
+
+
+networks:
+  academy_network:
+    name: academy_network
