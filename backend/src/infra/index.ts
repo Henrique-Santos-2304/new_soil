@@ -3,3 +3,5 @@
     Bem como repositórios, configuração com banco de dados, configurações de Orm's,
     tudo relacionado ao banco de dados
 */
+
+export * from './config_acess_db'
