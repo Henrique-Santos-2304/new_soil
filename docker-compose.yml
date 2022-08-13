@@ -35,7 +35,6 @@ services:
     networks:
       - academy_network
 
-
 networks:
   academy_network:
     name: academy_network

@@ -13,3 +13,4 @@ COPY . .
 EXPOSE 3308
 
 CMD ["yarn", "start:dev"]
+RUN npx prisma generate
