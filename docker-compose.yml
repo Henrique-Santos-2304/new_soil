@@ -8,9 +8,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - DATABASE_USER=$DATABASE_USER
-      - DATABASE_PASSWORD=$DATABASE_PASSWORD
-      - DATABASE_DB=$DATABASE_DB
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+      - POSTGRES_DB=$DATABASE_DB
     volumes:
       - ./db/scripts:/docker-entrypoint-initdb.d
     networks:

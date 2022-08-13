@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 3308
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "start:dev"]
