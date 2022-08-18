@@ -10,33 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType{
+  SUDO
+  USER
+}
+
 model User {
   id          String      @id @unique @default(uuid())
-  name        String
+  login       String
   password    String
-  data_person DataPerson?
-  adress      Adress?
+  user_type   UserType
 
   @@map("users")
-}
-
-model DataPerson {
-  id        String   @id @unique @default(uuid())
-  cpf       String   @unique()
-  rg        String?  @unique()
-  telephone String[]
-
-  user User? @relation(fields: [id], references: [id])
-}
-
-model Adress {
-  id       String @id @unique @default(uuid())
-  cep      String
-  road     String
-  number   Int
-  district String
-  city     String
-  state    String
-
-  user User? @relation(fields: [id], references: [id])
 }

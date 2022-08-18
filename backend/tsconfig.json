@@ -25,7 +25,6 @@
       "@resolvers/*": ["src/presentation/resolvers"],
       "@utils/*": ["src/shared/*"],
       "@core/*": ["src/core/*"]
-
     }
   }
 }
