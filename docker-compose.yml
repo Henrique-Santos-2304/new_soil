@@ -6,7 +6,7 @@ services:
     container_name: new_soil_db
     restart: always
     ports:
-      - 5434:5434
+      - 5434:5432
     env_file:
       - ./db/.env
     volumes:
@@ -22,7 +22,7 @@ services:
       - ./backend/.env
     ports:
       - 3310:3310
-      - 5000:5000
+      - 5555:5555
     volumes:
       - ./backend:/usr/new_soil/backend
     links:
