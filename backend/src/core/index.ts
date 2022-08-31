@@ -3,4 +3,5 @@
     Que faça uso da main global da aplicação
 */
 
-export * from './swagger.config'
+export * from './swagger.config';
+export * from './modules';

@@ -24,7 +24,8 @@
       "@usecases/*": ["src/data/usecases/*"],
       "@resolvers/*": ["src/presentation/resolvers"],
       "@utils/*": ["src/shared/*"],
-      "@core/*": ["src/core/*"]
+      "@core/*": ["src/core/*"],
+      "@modules/*": ["src/core/modules/*"]
     }
   }
 }

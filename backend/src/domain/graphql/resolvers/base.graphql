@@ -1,0 +1,15 @@
+enum UserType {
+  SUDO
+  USER
+}
+
+type User {
+  id: ID!
+  login: String!
+  password: String!
+  userType: UserType!
+}
+
+type Query {
+  get_user_by_login(login: String): User!
+}

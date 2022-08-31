@@ -24,12 +24,16 @@
     "test:ci": "NODE_ENV=test npm test -c -- --coverage"
   },
   "dependencies": {
+    "@nestjs/apollo": "^10.0.22",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/graphql": "^10.0.22",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.0.5",
     "@prisma/client": "^4.2.1",
+    "apollo-server-express": "^3.10.2",
     "dotenv": "^16.0.1",
+    "graphql": "^16.6.0",
     "prisma": "^4.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
