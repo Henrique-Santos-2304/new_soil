@@ -1,6 +1,8 @@
-import { Module, Provider } from '@nestjs/common';
+import { Logger, Module, Provider } from '@nestjs/common';
 import { CreateUserRepo } from '@root/infra/repositories/user/create.repo';
+import { FindUserRepo } from '@root/infra/repositories/user/find.repo';
 import { CreateUserService } from '@usecases/users/create.service';
+import { PrismaModule } from './prisma.module';
 
 const createService: Provider = {
   provide: 'ICreateUserService',
@@ -12,10 +14,14 @@ const createRepo: Provider = {
   useClass: CreateUserRepo,
 };
 
-const repos = [createRepo];
-const services = [createService];
+const findByLoginRepo: Provider = {
+  provide: 'IFindUserRepo',
+  useClass: FindUserRepo,
+};
 
-@Module({
-  providers: [...repos, ...services],
-})
+const repos = [createRepo, findByLoginRepo];
+const services = [createService];
+const providers = [...repos, ...services, Logger, FindUserRepo];
+
+@Module({ providers, exports: [...repos], imports: [PrismaModule] })
 export class UserModule {}

@@ -1,11 +1,12 @@
 import { Logger } from '@nestjs/common';
+import { mock, MockProxy } from 'jest-mock-extended';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaModule } from '@root/core';
 import {
   ICreateUserRepo,
   ICreateUserService,
   IFindUserRepo,
 } from '@root/domain';
-import { PrismaService } from '@root/infra';
 import { CreateUserRepo } from '@root/infra/repositories/user/create.repo';
 import { FindUserRepo } from '@root/infra/repositories/user/find.repo';
 import { createUserMocked, userModelMocked } from '@testRoot/index';
@@ -13,36 +14,28 @@ import { CreateUserService } from '../create.service';
 
 describe('UserService', () => {
   let service: ICreateUserService;
-  let createUserrepo: ICreateUserRepo;
-  let findUserRepo: IFindUserRepo;
+  let createUserrepo: MockProxy<ICreateUserRepo>;
+  let findUserRepo: MockProxy<IFindUserRepo>;
 
   beforeEach(async () => {
-    const createUserProvider = {
-      provide: 'ICreateUserRepo',
-      useClass: CreateUserRepo,
-    };
+    createUserrepo = mock();
+    findUserRepo = mock();
 
-    const findUserProvider = {
-      provide: 'IFindUserRepo',
-      useClass: FindUserRepo,
+    const finProvider = { provide: 'IFindUserRepo', useValue: findUserRepo };
+    const createProvider = {
+      provide: 'ICreateUserRepo',
+      useValue: createUserrepo,
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CreateUserService,
-        createUserProvider,
-        findUserProvider,
-        PrismaService,
-        Logger,
-      ],
+      imports: [PrismaModule],
+      providers: [CreateUserService, finProvider, createProvider, Logger],
     }).compile();
 
     service = module.get<ICreateUserService>(CreateUserService);
-    createUserrepo = module.get<ICreateUserRepo>(CreateUserRepo);
-    findUserRepo = module.get<IFindUserRepo>(FindUserRepo);
 
-    createUserrepo.create = jest.fn().mockReturnValue(userModelMocked);
-    findUserRepo.by_login = jest.fn().mockReturnValue(userModelMocked);
+    createUserrepo.create.mockResolvedValue(userModelMocked);
+    findUserRepo.by_login.mockResolvedValue(userModelMocked);
   });
 
   it('should be defined', () => {

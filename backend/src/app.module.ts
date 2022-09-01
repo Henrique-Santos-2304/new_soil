@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { graphqlModule, UserModule, PrismaModule } from '@modules/index';
 
 @Module({
