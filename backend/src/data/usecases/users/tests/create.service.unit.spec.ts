@@ -35,7 +35,7 @@ describe('UserService', () => {
     service = module.get<ICreateUserService>(CreateUserService);
 
     createUserrepo.create.mockResolvedValue(userModelMocked);
-    findUserRepo.by_login.mockResolvedValue(userModelMocked);
+    findUserRepo.by_login.mockResolvedValue(null);
   });
 
   it('should be defined', () => {
@@ -56,5 +56,12 @@ describe('UserService', () => {
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ login: createUserMocked.login });
+  });
+
+  it('should return user already exists if db return an user', async () => {
+    findUserRepo.by_login.mockResolvedValueOnce(userModelMocked);
+
+    const response = await service.start(createUserMocked);
+    expect(response).toBe('User already exists');
   });
 });
