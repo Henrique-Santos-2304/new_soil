@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { graphqlModule, UserModule } from '@modules/index';
+import { graphqlModule, UserModule, PrismaModule } from '@modules/index';
 
 @Module({
-  imports: [graphqlModule, UserModule],
+  imports: [graphqlModule, UserModule, PrismaModule],
 })
 export class AppModule {}
