@@ -4,7 +4,10 @@ import { PrismaService } from '@root/infra';
 
 @Injectable()
 class CreateUserRepo implements ICreateUserRepo {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: Logger,
+  ) {}
 
   async create(user: ICreateUserRepo.Params): ICreateUserRepo.Response {
     try {
@@ -13,8 +16,8 @@ class CreateUserRepo implements ICreateUserRepo {
       });
       return userCreated;
     } catch (err) {
-      Logger.log('Erro ao criar usuario no banco de dados...');
-      Logger.error(err);
+      this.logger.log('Erro ao criar usuario no banco de dados...');
+      this.logger.error(err.message);
     }
   }
 }
