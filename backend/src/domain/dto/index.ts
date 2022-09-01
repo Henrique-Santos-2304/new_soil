@@ -3,3 +3,4 @@
     Bem como abstração de Repositories
     
 */
+export * from './users';
