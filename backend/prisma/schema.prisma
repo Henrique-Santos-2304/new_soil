@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DB_URL_LOCAL")
 }
 
 enum UserType{
@@ -16,10 +16,10 @@ enum UserType{
 }
 
 model User {
-  id          String      @id @unique @default(uuid())
-  login       String
-  password    String
-  user_type   UserType
+  user_id          String      @id @unique @default(uuid())
+  login            String
+  password         String
+  userType        UserType
 
   @@map("users")
 }
