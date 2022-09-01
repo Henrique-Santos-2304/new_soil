@@ -61,7 +61,7 @@ describe('UserService', () => {
   it('should return user already exists if db return an user', async () => {
     findUserRepo.by_login.mockResolvedValueOnce(userModelMocked);
 
-    const response = await service.start(createUserMocked);
-    expect(response).toBe('User already exists');
+    const response = service.start(createUserMocked);
+    await expect(response).rejects.toThrow('User already exists');
   });
 });
