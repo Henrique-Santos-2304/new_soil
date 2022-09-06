@@ -15,6 +15,8 @@ module.exports = {
   setupFiles: ['dotenv/config'],
   moduleNameMapper: {
     '@root/(.*)': '<rootDir>/src/$1',
+    "@db/(.*)": "<rootDir>/src/infra/$1",
+    "@repos/(.*)": "<rootDir>/src/infra/repositories/$1",
     '@contracts/(.*)': '<rootDir>/src/domain/$1',
     '@impl/(.*)': '<rootDir>/src/data/$1',
     '@usecases/(.*)': '<rootDir>/src/data/usecases/$1',

@@ -5,3 +5,4 @@
 */
 
 export * from './config_acess_db'
+export * from './repositories'

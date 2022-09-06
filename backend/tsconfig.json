@@ -19,6 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@root/*": ["src/*"],
+      "@db/*": ["src/infra/*"],
+      "@repos/*": ["src/infra/repositories/*"],
       "@contracts/*": ["src/domain/*"],
       "@impl/*": ["src/data/*"],
       "@usecases/*": ["src/data/usecases/*"],
