@@ -1,4 +1,5 @@
 import { Logger, Module, Provider } from '@nestjs/common';
+import { EncrypterData } from '@root/data/validators/encrypter';
 import { CreateUserRepo } from '@root/infra/repositories/user/create.repo';
 import { FindUserRepo } from '@root/infra/repositories/user/find.repo';
 import { CreateUserService } from '@usecases/users/create.service';
@@ -19,9 +20,14 @@ const findByLoginRepo: Provider = {
   useClass: FindUserRepo,
 };
 
+const encrypterProvider: Provider = {
+  provide: 'IEncrypterData',
+  useClass: EncrypterData
+}
+
 const repos = [createRepo, findByLoginRepo];
 const services = [createService];
-const providers = [...repos, ...services, Logger, FindUserRepo];
+const providers = [...repos, ...services, Logger, FindUserRepo, encrypterProvider];
 
 @Module({ providers, exports: [...repos], imports: [PrismaModule] })
 export class UserModule {}

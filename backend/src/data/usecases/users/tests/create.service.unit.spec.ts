@@ -99,7 +99,7 @@ describe('UserService', () => {
 
   // Test encrypter return error if not encrypted password
   it('should encrypter throw "ENCRYPT ERROR" if an error ocurred', async () => {
-    encrypter.encrypt.mockRejectedValueOnce(new Error())
+    encrypter.encrypt.mockRejectedValueOnce(new Error("ENCRYPT ERROR"))
     const response = service.start(createUserMocked);
 
     await expect(response).rejects.toThrow("ENCRYPT ERROR")
