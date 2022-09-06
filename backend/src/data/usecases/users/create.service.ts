@@ -25,7 +25,12 @@ export class CreateUserService implements ICreateUserService {
     if (user) throw new Error('User already exists');
 
     const passwordEncrypted = await this.encrypter.encrypt({value: password})
-    
+
+    const createdUser = await this.createUserRepo.create(
+      {login, userType, password: passwordEncrypted}
+      )
+
+    if(!createdUser) throw new Error("User Not Created")
 
     return {status: "Sucess"};
   }

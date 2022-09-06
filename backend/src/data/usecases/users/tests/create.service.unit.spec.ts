@@ -117,16 +117,24 @@ describe('UserService', () => {
 
   // Test createUserRepo return "QUERY_ERROR" if db ocurred an error
   it('should createUserRepo throw "QUERY_ERROR" if db ocurred an error and log error', async () => {
-    createUserrepo.create.mockRejectedValueOnce(new Error())
+    createUserrepo.create.mockRejectedValueOnce(new Error("QUERY_ERROR"))
     const response = service.start(createUserMocked);
 
     await expect(response).rejects.toThrow("QUERY_ERROR");
+  });
+
+  // Test useCase return User not created if db not return a new user
+  it('should useCase return User not created if db not return a new user', async () => {
+    createUserrepo.create.mockResolvedValueOnce(null)
+    const response = service.start(createUserMocked);
+
+    await expect(response).rejects.toThrow("User Not Created");
   });
 
   // Test useCase return a new User created if haved sucess
   it('should useCase return a new User created if haved sucess', async () => {
     const response = await service.start(createUserMocked);
 
-    expect(response).toBe({status: "Sucess"});
+    expect(response).toEqual({status: "Sucess"});
   });
 });
