@@ -47,27 +47,27 @@ describe('UserRepo', () => {
   });
 
   it('should to return a user Created with action not ocurred an error', async () => {
-    jest.spyOn(repo, 'create');
     const value = await repo.create(createUserMocked);
+
     expect(value).toHaveProperty('user_id');
-    expect(value).toHaveProperty('login', userModelMocked.login);
-    expect(value).toHaveProperty('userType', userModelMocked.userType);
   });
 
-  it('should to return undefined when database return erro', async () => {
+  it('should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.user.create = jest.fn().mockRejectedValueOnce(new Error());
-    const value = await repo.create(createUserMocked);
-    expect(value).toBeUndefined();
+    const value = repo.create(createUserMocked);
+    await expect(value).rejects.toThrow("QUERY_ERROR");
   });
 
   it('should log an erro when database return error', async () => {
+    const spy = jest.spyOn(repo, 'create')
     prisma.user.create = jest
       .fn()
       .mockRejectedValueOnce(new Error('DATABASE ERROR'));
 
-    await repo.create(createUserMocked);
+    const response = repo.create(createUserMocked);
 
     // method log
+    await expect(response).rejects.toThrow()
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith(
       'Erro ao criar usuario no banco de dados...',

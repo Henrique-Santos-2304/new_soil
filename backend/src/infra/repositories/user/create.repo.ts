@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 import { ICreateUserRepo, UserModel } from '@root/domain';
 import { PrismaService } from '@root/infra';
 
@@ -11,15 +12,17 @@ class CreateUserRepo implements ICreateUserRepo {
 
   async create(user: ICreateUserRepo.Params): ICreateUserRepo.Response {
     try {
-      const userCreated: UserModel = await this.prisma.user.create({
-        data: user,
+      const { user_id } = await this.prisma.user.create({
+          data: user
       });
-      return userCreated;
+      return { user_id } ;
     } catch (err) {
       this.logger.log('Erro ao criar usuario no banco de dados...');
       this.logger.error(err.message);
+      throw new Error("QUERY_ERROR")
     }
   }
+
 }
 
 export { CreateUserRepo };

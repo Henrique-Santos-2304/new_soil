@@ -18,6 +18,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
       this.logger.error(err.message);
+      throw new Error("QUERY_ERROR")
     }
   }
 
@@ -28,6 +29,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
       this.logger.error(err.message);
+      throw new Error("QUERY_ERROR")
     }
   }
 }
