@@ -3,11 +3,15 @@ import {
   ICreateUserRepo,
   ICreateUserService,
   IEncrypterData,
+  IFindUserByLogin,
   IFindUserRepo,
+  NEncrypt,
 } from '@root/domain';
 
 @Injectable()
 export class CreateUserService implements ICreateUserService {
+
+  private passwordHash: string
 
   constructor(
     @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
@@ -15,23 +19,31 @@ export class CreateUserService implements ICreateUserService {
     @Inject('IEncrypterData') private readonly encrypter: IEncrypterData
   ) {}
 
+  async checkUserExists({login}: IFindUserByLogin.Params ): Promise<void> {
+    const user = await this.findUserRepo.by_login({ login });
+
+    if (user) throw new Error('User already exists');
+  }
+
+  async encryptPassword({value}: NEncrypt.Params): Promise<void>{
+    this.passwordHash = await this.encrypter.encrypt({value})
+  }
+
+  async createANewUser(user:  ICreateUserService.Params): Promise<void>{
+    const createdUser = await this.createUserRepo.create(user)
+
+    if(!createdUser) throw new Error("User Not Created")
+  }
+
   async start({
     login,
     password,
     userType,
   }: ICreateUserService.Params): ICreateUserService.Response {
-    const user = await this.findUserRepo.by_login({ login });
+    await this.checkUserExists({login})
+    await this.encryptPassword({value: password})
+    await this.createANewUser({login, userType, password: this.passwordHash})
 
-    if (user) throw new Error('User already exists');
-
-    const passwordEncrypted = await this.encrypter.encrypt({value: password})
-
-    const createdUser = await this.createUserRepo.create(
-      {login, userType, password: passwordEncrypted}
-      )
-
-    if(!createdUser) throw new Error("User Not Created")
-
-    return {status: "Sucess"};
+    return { status: "Sucess"};
   }
 }
