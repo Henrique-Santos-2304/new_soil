@@ -7,7 +7,7 @@ interface ICreateUserRepo {
 
 namespace ICreateUserRepo {
   export type Params = CreateUserDto;
-  export type Response = Promise<UserModel | undefined>;
+  export type Response = Promise<UserModel | undefined | "QUERY_ERROR">;
 }
 
 export { ICreateUserRepo };

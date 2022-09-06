@@ -72,7 +72,7 @@ describe('UserService', () => {
 
   // Test find user return "QUERY_ERROR" if db to throw
   it('should find user return "QUERY_ERROR" if db to throw', async () => {
-    findUserRepo.by_login.mockRejectedValueOnce(new Error())
+    findUserRepo.by_login.mockRejectedValueOnce(new Error("QUERY_ERROR"))
 
     const response =  service.start(createUserMocked);
     await expect(response).rejects.toThrow(new Error("QUERY_ERROR"));

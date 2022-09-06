@@ -17,9 +17,10 @@ export class CreateUserService implements ICreateUserService {
     password,
     userType,
   }: ICreateUserService.Params): ICreateUserService.Response {
-    const user = this.findUserRepo.by_login({ login });
+    const user = await this.findUserRepo.by_login({ login });
 
     if (user) throw new Error('User already exists');
-    return { login, password, userType, user_id: '' };
+
+    return {status: "Sucess"};
   }
 }
