@@ -4,5 +4,5 @@
     tudo relacionado ao banco de dados
 */
 
-export * from './config_acess_db'
-export * from './repositories'
+export * from './config_acess_db';
+export * from './repositories';

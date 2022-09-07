@@ -1,5 +1,32 @@
 import { CreateUserDto } from '@root/domain/dto';
-import { ICreateUserService } from '@root/domain/usecases';
+
+/* Criação de novo Usuario no banco de dados
+
+  *****************************************************************
+    @Params: {
+      login: string, 
+      password: string, 
+      userType: SUDO ou USER
+    }
+    
+  *****************************************************************
+    @Response: 
+      Em caso de sucesso: {
+        status: 'Sucess'
+      }, 
+      Em caso de erro: {
+        status: 'Fail',
+         error: string
+        }, 
+      Em caso de erro do Graphql: {
+        errors: Array<{message: string}>
+      }
+
+  ******************************************************************
+      USERTYPE = 
+        SUDO: Acesso Total ao app, 
+        USER: Acesso Moderado as sua respectiva fazendas 
+    */
 
 interface ICreateUserController {
   createUser(

@@ -9,6 +9,23 @@ class CreateUserResolver implements ICreateUserController {
     private readonly createUserService: ICreateUserService,
   ) {}
 
+  logInitRequest(user: ICreateUserController.Params) {
+    const { password, ...rest } = user;
+    Logger.log(
+      `Recebido novo Usuario para cadastro... ${JSON.stringify({
+        ...rest,
+        password: '*********',
+      })} `,
+    );
+  }
+
+  logFinishRequest(err: boolean) {
+    const messageSucess = `Usuario cadastrado com sucesso...\n`;
+    const messageError =
+      'Requisição para criar novo Usuario Finalizada com erros..';
+    Logger.log(err ? messageError : messageSucess);
+  }
+
   /* Provisório só está para o graphql não reclamar de falta de query*/
   @Query()
   async getUserByLogin(@Args('login') login: string) {
@@ -19,15 +36,14 @@ class CreateUserResolver implements ICreateUserController {
   async createUser(
     @Args('data') data: ICreateUserController.Params,
   ): ICreateUserController.Response {
-    Logger.log(
-      `Recebido novo Usuario para cadastro... ${JSON.stringify(data)} `,
-    );
     try {
+      // Loga o inicio da requisição
+      this.logInitRequest(data);
       const user = await this.createUserService.start(data);
-      Logger.log(`Usuario cadastrado com sucesso...\n`);
+      this.logFinishRequest(false);
       return user;
     } catch (err) {
-      console.log(err);
+      this.logFinishRequest(true);
       return { status: 'Fail', error: err.message };
     }
   }

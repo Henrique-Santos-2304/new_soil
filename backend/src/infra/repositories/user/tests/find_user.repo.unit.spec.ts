@@ -100,14 +100,14 @@ describe('Find User Repo', () => {
 
   it('should to to throw "QUERY ERROR" when database find_by_login return erro', async () => {
     prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
-    const value =  repo.by_login({ login: userModelMocked.login });
-    await expect(value).rejects.toThrow("QUERY_ERROR");
+    const value = repo.by_login({ login: userModelMocked.login });
+    await expect(value).rejects.toThrow('QUERY_ERROR');
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_id return erro', async () => {
     prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
-    const value =  repo.by_id({ user_id: userModelMocked.user_id });
-    await expect(value).rejects.toThrow("QUERY_ERROR");
+    const value = repo.by_id({ user_id: userModelMocked.user_id });
+    await expect(value).rejects.toThrow('QUERY_ERROR');
   });
 
   it('should log an erro when database find_by_login return error', async () => {

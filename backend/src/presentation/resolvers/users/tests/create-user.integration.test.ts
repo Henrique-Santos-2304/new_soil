@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
 import { Test } from '@nestjs/testing';
