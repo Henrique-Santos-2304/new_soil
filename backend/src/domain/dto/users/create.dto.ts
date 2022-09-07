@@ -2,6 +2,7 @@ import { notStringMessage, notEmptyMessage } from '@root/shared/errors';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 type UserType = 'SUDO' | 'USER';
+
 class CreateUserDto {
   @IsString({ message: notStringMessage('Login') })
   @IsNotEmpty({ message: notEmptyMessage('Login') })

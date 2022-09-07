@@ -8,12 +8,12 @@ interface IFindUserRepo {
 
 namespace IFindUserByLogin {
   export type Params = { login: CreateUserDto['login'] };
-  export type Response = Promise<UserModel | undefined | "QUERY_ERROR">;
+  export type Response = Promise<UserModel | undefined | 'QUERY_ERROR'>;
 }
 
 namespace IFindUserById {
-  export type Params = { user_id: CreateUserDto['user_id'] };
-  export type Response = Promise<UserModel | undefined | "QUERY_ERROR">;
+  export type Params = { user_id: UserModel['user_id'] };
+  export type Response = Promise<UserModel | undefined | 'QUERY_ERROR'>;
 }
 
 export { IFindUserRepo, IFindUserByLogin, IFindUserById };

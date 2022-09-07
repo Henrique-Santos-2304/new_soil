@@ -13,16 +13,15 @@ class CreateUserRepo implements ICreateUserRepo {
   async create(user: ICreateUserRepo.Params): ICreateUserRepo.Response {
     try {
       const { user_id } = await this.prisma.user.create({
-          data: user
+        data: user,
       });
-      return { user_id } ;
+      return { user_id };
     } catch (err) {
       this.logger.log('Erro ao criar usuario no banco de dados...');
       this.logger.error(err.message);
-      throw new Error("QUERY_ERROR")
+      throw new Error('QUERY_ERROR');
     }
   }
-
 }
 
 export { CreateUserRepo };

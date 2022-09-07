@@ -7,7 +7,7 @@ interface ICreateUserService {
 
 namespace ICreateUserService {
   export type Params = CreateUserDto;
-  export type Response = Promise<{status:"Sucess"}>;
+  export type Response = Promise<{ status: 'Sucess' }>;
 }
 
 export { ICreateUserService };

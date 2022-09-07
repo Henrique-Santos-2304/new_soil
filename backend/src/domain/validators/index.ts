@@ -1,1 +1,1 @@
-export * from './encrypt_data'
+export * from './encrypt_data.domain';

@@ -2,14 +2,28 @@ enum UserType {
   SUDO
   USER
 }
+type ResponseCreateUser {
+  status: String!
+  error: String
+}
 
 type User {
-  id: ID!
+  user_id: ID!
   login: String!
   password: String!
   userType: UserType!
 }
 
 type Query {
-  get_user_by_login(login: String): User!
+  getUserByLogin(login: String): User!
+}
+
+input CreateUserInput {
+  login: String!
+  password: String!
+  userType: UserType!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput!): ResponseCreateUser
 }

@@ -1,2 +1,2 @@
-export * from './create.repo';
-export * from './find.repo';
+export * from './create.repo.domain';
+export * from './find.repo.domain';

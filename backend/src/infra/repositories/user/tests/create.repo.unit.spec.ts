@@ -55,11 +55,11 @@ describe('UserRepo', () => {
   it('should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.user.create = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.create(createUserMocked);
-    await expect(value).rejects.toThrow("QUERY_ERROR");
+    await expect(value).rejects.toThrow('QUERY_ERROR');
   });
 
   it('should log an erro when database return error', async () => {
-    const spy = jest.spyOn(repo, 'create')
+    const spy = jest.spyOn(repo, 'create');
     prisma.user.create = jest
       .fn()
       .mockRejectedValueOnce(new Error('DATABASE ERROR'));
@@ -67,7 +67,7 @@ describe('UserRepo', () => {
     const response = repo.create(createUserMocked);
 
     // method log
-    await expect(response).rejects.toThrow()
+    await expect(response).rejects.toThrow();
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith(
       'Erro ao criar usuario no banco de dados...',

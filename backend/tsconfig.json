@@ -24,7 +24,7 @@
       "@contracts/*": ["src/domain/*"],
       "@impl/*": ["src/data/*"],
       "@usecases/*": ["src/data/usecases/*"],
-      "@resolvers/*": ["src/presentation/resolvers"],
+      "@resolvers/*": ["src/presentation/resolvers/*"],
       "@utils/*": ["src/shared/*"],
       "@core/*": ["src/core/*"],
       "@modules/*": ["src/core/modules/*"],

@@ -7,7 +7,7 @@ interface ICreateUserRepo {
 
 namespace ICreateUserRepo {
   export type Params = CreateUserDto;
-  export type Response = Promise<{user_id: UserModel["user_id"]}>;
+  export type Response = Promise<{ user_id: UserModel['user_id'] }>;
 }
 
 export { ICreateUserRepo };

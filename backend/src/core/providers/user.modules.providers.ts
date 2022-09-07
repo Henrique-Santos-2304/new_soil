@@ -3,6 +3,7 @@ import { EncrypterData } from '@root/data/validators/encrypter';
 import { CreateUserRepo, FindUserRepo } from '@repos/index';
 import { CreateUserService } from '@usecases/index';
 import { Logger } from '@nestjs/common';
+import { CreateUserResolver } from '@resolvers/index';
 
 const createService: Provider = {
   provide: 'ICreateUserService',
@@ -21,15 +22,22 @@ const findByLoginRepo: Provider = {
 
 const encrypterProvider: Provider = {
   provide: 'IEncrypterData',
-  useClass: EncrypterData
-}
+  useClass: EncrypterData,
+};
 
 const userProviders: Provider[] = [
-  createService, 
-  createRepo, 
-  findByLoginRepo, 
-  encrypterProvider, 
-  Logger
-]
+  createService,
+  createRepo,
+  findByLoginRepo,
+  encrypterProvider,
+  Logger,
+];
 
-export { userProviders }
+const createUserController: Provider = {
+  provide: 'ICreateUserController',
+  useClass: CreateUserResolver,
+};
+
+const userControllersProviders: Provider[] = [createUserController];
+
+export { userProviders, userControllersProviders };
