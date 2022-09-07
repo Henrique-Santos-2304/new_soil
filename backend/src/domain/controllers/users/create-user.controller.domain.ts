@@ -1,5 +1,3 @@
-import { CreateUserDto } from '@root/domain/dto';
-
 /* Criação de novo Usuario no banco de dados
 
   *****************************************************************
@@ -27,6 +25,8 @@ import { CreateUserDto } from '@root/domain/dto';
         SUDO: Acesso Total ao app, 
         USER: Acesso Moderado as sua respectiva fazendas 
     */
+
+import { CreateUserDto } from '@root/domain';
 
 interface ICreateUserController {
   createUser(

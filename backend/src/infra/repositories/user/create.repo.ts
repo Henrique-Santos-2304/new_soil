@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { ICreateUserRepo, UserModel } from '@root/domain';
+import { ICreateUserRepo } from '@root/domain';
 import { PrismaService } from '@root/infra';
 
 @Injectable()
