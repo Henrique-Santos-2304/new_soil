@@ -1,0 +1,10 @@
+# Query para criar um novo usuario
+
+mutation CREATE_USER {
+  createUser(
+    data: { login: $login, password: $password, userType: $userType }
+  ) {
+    status
+    error
+  }
+}

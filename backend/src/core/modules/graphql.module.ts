@@ -4,7 +4,7 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 const graphqlModule = GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
-  typePaths: ['./**/*.graphql'],
+  typePaths: ['./**/*.gql'],
   formatError: (error: GraphQLError) => {
     const graphQLFormattedError: GraphQLFormattedError = {
       message: error?.extensions?.exception?.code || error?.message,

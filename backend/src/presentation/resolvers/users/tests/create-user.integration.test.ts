@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-
 import { Test } from '@nestjs/testing';
 import { graphqlModule, PrismaModule, UserModule } from '@root/core';
 import {
@@ -74,7 +73,9 @@ describe('Create User', () => {
   it('should be "{status: Fail}" if received login type inválid', async () => {
     const { errors } = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
-        createUser(data: { login: 1, password: "1234", userType: SUDO }) {
+        createUser(
+          data: { login: $login, password: $password, userType: $userType }
+        ) {
           status
           error
         }
