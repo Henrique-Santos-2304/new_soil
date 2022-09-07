@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-import { PrismaClient } from '@prisma/client';
 
 import { Test } from '@nestjs/testing';
 import { graphqlModule, PrismaModule, UserModule } from '@root/core';
@@ -14,12 +13,7 @@ import {
 } from '@root/domain';
 import { PrismaService } from '@root/infra';
 import { createUserMocked } from '@testRoot/mocks';
-
-const prisma = new PrismaClient({
-  datasources: {
-    db: { url: 'postgresql://test:test_pass@localhost:5492/test_db' },
-  },
-});
+import { prismaTest } from '@testRoot/setup';
 
 describe('Create User', () => {
   let app: INestApplication;
@@ -34,7 +28,7 @@ describe('Create User', () => {
       imports: [UserModule, graphqlModule, PrismaModule],
     })
       .overrideProvider(PrismaService)
-      .useValue(prisma)
+      .useValue(prismaTest)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -44,11 +38,12 @@ describe('Create User', () => {
     findUserRepo = moduleRef.get('IFindUserRepo');
     createUserRepo = moduleRef.get('ICreateUserRepo');
     encrypter = moduleRef.get('IEncrypterData');
+
     await app.init();
   });
 
   afterEach(async () => {
-    await prisma.user.deleteMany();
+    await prismaTest.user.deleteMany();
   });
 
   afterAll(async () => {
@@ -101,11 +96,12 @@ describe('Create User', () => {
       }
     `);
 
+    console.log(errors[0]);
     expect(errors[0]).toHaveProperty('message');
   });
 
   it('should be "{status: Fail}" if this user already exist in db', async () => {
-    await prisma.user.create({
+    await prismaTest.user.create({
       data: createUserMocked,
     });
 
@@ -138,7 +134,7 @@ describe('Create User', () => {
       }
     `);
 
-    const user = await prisma.user.findFirst({
+    const user = await prismaTest.user.findFirst({
       where: { login: 'soil' },
     });
 
@@ -172,7 +168,7 @@ describe('Create User', () => {
       }
     `);
 
-    const user = await prisma.user.findFirst({
+    const user = await prismaTest.user.findFirst({
       where: { login: 'soil' },
     });
 
