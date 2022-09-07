@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@root/*": ["src/*"],
+      "@prismaRoot/*": ["prisma/*"],
       "@db/*": ["src/infra/*"],
       "@repos/*": ["src/infra/repositories/*"],
       "@contracts/*": ["src/domain/*"],

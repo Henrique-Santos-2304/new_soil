@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db_new_soil_test:
+    image: postgres:alpine
+    container_name: db_new_soil_test
+    restart: always
+    ports:
+      - 5492:5432
+    env_file:
+      - ./.env
+    volumes:
+      - ../../db/scripts:/docker-entrypoint-initdb.d
+    networks:
+      - new_soil_network
+
+networks:
+  new_soil_network:
+    name: new_soil_network

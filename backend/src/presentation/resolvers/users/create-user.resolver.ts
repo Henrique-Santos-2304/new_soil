@@ -1,10 +1,6 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import {
-  CreateUserDto,
-  ICreateUserController,
-  ICreateUserService,
-} from '@root/domain';
+import { ICreateUserController, ICreateUserService } from '@root/domain';
 
 @Resolver()
 class CreateUserResolver implements ICreateUserController {
@@ -31,6 +27,7 @@ class CreateUserResolver implements ICreateUserController {
       Logger.log(`Usuario cadastrado com sucesso...\n`);
       return user;
     } catch (err) {
+      console.log(err);
       return { status: 'Fail', error: err.message };
     }
   }
