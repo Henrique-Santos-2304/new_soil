@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { IFindUserById, IFindUserByLogin, IFindUserRepo } from '@root/domain';
+import {
+  IFindUserById,
+  IFindUserByLogin,
+  IFindUserRepo,
+  IFindUserWithoutLoginPassword,
+} from '@root/domain';
 import { PrismaService } from '@root/infra';
 
 @Injectable()
@@ -8,6 +13,24 @@ class FindUserRepo implements IFindUserRepo {
     private readonly prisma: PrismaService,
     private readonly logger: Logger,
   ) {}
+
+  async without_login({
+    login,
+  }: IFindUserWithoutLoginPassword.Params): IFindUserWithoutLoginPassword.Response {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { login },
+        select: { user_id: true, userType: true, password: true },
+      });
+
+      console.log(user);
+      return user;
+    } catch (err) {
+      this.logger.log('Erro ao buscar usuario no banco de dados...');
+      this.logger.error(err.message);
+      throw new Error('QUERY_ERROR');
+    }
+  }
 
   async by_login({
     login,
