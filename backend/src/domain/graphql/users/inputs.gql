@@ -4,3 +4,8 @@ input CreateUserInput {
   userType: UserType!
   internal_password: String!
 }
+
+input AuthUserInput {
+  login: String!
+  password: String!
+}

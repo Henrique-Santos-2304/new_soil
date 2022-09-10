@@ -1,4 +1,5 @@
 type Mutation {
   # Cria um novo usuario no banco de
   createUser(data: CreateUserInput!): ResponseCreateUser
+  authUser(data: AuthUserInput!): ResponseAuthUser
 }

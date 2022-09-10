@@ -8,6 +8,12 @@ type ResponseCreateUser {
   error: String
 }
 
+type ResponseAuthUser {
+  status: String!
+  error: String
+  token: String
+}
+
 type User {
   user_id: ID!
   login: String!

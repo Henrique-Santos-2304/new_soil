@@ -5,6 +5,7 @@ import { AuthUserService, CreateUserService } from '@usecases/index';
 import { Logger } from '@nestjs/common';
 import { CreateUserResolver } from '@resolvers/index';
 import { TokenService } from '@root/data';
+import { AuthUserResolver } from '@root/presentation/resolvers/users/auth-user-controller.resolver';
 
 const createService: Provider = {
   provide: 'ICreateUserService',
@@ -51,6 +52,14 @@ const createUserController: Provider = {
   useClass: CreateUserResolver,
 };
 
-const userControllersProviders: Provider[] = [createUserController];
+const authUserController: Provider = {
+  provide: 'IAuthUserController',
+  useClass: AuthUserResolver,
+};
+
+const userControllersProviders: Provider[] = [
+  createUserController,
+  authUserController,
+];
 
 export { userProviders, userControllersProviders };
