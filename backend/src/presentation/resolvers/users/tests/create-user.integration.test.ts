@@ -60,7 +60,34 @@ describe('Create User', () => {
   it('should be "{status: Fail}" if received password type inválid', async () => {
     const { errors } = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
-        createUser(data: { login: "soil", password: 1234, userType: SUDO }) {
+        createUser(
+          data: {
+            login: "soil"
+            password: 1234
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
+        ) {
+          status
+          error
+        }
+      }
+    `);
+
+    expect(errors[0]).toHaveProperty('message');
+  });
+
+  it('should be "{status: Fail}" if received internal_password type inválid', async () => {
+    const { errors } = await request(app.getHttpServer()).mutate(gql`
+      mutation CREATE_USER {
+        createUser(
+          data: {
+            login: "soil"
+            password: 1234
+            userType: SUDO
+            internal_password: 123
+          }
+        ) {
           status
           error
         }
@@ -74,7 +101,12 @@ describe('Create User', () => {
     const { errors } = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: $login, password: $password, userType: $userType }
+          data: {
+            login: 123
+            password: "1234"
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
@@ -89,7 +121,12 @@ describe('Create User', () => {
     const { errors } = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: "soil", password: "password", userType: "SUDO" }
+          data: {
+            login: "soil"
+            password: "password"
+            userType: "SUDO"
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
@@ -101,6 +138,26 @@ describe('Create User', () => {
     expect(errors[0]).toHaveProperty('message');
   });
 
+  it('should be "{status: Fail}" if internal_password is not valid', async () => {
+    const { data }: any = await request(app.getHttpServer()).mutate(gql`
+      mutation CREATE_USER {
+        createUser(
+          data: {
+            login: "soil"
+            password: "password"
+            userType: SUDO
+            internal_password: "@soil123"
+          }
+        ) {
+          status
+          error
+        }
+      }
+    `);
+
+    expect(data.createUser).toHaveProperty('status', 'Fail');
+    expect(data.createUser).toHaveProperty('error', 'Invalid Credentials');
+  });
   it('should be "{status: Fail}" if this user already exist in db', async () => {
     await prismaTest.user.create({
       data: createUserMocked,
@@ -109,7 +166,12 @@ describe('Create User', () => {
     const { data }: any = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: "soil", password: "password", userType: SUDO }
+          data: {
+            login: "soil"
+            password: "password"
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
@@ -127,7 +189,12 @@ describe('Create User', () => {
     await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: "soil", password: "password", userType: SUDO }
+          data: {
+            login: "soil"
+            password: "password"
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
@@ -146,7 +213,12 @@ describe('Create User', () => {
     const { data }: any = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: "soil", password: "password", userType: SUDO }
+          data: {
+            login: "soil"
+            password: "password"
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
@@ -161,7 +233,12 @@ describe('Create User', () => {
     await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
-          data: { login: "soil", password: "password", userType: SUDO }
+          data: {
+            login: "soil"
+            password: "password"
+            userType: SUDO
+            internal_password: "@Inatel123"
+          }
         ) {
           status
           error
