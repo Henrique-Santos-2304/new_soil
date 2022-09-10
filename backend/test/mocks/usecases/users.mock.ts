@@ -11,6 +11,16 @@ const createUserRequestMocked: ICreateUserService.Params = {
   internal_password: process.env.INTERNAL_PASSWORD,
 };
 
+const authUserRequestMocked = {
+  login: 'soil',
+  password: '1234',
+};
+
 const userModelMocked: UserModel = { ...createUserMocked, user_id: '' };
 
-export { createUserMocked, userModelMocked, createUserRequestMocked };
+export {
+  createUserMocked,
+  userModelMocked,
+  createUserRequestMocked,
+  authUserRequestMocked,
+};

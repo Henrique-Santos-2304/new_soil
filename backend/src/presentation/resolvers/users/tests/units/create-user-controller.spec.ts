@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ICreateUserController, ICreateUserService } from '@root/domain';
 import { createUserRequestMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
-import { CreateUserResolver } from '../create-user.resolver';
+import { CreateUserResolver } from '../../create-user.resolver';
 
 describe('UserService', () => {
   let controller: ICreateUserController;
