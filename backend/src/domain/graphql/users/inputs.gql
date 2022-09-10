@@ -2,4 +2,5 @@ input CreateUserInput {
   login: String!
   password: String!
   userType: UserType!
+  internal_password: String!
 }

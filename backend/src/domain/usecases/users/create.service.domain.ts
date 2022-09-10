@@ -30,7 +30,7 @@ import { CreateUserDto } from '@contracts/index';
       protejendo o dado mais sensível do usuario
       
   3 - Conecta com ICreateUserRepo com a função de salvar o novo usuario
-      no banco de dados com a senha criptografada
+      no banco de dados com a senha já criptografada
 
   4 - Retorna uma das opções mostradas acima no @Response de acordo 
       com o resultado do fluxo de serviço
@@ -41,7 +41,7 @@ interface ICreateUserService {
 }
 
 namespace ICreateUserService {
-  export type Params = CreateUserDto;
+  export type Params = CreateUserDto & { internal_password: string };
   export type Response = Promise<{ status: 'Sucess' }>;
 }
 

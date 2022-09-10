@@ -35,7 +35,7 @@ interface ICreateUserController {
 }
 
 namespace ICreateUserController {
-  export type Params = CreateUserDto;
+  export type Params = CreateUserDto & { internal_password: string };
   export type Response = Promise<{ status: string; error?: string }>;
 }
 

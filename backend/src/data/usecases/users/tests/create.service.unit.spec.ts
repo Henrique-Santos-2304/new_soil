@@ -8,7 +8,11 @@ import {
   IEncrypterData,
   IFindUserRepo,
 } from '@root/domain';
-import { createUserMocked, userModelMocked } from '@testRoot/index';
+import {
+  createUserMocked,
+  createUserRequestMocked,
+  userModelMocked,
+} from '@testRoot/index';
 import { CreateUserService } from '../create.service';
 
 describe('UserService', () => {
@@ -61,16 +65,26 @@ describe('UserService', () => {
   // Test service to have been called with data válids
   it('should service to have been called with data válids', async () => {
     const spy = jest.spyOn(service, 'start');
-    await service.start(createUserMocked);
+    await service.start(createUserRequestMocked);
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith(createUserMocked);
+    expect(spy).toHaveBeenCalledWith(createUserRequestMocked);
+  });
+
+  // Test if received password intenal is válid
+  it('should return error "Credential Invalid" if internal password received is invalid', async () => {
+    const response = service.start({
+      ...createUserRequestMocked,
+      internal_password: 'invalid',
+    });
+
+    await expect(response).rejects.toThrow('Invalid Credentials');
   });
 
   // Test find user to have been called with data válid
   it('should find user to have been called with data válids', async () => {
     const spy = jest.spyOn(findUserRepo, 'by_login');
-    await service.start(createUserMocked);
+    await service.start(createUserRequestMocked);
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ login: createUserMocked.login });
@@ -80,7 +94,7 @@ describe('UserService', () => {
   it('should find user return "QUERY_ERROR" if db to throw', async () => {
     findUserRepo.by_login.mockRejectedValueOnce(new Error('QUERY_ERROR'));
 
-    const response = service.start(createUserMocked);
+    const response = service.start(createUserRequestMocked);
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
   });
 
@@ -88,14 +102,14 @@ describe('UserService', () => {
   it('should findUserRepo return user already exists if db return an user', async () => {
     findUserRepo.by_login.mockResolvedValueOnce(userModelMocked);
 
-    const response = service.start(createUserMocked);
+    const response = service.start(createUserRequestMocked);
     await expect(response).rejects.toThrow('User already exists');
   });
 
   // Test encrypter to have been called with password received
   it('should encrypter to have been called with password received ', async () => {
     const spy = jest.spyOn(encrypter, 'encrypt');
-    await service.start(createUserMocked);
+    await service.start(createUserRequestMocked);
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ value: createUserMocked.password });
@@ -104,7 +118,7 @@ describe('UserService', () => {
   // Test encrypter return error if not encrypted password
   it('should encrypter throw "ENCRYPT ERROR" if an error ocurred', async () => {
     encrypter.encrypt.mockRejectedValueOnce(new Error('ENCRYPT ERROR'));
-    const response = service.start(createUserMocked);
+    const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow('ENCRYPT ERROR');
   });
@@ -112,7 +126,7 @@ describe('UserService', () => {
   // Test createUserRepo to have been called with data received and password encrypted
   it('should createUserRepo to have been called with data received and password encrypted', async () => {
     const spy = jest.spyOn(createUserrepo, 'create');
-    await service.start(createUserMocked);
+    await service.start(createUserRequestMocked);
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
@@ -124,7 +138,7 @@ describe('UserService', () => {
   // Test createUserRepo return "QUERY_ERROR" if db ocurred an error
   it('should createUserRepo throw "QUERY_ERROR" if db ocurred an error and log error', async () => {
     createUserrepo.create.mockRejectedValueOnce(new Error('QUERY_ERROR'));
-    const response = service.start(createUserMocked);
+    const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow('QUERY_ERROR');
   });
@@ -132,14 +146,14 @@ describe('UserService', () => {
   // Test useCase return User not created if db not return a new user
   it('should useCase return User not created if db not return a new user', async () => {
     createUserrepo.create.mockResolvedValueOnce(null);
-    const response = service.start(createUserMocked);
+    const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow('User Not Created');
   });
 
   // Test useCase return a new User created if haved sucess
   it('should useCase return a new User created if haved sucess', async () => {
-    const response = await service.start(createUserMocked);
+    const response = await service.start(createUserRequestMocked);
 
     expect(response).toEqual({ status: 'Sucess' });
   });
