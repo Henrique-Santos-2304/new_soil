@@ -34,6 +34,7 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [PrismaModule],
       providers: [
+        AuthUserService,
         findProvider,
         loggerProvider,
         encrypterProvider,
@@ -73,7 +74,7 @@ describe('UserService', () => {
   it('should service to throw if findUserRepo.with_login ocurred an error', async () => {
     findUserRepo.without_login.mockResolvedValueOnce(null);
 
-    const response = await service.start(loginUser);
+    const response = service.start(loginUser);
 
     await expect(response).rejects.toThrow('Invalid Credentials');
   });
@@ -86,7 +87,7 @@ describe('UserService', () => {
     expect(spy).toBeCalledTimes(1);
 
     expect(spy).toHaveBeenCalledWith({
-      oldValue: userModelMocked.password,
+      old_value: userModelMocked.password,
       valueCompare: loginUser.password,
     });
   });
@@ -125,7 +126,7 @@ describe('UserService', () => {
   it('should service to Throw if ocurred error in at generated Jwt Token', async () => {
     token.generate.mockRejectedValueOnce(new Error('TOKEN ERROR'));
     const response = service.start(loginUser);
-    await expect(response).toThrow('TOKEN ERROR');
+    await expect(response).rejects.toThrow('TOKEN ERROR');
   });
 
   // Test service return the data expected { status, token }

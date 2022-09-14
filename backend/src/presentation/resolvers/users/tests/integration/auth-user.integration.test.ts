@@ -31,8 +31,8 @@ describe('Auth User Integration', () => {
 
     app = moduleRef.createNestApplication();
 
-    service = moduleRef.get('ICreateUserService');
-    controller = moduleRef.get('ICreateUserController');
+    service = moduleRef.get('IAuthUserService');
+    controller = moduleRef.get('IAuthUserController');
     findUserRepo = moduleRef.get('IFindUserRepo');
     encrypter = moduleRef.get('IEncrypterData');
     token = moduleRef.get('ITokenService');

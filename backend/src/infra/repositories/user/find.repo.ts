@@ -23,7 +23,6 @@ class FindUserRepo implements IFindUserRepo {
         select: { user_id: true, userType: true, password: true },
       });
 
-      console.log(user);
       return user;
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');

@@ -22,7 +22,8 @@ class AuthUserService implements IAuthUserService {
     const user = await this.findUserRepo.without_login({ login });
 
     if (!user) throw new Error('Invalid Credentials');
-    else this.user = user;
+
+    this.user = user;
   }
 
   async checkPasswordIsValid(password: string): Promise<void> {
