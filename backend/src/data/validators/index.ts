@@ -1,2 +1,2 @@
-export * from './encrypter';
-export * from './token';
+export * from './encrypter.service';
+export * from './token.service';

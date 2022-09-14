@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IGenerateUserToken, ITokenService } from '@root/domain';
-import { TokenService } from '../token';
+import { TokenService } from '../token.service';
 import * as jwt from 'jsonwebtoken';
 
 describe('Encrypter Service', () => {

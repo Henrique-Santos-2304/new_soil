@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IEncrypterData } from '@root/domain';
-import { EncrypterData } from '../encrypter';
+import { EncrypterData } from '../encrypter.service';
 import * as bcrypt from 'bcrypt';
 
 describe('Encrypter Service', () => {
