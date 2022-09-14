@@ -33,7 +33,6 @@ class TokenService implements ITokenService {
   async checkIsValid({ token }: { token: string }): Promise<boolean> {
     try {
       const TokenValid = jwt.verify(token, this.secretKey as jwt.Secret);
-
       if (!TokenValid) throw new Error('TOKEN ERROR');
       return true;
     } catch (err) {
