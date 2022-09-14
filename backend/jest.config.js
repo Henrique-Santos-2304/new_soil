@@ -2,7 +2,12 @@ module.exports = {
   roots: ['<rootDir>/src/', '<rootDir>/test/'],
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
-    // '!<rootDir>/src/utils/**/*.ts',
+    '!<rootDir>/**/index.ts',
+    '!<rootDir>/src/main/**/*.ts',
+    '!<rootDir>/src/domain/**/*.ts',
+    '!<rootDir>/src/core/**/*.ts',
+    '!<rootDir>/src/infra/config_acess_db/**/*.ts',
+    '!<rootDir>/src/shared/**/*.ts',
   ],
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
