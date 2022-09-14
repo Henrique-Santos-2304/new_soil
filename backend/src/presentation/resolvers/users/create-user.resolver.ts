@@ -1,15 +1,20 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ICreateUserController, ICreateUserService } from '@root/domain';
+import {
+  IAuthUserService,
+  IAuthUserController,
+  ICreateUserController,
+  ICreateUserService,
+} from '@root/domain';
 
-@Resolver()
+@Resolver('Users')
 class CreateUserResolver implements ICreateUserController {
   constructor(
     @Inject('ICreateUserService')
     private readonly createUserService: ICreateUserService,
   ) {}
 
-  logInitRequest(user: ICreateUserController.Params) {
+  logInitRequest(user: any) {
     const { password, ...rest } = user;
     Logger.log(
       `Recebido novo Usuario para cadastro... ${JSON.stringify({

@@ -2,7 +2,7 @@ import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IAuthUserController, IAuthUserService } from '@contracts/index';
 
-@Resolver()
+@Resolver('Users')
 class AuthUserResolver implements IAuthUserController {
   constructor(
     @Inject('IAuthUserService')
@@ -10,10 +10,9 @@ class AuthUserResolver implements IAuthUserController {
   ) {}
 
   logInitRequest(loginData: IAuthUserController.Params) {
-    const { login } = loginData;
     Logger.log(
       `Recebido dados para autenticação de usuario... ${JSON.stringify({
-        login,
+        login: loginData.login,
         password: '*********',
       })} `,
     );
@@ -33,6 +32,7 @@ class AuthUserResolver implements IAuthUserController {
     try {
       this.logInitRequest(data);
       const response = await this.authUserService.start(data);
+      this.logFinishRequest(false);
       return response;
     } catch (err) {
       this.logFinishRequest(true);
