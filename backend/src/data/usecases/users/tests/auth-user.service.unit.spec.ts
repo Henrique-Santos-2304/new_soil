@@ -129,6 +129,12 @@ describe('UserService', () => {
     await expect(response).rejects.toThrow('TOKEN ERROR');
   });
 
+  it('should service to Throw "TOKEN NOT PROVIDED" if Token return null', async () => {
+    token.generate.mockResolvedValueOnce(null);
+    const response = service.start(loginUser);
+    await expect(response).rejects.toThrow('TOKEN DOES NOT PROVIDED');
+  });
+
   // Test service return the data expected { status, token }
   it('should service return the data expected { status, token }', async () => {
     const response = await service.start(loginUser);

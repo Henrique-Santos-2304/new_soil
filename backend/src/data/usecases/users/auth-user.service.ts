@@ -38,10 +38,11 @@ class AuthUserService implements IAuthUserService {
   async generateUserToken(): Promise<void> {
     const { userType, user_id } = this.user;
 
-    const { token } = await this.tokenService.generate({ user_id, userType });
+    const response = await this.tokenService.generate({ user_id, userType });
 
-    if (!token) throw new Error('TOKEN DOES NOT PROVIDED');
-    else this.token = token;
+    if (!response || !response.token)
+      throw new Error('TOKEN DOES NOT PROVIDED');
+    else this.token = response.token;
   }
 
   async start({
