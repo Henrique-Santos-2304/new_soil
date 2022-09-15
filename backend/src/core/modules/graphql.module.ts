@@ -11,6 +11,7 @@ const graphqlModule = GraphQLModule.forRoot<ApolloDriverConfig>({
     };
     return graphQLFormattedError;
   },
+  context: ({ req }) => ({ req }),
 });
 
 export { graphqlModule };

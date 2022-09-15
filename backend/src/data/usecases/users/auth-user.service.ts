@@ -6,6 +6,7 @@ import {
   ITokenService,
   UserModel,
 } from '@contracts/index';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 class AuthUserService implements IAuthUserService {
@@ -16,6 +17,7 @@ class AuthUserService implements IAuthUserService {
     @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
     @Inject('IEncrypterData') private readonly encrypter: IEncrypterData,
     @Inject('ITokenService') private readonly tokenService: ITokenService,
+    private jwtService: JwtService,
   ) {}
 
   async checkUserAlreadyExists(login: string): Promise<void> {
@@ -38,11 +40,10 @@ class AuthUserService implements IAuthUserService {
   async generateUserToken(): Promise<void> {
     const { userType, user_id } = this.user;
 
-    const response = await this.tokenService.generate({ user_id, userType });
+    const response = await this.jwtService.signAsync({ userType, user_id });
 
-    if (!response || !response.token)
-      throw new Error('TOKEN DOES NOT PROVIDED');
-    else this.token = response.token;
+    if (!response) throw new Error('TOKEN DOES NOT PROVIDED');
+    else this.token = response;
   }
 
   async start({

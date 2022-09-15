@@ -1,6 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IAuthUserController, IAuthUserService } from '@contracts/index';
+import { Public } from '@root/data';
 
 @Resolver('Users')
 class AuthUserResolver implements IAuthUserController {
@@ -26,6 +27,7 @@ class AuthUserResolver implements IAuthUserController {
   }
 
   @Mutation()
+  @Public()
   async authUser(
     @Args('data') data: IAuthUserController.Params,
   ): IAuthUserController.Response {

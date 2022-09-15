@@ -1,13 +1,9 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Logger, Req, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import {
-  IAuthUserService,
-  IAuthUserController,
-  ICreateUserController,
-  ICreateUserService,
-} from '@root/domain';
+import { JwtAuthGuard, Public } from '@root/data/index';
+import { ICreateUserController, ICreateUserService } from '@root/domain';
 
-@Resolver('Users')
+@Resolver()
 class CreateUserResolver implements ICreateUserController {
   constructor(
     @Inject('ICreateUserService')
@@ -34,10 +30,11 @@ class CreateUserResolver implements ICreateUserController {
   /* Provisório só está para o graphql não reclamar de falta de query*/
   @Query()
   async getUserByLogin(@Args('login') login: string) {
-    return '';
+    return { user_id: 'soil', login, password: '****', userType: 'SUDO' };
   }
 
   @Mutation()
+  @Public()
   async createUser(
     @Args('data') data: ICreateUserController.Params,
   ): ICreateUserController.Response {
