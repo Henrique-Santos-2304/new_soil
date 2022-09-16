@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { IAuthUserService } from '@root/domain';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -14,7 +14,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IAuthUserService.Params) {
-    Logger.log('Logging: ' + JSON.stringify(payload));
     return payload;
   }
 }

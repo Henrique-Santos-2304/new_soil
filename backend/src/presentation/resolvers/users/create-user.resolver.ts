@@ -1,6 +1,6 @@
-import { Inject, Logger, Req, UseGuards } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard, Public } from '@root/data/index';
+import { Public } from '@root/data/index';
 import { ICreateUserController, ICreateUserService } from '@root/domain';
 
 @Resolver()

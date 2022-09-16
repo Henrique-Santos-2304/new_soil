@@ -1,26 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IGenerateUserToken, ITokenService } from '@contracts/index';
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 class TokenService implements ITokenService {
   private readonly secretKey = process.env.TOKEN_SECRET;
   private readonly expiresIn = '150h';
 
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly logger: Logger,
+  ) {}
 
   async generate({
     userType,
     user_id,
   }: IGenerateUserToken.Params): IGenerateUserToken.Response {
     try {
-      const token = jwt.sign(
-        { user_id, userType },
-        this.secretKey as jwt.Secret,
-        {
-          expiresIn: this.expiresIn,
-        },
-      );
+      const token = await this.jwtService.signAsync({ userType, user_id });
 
       return { token };
     } catch (err) {
@@ -32,7 +29,7 @@ class TokenService implements ITokenService {
 
   async checkIsValid({ token }: { token: string }): Promise<boolean> {
     try {
-      const TokenValid = jwt.verify(token, this.secretKey as jwt.Secret);
+      const TokenValid = await this.jwtService.verifyAsync(token);
       if (!TokenValid) throw new Error('TOKEN ERROR');
       return true;
     } catch (err) {

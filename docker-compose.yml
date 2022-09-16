@@ -11,8 +11,8 @@ services:
       - ./db/.env
     volumes:
       - ./db/scripts:/docker-entrypoint-initdb.d
-    networks:
-      - new_soil_network
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   new_soil_backend:
     build: ./backend
@@ -22,16 +22,12 @@ services:
       - ./backend/.env
     ports:
       - 3310:3310
-      - 5555:5555
+      - 5556:5555
     volumes:
       - ./backend:/usr/new_soil/backend
     links:
       - db_new_soil
     depends_on:
       - db_new_soil
-    networks:
-      - new_soil_network
-
-networks:
-  new_soil_network:
-    name: new_soil_network
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
