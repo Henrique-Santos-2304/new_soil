@@ -1,17 +1,17 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { formatError, context, dataSources, cors } from '../graphql-config';
 
-const graphqlModule = GraphQLModule.forRoot<ApolloDriverConfig>({
+const graphqlModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
-  typePaths: ['./**/*.gql'],
-  formatError: (error: GraphQLError) => {
-    const graphQLFormattedError: GraphQLFormattedError = {
-      message: error?.extensions?.exception?.code || error?.message,
-    };
-    return graphQLFormattedError;
-  },
-  context: ({ req }) => ({ req }),
+  useFactory: () => ({
+    typePaths: ['./**/*.gql'],
+    playground: true,
+    formatError,
+    context,
+    dataSources,
+    cors,
+  }),
 });
 
 export { graphqlModule };

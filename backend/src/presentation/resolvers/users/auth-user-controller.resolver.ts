@@ -1,5 +1,5 @@
 import { Inject, Logger } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { IAuthUserController, IAuthUserService } from '@contracts/index';
 import { Public } from '@root/data';
 
@@ -19,25 +19,27 @@ class AuthUserResolver implements IAuthUserController {
     );
   }
 
-  logFinishRequest(err: boolean) {
+  logFinishRequest(err: boolean, message?: string) {
     const messageSucess = `Usuario autenticado com sucesso...\n`;
     const messageError =
       'Requisição para autenticar Usuario Finalizada com erros..';
     Logger.log(err ? messageError : messageSucess);
+    message && Logger.error(message);
   }
 
   @Mutation()
   @Public()
   async authUser(
+    @Context('dataSources') { userDS }: any,
     @Args('data') data: IAuthUserController.Params,
   ): IAuthUserController.Response {
     try {
       this.logInitRequest(data);
       const response = await this.authUserService.start(data);
       this.logFinishRequest(false);
-      return response;
+      return await userDS.handleResponse(response);
     } catch (err) {
-      this.logFinishRequest(true);
+      this.logFinishRequest(true, err.message);
       return { status: 'Fail', error: err.message };
     }
   }
