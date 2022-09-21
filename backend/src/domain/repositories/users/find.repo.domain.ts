@@ -9,6 +9,7 @@ import { CreateUserDto, UserModel } from '@root/domain/models';
       by_login = { login }
       by_id = { user_id }
       without_login_pass = { login}
+      all = void
       
     
   *****************************************************************
@@ -25,6 +26,7 @@ interface IFindUserRepo {
   without_login({
     login,
   }: IFindUserWithoutLoginPassword.Params): IFindUserWithoutLoginPassword.Response;
+  all(): IGetAllUsers.Response;
 }
 
 namespace IFindUserByLogin {
@@ -40,6 +42,10 @@ namespace IFindUserWithoutLoginPassword {
 namespace IFindUserById {
   export type Params = { user_id: UserModel['user_id'] };
   export type Response = Promise<UserModel | undefined>;
+}
+
+namespace IGetAllUsers {
+  export type Response = Promise<Array<Omit<UserModel, 'password'>>>;
 }
 
 export {

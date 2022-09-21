@@ -4,6 +4,7 @@ import {
   IFindUserByLogin,
   IFindUserRepo,
   IFindUserWithoutLoginPassword,
+  UserModel,
 } from '@root/domain';
 import { PrismaService } from '@root/infra';
 
@@ -50,6 +51,19 @@ class FindUserRepo implements IFindUserRepo {
       return user;
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
+      this.logger.error(err.message);
+      throw new Error('QUERY_ERROR');
+    }
+  }
+
+  async all(): Promise<Array<Omit<UserModel, 'password'>>> {
+    try {
+      const user = await this.prisma.user.findMany({
+        select: { user_id: true, login: true, userType: true },
+      });
+      return user;
+    } catch (err) {
+      this.logger.log('Erro ao buscar usuarios no banco de dados...');
       this.logger.error(err.message);
       throw new Error('QUERY_ERROR');
     }
