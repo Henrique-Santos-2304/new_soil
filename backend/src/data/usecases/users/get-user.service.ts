@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IFindUserRepo, IGetAllUserService, UserModel } from '@contracts/index';
+import { IFindUserRepo, IGetAllUserService } from '@contracts/index';
 
 @Injectable()
 class GetAllUserService implements IGetAllUserService {
@@ -7,8 +7,11 @@ class GetAllUserService implements IGetAllUserService {
     @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
   ) {}
 
+  getUsersInDb = async () => await this.findUserRepo.all();
+
   async start(): IGetAllUserService.Response {
-    return [] as UserModel[];
+    const user = await this.getUsersInDb();
+    return user;
   }
 }
 

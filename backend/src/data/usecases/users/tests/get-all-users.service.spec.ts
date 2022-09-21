@@ -9,17 +9,8 @@ describe('UserService', () => {
   let service: IGetAllUserService;
   let findUserRepo: MockProxy<IFindUserRepo>;
   let logger: MockProxy<Logger>;
-  const users: UserModel[] = [];
 
   beforeEach(async () => {
-    for (let i; i < 4; i++) {
-      users.push({
-        login: `soil-${i}`,
-        password: `soil-${i}`,
-        user_id: `${i}`,
-        userType: 'SUDO',
-      });
-    }
     findUserRepo = mock();
     logger = mock();
 
@@ -32,7 +23,6 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<IGetAllUserService>(GetAllUserService);
-    findUserRepo.all.mockResolvedValue(users);
   });
 
   it('shoud be service and repo to be defined', async () => {
@@ -48,7 +38,7 @@ describe('UserService', () => {
   });
 
   it('shoud throw error if findUserRepo.all to return an error ', async () => {
-    findUserRepo.all.mockRejectedValueOnce(new Error(''));
+    findUserRepo.all.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start();
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
   });
@@ -60,8 +50,14 @@ describe('UserService', () => {
   });
 
   it('shoud be service to return array of users if findUserRepo.all encounter users ', async () => {
+    findUserRepo.all.mockResolvedValueOnce([
+      { login: `soil1`, user_id: `1`, userType: 'SUDO' },
+      { login: `soil2`, user_id: `2`, userType: 'SUDO' },
+    ]);
     const response = await service.start();
-    expect(response).toHaveLength(4);
+    console.log(response);
+
+    expect(response).toHaveLength(2);
 
     expect(response[0]).toHaveProperty('user_id');
     expect(response[0]).toHaveProperty('userType');

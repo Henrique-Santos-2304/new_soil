@@ -27,7 +27,7 @@ interface IGetAllUserService {
 }
 
 namespace IGetAllUserService {
-  export type Response = Promise<UserModel[]>;
+  export type Response = Promise<Omit<UserModel, 'password'>[]>;
 }
 
 export { IGetAllUserService };
