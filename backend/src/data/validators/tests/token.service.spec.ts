@@ -10,7 +10,7 @@ describe('Token Jwt Service', () => {
   let logger: Logger;
   let jwt: MockProxy<JwtService>;
 
-  const data: IGenerateUserToken.Params = { user_id: 'id', userType: 'SUDO' };
+  const data: IGenerateUserToken.Params = { user_id: 'id', userType: 'MASTER' };
 
   beforeEach(async () => {
     jwt = mock();

@@ -102,7 +102,7 @@ describe('Auth User Integration', () => {
 
   it('should be "{status: Fail}" if password is not correct', async () => {
     await prismaTest.user.create({
-      data: { login: 'soil', password: '1234', userType: 'SUDO' },
+      data: { login: 'soil', password: '1234', userType: 'MASTER' },
     });
     const { data }: any = await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
@@ -126,7 +126,7 @@ describe('Auth User Integration', () => {
           data: {
             login: "soil"
             password: "1234"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {

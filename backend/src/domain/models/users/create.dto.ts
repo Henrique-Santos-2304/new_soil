@@ -1,5 +1,4 @@
-type UserType = 'SUDO' | 'USER';
-
+type UserType = 'MASTER' | 'DEALER' | 'ADMIN' | 'USER';
 /*
   Data Object Transfer para criação de novo Usuario
 
@@ -7,8 +6,8 @@ type UserType = 'SUDO' | 'USER';
 
   login: String = Usado para identificar usuario ao entrar na aplicação
   password: String = Usado para válidar se usuario da requisição é ele mesmo
-  userType: SUDO ou USER = Usado para definir autorizações de uso do usuario
-    SUDO: Define como acesso total a aplicação
+  userType: MASTER ou USER = Usado para definir autorizações de uso do usuario
+    MASTER: Define como acesso total a aplicação
     USER: Define como acesso moderado as suas respectivas fazendas
 
   *************************************************************************

@@ -8,7 +8,7 @@ import { CreateUserDto, UserModel } from '@root/domain/models';
   @Params: {
       login: string, 
       password: string, 
-      userType: SUDO ou USER
+      userType: MASTER ou USER
     }
     
   *****************************************************************

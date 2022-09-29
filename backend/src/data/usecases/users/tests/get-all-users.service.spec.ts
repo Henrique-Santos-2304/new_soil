@@ -51,8 +51,8 @@ describe('UserService', () => {
 
   it('shoud be service to return array of users if findUserRepo.all encounter users ', async () => {
     findUserRepo.all.mockResolvedValueOnce([
-      { login: `soil1`, user_id: `1`, userType: 'SUDO' },
-      { login: `soil2`, user_id: `2`, userType: 'SUDO' },
+      { login: `soil1`, user_id: `1`, userType: 'MASTER' },
+      { login: `soil2`, user_id: `2`, userType: 'MASTER' },
     ]);
     const response = await service.start();
     console.log(response);

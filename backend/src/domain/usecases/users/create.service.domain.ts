@@ -7,7 +7,7 @@ import { CreateUserDto } from '@contracts/index';
     @Params: {
       login: string, 
       password: string, 
-      userType: SUDO ou USER
+      userType: MASTER ou USER
     }
     
   *****************************************************************

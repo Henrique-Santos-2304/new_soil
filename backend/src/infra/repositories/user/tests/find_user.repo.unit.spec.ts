@@ -181,7 +181,7 @@ describe('Find User Repo', () => {
   it('should to return a user_id and userType and password of user when without_login not return an error', async () => {
     prisma.user.findFirst = jest.fn().mockResolvedValueOnce({
       user_id: 'soil_id',
-      userType: 'SUDO',
+      userType: 'MASTER',
       password: '1234',
     });
     const value = await repo.without_login({

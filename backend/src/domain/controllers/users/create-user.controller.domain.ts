@@ -4,7 +4,7 @@
     @Params: {
       login: string, 
       password: string, 
-      userType: SUDO ou USER
+      userType: MASTER ou USER
     }
     
   *****************************************************************
@@ -22,7 +22,7 @@
 
   ******************************************************************
       USERTYPE = 
-        SUDO: Acesso Total ao app, 
+        MASTER: Acesso Total ao app, 
         USER: Acesso Moderado as sua respectiva fazendas 
     */
 

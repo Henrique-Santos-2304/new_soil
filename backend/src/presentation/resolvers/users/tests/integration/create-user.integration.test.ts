@@ -64,7 +64,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: 1234
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -84,7 +84,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: 1234
-            userType: SUDO
+            userType: MASTER
             internal_password: 123
           }
         ) {
@@ -104,7 +104,7 @@ describe('Create User', () => {
           data: {
             login: 123
             password: "1234"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -124,7 +124,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: "SUDO"
+            userType: "MASTER"
             internal_password: "@Inatel123"
           }
         ) {
@@ -145,7 +145,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@soil123"
           }
         ) {
@@ -169,7 +169,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -192,7 +192,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -216,7 +216,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -236,7 +236,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: SUDO
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
@@ -253,6 +253,6 @@ describe('Create User', () => {
     expect(user).toHaveProperty('user_id');
     expect(user).toHaveProperty('password');
     expect(user).toHaveProperty('login', 'soil');
-    expect(user).toHaveProperty('userType', 'SUDO');
+    expect(user).toHaveProperty('userType', 'MASTER');
   });
 });

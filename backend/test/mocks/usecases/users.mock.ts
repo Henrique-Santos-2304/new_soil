@@ -3,7 +3,7 @@ import { CreateUserDto, ICreateUserService, UserModel } from '@root/domain';
 const createUserMocked: CreateUserDto = {
   login: 'soil',
   password: '1234',
-  userType: 'SUDO',
+  userType: 'MASTER',
 };
 
 const createUserRequestMocked: ICreateUserService.Params = {

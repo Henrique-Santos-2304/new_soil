@@ -20,8 +20,8 @@ describe('Get Users Controller', () => {
     controller = module.get(GetUsersResolver);
 
     service.start.mockResolvedValue([
-      { login: `soil1`, user_id: `1`, userType: 'SUDO' },
-      { login: `soil2`, user_id: `2`, userType: 'SUDO' },
+      { login: `soil1`, user_id: `1`, userType: 'MASTER' },
+      { login: `soil2`, user_id: `2`, userType: 'MASTER' },
     ]);
   });
 

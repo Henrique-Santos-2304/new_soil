@@ -8,7 +8,7 @@ const getTokenMocked = async (app: any) => {
         data: {
           login: "soil_test"
           password: "password"
-          userType: SUDO
+          userType: MASTER
           internal_password: "@Inatel123"
         }
       ) {

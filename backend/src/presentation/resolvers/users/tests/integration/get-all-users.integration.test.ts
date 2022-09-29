@@ -75,7 +75,7 @@ describe('Create User', () => {
         login: 'soilTest',
         password: 'password',
         user_id: 'soilTest',
-        userType: 'SUDO',
+        userType: 'MASTER',
       },
     });
     const { data }: any = await request(app.getHttpServer()).set(
