@@ -17,7 +17,7 @@ CREATE TABLE "farms" (
     "farm_name" TEXT NOT NULL,
     "farm_city" TEXT NOT NULL,
     "farm_lat" DOUBLE PRECISION NOT NULL,
-    "farm_long" DOUBLE PRECISION NOT NULL,
+    "farm_lng" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "farms_pkey" PRIMARY KEY ("farm_id")
 );

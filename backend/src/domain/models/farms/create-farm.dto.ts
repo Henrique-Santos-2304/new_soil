@@ -6,7 +6,7 @@ class CreateFarmDTO {
   farm_lng: number;
 
   admins_id: string[];
-  dealer_id?: string;
+  dealer_id?: string[];
   user_id?: string[];
 }
 

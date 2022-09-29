@@ -33,7 +33,7 @@ model Farm{
   farm_name  String      @unique  
   farm_city  String
   farm_lat   Float 
-  farm_long  Float
+  farm_lng   Float
 
   admins            AdminsOnFarms[]    
   dealers           DealersOnFarms[]
