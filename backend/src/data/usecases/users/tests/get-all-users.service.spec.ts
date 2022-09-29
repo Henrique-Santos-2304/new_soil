@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import { PrismaModule } from '@root/core';
-import { IFindUserRepo, IGetAllUserService, UserModel } from '@root/domain';
+import { IFindUserRepo, IGetAllUserService } from '@root/domain';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetAllUserService } from '../get-user.service';
 
