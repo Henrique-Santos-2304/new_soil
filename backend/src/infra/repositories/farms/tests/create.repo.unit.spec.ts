@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICreateFarmRepo } from '@root/domain';
 import { PrismaService } from '@root/infra/config_acess_db';
-import { createFarmMocked, userModelMocked } from '@testRoot/mocks';
+import { createFarmMocked } from '@testRoot/mocks';
 import { CreateFarmRepo } from '../create.repo';
 
 describe('UserRepo', () => {
@@ -23,7 +23,9 @@ describe('UserRepo', () => {
     prisma = module.get<PrismaService>(PrismaService);
     logger = module.get<Logger>(Logger);
 
-    prisma.farm.create = jest.fn().mockReturnValueOnce(userModelMocked);
+    prisma.farm.create = jest
+      .fn()
+      .mockReturnValueOnce({ farm_id: createFarmMocked.farm_id });
   });
 
   it('should be defined', () => {
@@ -43,7 +45,10 @@ describe('UserRepo', () => {
 
     expect(prisma.farm.create).toHaveBeenCalled();
     expect(prisma.farm.create).toHaveBeenCalledTimes(1);
-    expect(prisma.farm.create).toHaveBeenCalledWith({ data: createFarmMocked });
+    expect(prisma.farm.create).toHaveBeenCalledWith({
+      data: createFarmMocked,
+      select: { farm_id: true },
+    });
   });
 
   it('should to return a farm Created with action not ocurred an error', async () => {
