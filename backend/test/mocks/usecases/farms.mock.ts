@@ -6,9 +6,9 @@ const createFarmMocked: CreateFarmDTO = {
   farm_city: 'Santa Rita Sapucaí',
   farm_lat: 19.4567,
   farm_lng: 46.4567,
-  admins_id: ['user_id'],
-  dealer_id: [],
-  user_id: [],
+  admins: ['user_id'],
+  dealers: [],
+  users: [],
 };
 
 export { createFarmMocked };

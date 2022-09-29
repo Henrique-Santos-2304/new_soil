@@ -5,9 +5,9 @@ class CreateFarmDTO {
   farm_lat: number;
   farm_lng: number;
 
-  admins_id: string[];
-  dealer_id?: string[];
-  user_id?: string[];
+  admins?: string[];
+  dealers?: string[];
+  users?: string[];
 }
 
 export { CreateFarmDTO };
