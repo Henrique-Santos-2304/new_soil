@@ -12,8 +12,9 @@ class CreateUserResolver implements ICreateUserController {
 
   logInitRequest(user: any) {
     const { password, ...rest } = user;
+    Logger.warn('');
     Logger.log(
-      `Recebido novo Usuario para cadastro... ${JSON.stringify({
+      `\nCadastrando novo Usuario... ${JSON.stringify({
         ...rest,
         password: '*********',
       })} `,
@@ -23,7 +24,7 @@ class CreateUserResolver implements ICreateUserController {
   logFinishRequest(err: boolean) {
     const messageSucess = `Usuario cadastrado com sucesso...\n`;
     const messageError =
-      'Requisição para criar novo Usuario Finalizada com erros..';
+      'Requisição para criar novo Usuario Finalizada com erros...\n';
     Logger.log(err ? messageError : messageSucess);
   }
 

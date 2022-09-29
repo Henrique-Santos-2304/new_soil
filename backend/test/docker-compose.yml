@@ -11,9 +11,5 @@ services:
       - ./.env
     volumes:
       - ../../db/scripts:/docker-entrypoint-initdb.d
-    networks:
-      - new_soil_network
-
-networks:
-  new_soil_network:
-    name: new_soil_network
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'

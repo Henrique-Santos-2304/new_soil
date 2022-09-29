@@ -33,7 +33,7 @@ describe('UserService', () => {
     expect(spy).toHaveBeenCalledWith(createUserRequestMocked);
   });
 
-  it('should service to have not been called', async () => {
+  it('should service to have been called', async () => {
     const spy = jest.spyOn(service, 'start');
 
     await controller.createUser(createUserRequestMocked);
