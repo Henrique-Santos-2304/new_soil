@@ -29,7 +29,11 @@ interface IGetUserController {
 }
 
 namespace IGetAllUserController {
-  export type Response = Promise<UserModel[]>;
+  export type Response = Promise<{
+    status: string;
+    error?: string;
+    users?: Omit<UserModel, 'password'>[];
+  }>;
 }
 
 export { IGetUserController, IGetAllUserController };
