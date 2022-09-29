@@ -35,7 +35,7 @@ model Farm{
   farm_lat   Float 
   farm_long  Float
 
-  admins            AdminsOnFarms[]
+  admins            AdminsOnFarms[]    
   dealers           DealersOnFarms[]
   users             UserOnFarms[]
 
