@@ -14,7 +14,7 @@ class CreateUserResolver implements ICreateUserController {
     const { password, ...rest } = user;
     Logger.warn('');
     Logger.log(
-      `\nCadastrando novo Usuario... ${JSON.stringify({
+      `Cadastrando novo Usuario... ${JSON.stringify({
         ...rest,
         password: '*********',
       })} `,
