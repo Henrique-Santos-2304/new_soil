@@ -11,8 +11,9 @@ class AuthUserResolver implements IAuthUserController {
   ) {}
 
   logInitRequest(loginData: IAuthUserController.Params) {
+    Logger.warn('');
     Logger.log(
-      `Recebido dados para autenticação de usuario... ${JSON.stringify({
+      `Autenticando Usúario... ${JSON.stringify({
         login: loginData.login,
         password: '*********',
       })} `,
@@ -22,7 +23,7 @@ class AuthUserResolver implements IAuthUserController {
   logFinishRequest(err: boolean, message?: string) {
     const messageSucess = `Usuario autenticado com sucesso...\n`;
     const messageError =
-      'Requisição para autenticar Usuario Finalizada com erros..';
+      'Requisição para autenticar Usuario Finalizada com erros...\n';
     Logger.log(err ? messageError : messageSucess);
     message && Logger.error(message);
   }

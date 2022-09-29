@@ -31,8 +31,8 @@ interface IAuthUserController {
 }
 
 namespace IAuthUserController {
-  export type Params = Omit<CreateUserDto, 'UserType'>;
-  export type Context = ExecutionContext;
+  export type Params = Omit<CreateUserDto, 'userType'>;
+  export type Context = ExecutionContext | any;
 
   export type Response = Promise<{
     status: string;
