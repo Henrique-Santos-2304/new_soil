@@ -1,5 +1,5 @@
 import { Inject, Logger } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from '@root/data/index';
 import { ICreateUserController, ICreateUserService } from '@root/domain';
 
@@ -26,12 +26,6 @@ class CreateUserResolver implements ICreateUserController {
     const messageError =
       'Requisição para criar novo Usuario Finalizada com erros...\n';
     Logger.log(err ? messageError : messageSucess);
-  }
-
-  /* Provisório só está para o graphql não reclamar de falta de query*/
-  @Query()
-  async getUserByLogin(@Args('login') login: string) {
-    return { user_id: 'soil', login, password: '****', userType: 'SUDO' };
   }
 
   @Mutation()

@@ -10,16 +10,10 @@ class GetUsersResolver implements IGetUserController {
     private readonly getAllUserService: IGetAllUserService,
   ) {}
 
-  logInitRequest(user: any) {
-    const { password, ...rest } = user;
+  logInitRequest() {
     Logger.warn('');
 
-    Logger.log(
-      `\nBuscando usúarios no sistema... ${JSON.stringify({
-        ...rest,
-        password: '*********',
-      })} `,
-    );
+    Logger.log(`Busca de usuarios iniciada.....`);
   }
 
   logFinishRequest(err: boolean, message?: string) {
@@ -33,7 +27,9 @@ class GetUsersResolver implements IGetUserController {
   @Query()
   async getUsers(): IGetAllUserController.Response {
     try {
+      this.logInitRequest();
       const users = await this.getAllUserService.start();
+      this.logFinishRequest(false);
       return { status: 'Sucess', users };
     } catch (err) {
       this.logFinishRequest(true, err.message);
