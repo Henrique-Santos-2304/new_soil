@@ -1,5 +1,6 @@
 # Define a regra do usuario, usado mais a frente para diferir o acesso a recursos do app
 #Usuario pode ser do tipo { MASTER= acesso total, USER= acesso limitado a sua fazenda}
+
 enum UserType {
   MASTER
   DEALER
