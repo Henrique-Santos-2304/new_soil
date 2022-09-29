@@ -1,5 +1,9 @@
+# Define a regra do usuario, usado mais a frente para diferir o acesso a recursos do app
+#Usuario pode ser do tipo { SUDO= acesso total, USER= acesso limitado a sua fazenda}
 enum UserType {
-  SUDO
+  MASTER
+  DEALER
+  ADMIN
   USER
 }
 
@@ -24,7 +28,6 @@ type User {
   user_id: ID!
   login: String!
   password: String!
-  # Define a regra do usuario, usado mais a frente para diferir o acesso a recursos do app
-  #Usuario pode ser do tipo { SUDO= acesso total, USER= acesso limitado a sua fazenda}
+
   userType: UserType!
 }

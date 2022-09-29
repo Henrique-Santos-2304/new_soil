@@ -12,7 +12,9 @@ datasource db {
 }
 
 enum UserType{
-  SUDO
+  MASTER
+  DEALER
+  ADMIN
   USER
 }
 

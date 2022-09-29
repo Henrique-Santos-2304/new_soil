@@ -1,5 +1,4 @@
-type UserType = 'SUDO' | 'USER';
-
+type UserType = 'MASTER' | 'DEALER' | 'ADMIN' | 'USER';
 /*
   Data Object Transfer para criação de novo Usuario
 
