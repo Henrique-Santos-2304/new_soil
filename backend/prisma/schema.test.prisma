@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://test:test_pass@db_new_soil_test:5432/test_db"
+  url      = "postgresql://test:test_pass@localhost:5492/test_db"
 }
 
 enum UserType{
