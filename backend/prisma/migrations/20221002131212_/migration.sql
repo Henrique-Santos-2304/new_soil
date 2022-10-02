@@ -18,7 +18,7 @@ CREATE TABLE "farms" (
     "farm_city" TEXT NOT NULL,
     "farm_lat" DOUBLE PRECISION NOT NULL,
     "farm_lng" DOUBLE PRECISION NOT NULL,
-    "owner" TEXT NOT NULL,
+    "owner_id" TEXT NOT NULL,
     "created_by" TEXT NOT NULL,
     "updated_by" TEXT,
 
@@ -57,6 +57,9 @@ CREATE UNIQUE INDEX "farms_farm_id_key" ON "farms"("farm_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "farms_farm_name_key" ON "farms"("farm_name");
+
+-- AddForeignKey
+ALTER TABLE "farms" ADD CONSTRAINT "farms_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AdminsOnFarms" ADD CONSTRAINT "AdminsOnFarms_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

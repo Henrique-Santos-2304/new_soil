@@ -10,7 +10,10 @@ import { CreateFarmDTO } from '@contracts/index';
       farm_city: string;
       farm_lat: number;
       farm_lng: number;
+      owner: string  *** Usuario dono da fazenda ***
 
+      created_by: string  *** Usuario criador da fazenda ***
+      updated_by: string *** Ultimo usuario a atualizar a fazenda ***
       admins_id: string[];
       dealer_id?: string;
       user_id?: string[];

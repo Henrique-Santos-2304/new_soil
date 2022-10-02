@@ -22,9 +22,13 @@ model User {
   login            String
   password         String
   userType         UserType
+
   admFarms            AdminsOnFarms[]
   dealerFarms         DealersOnFarms[]
   usersFarms          UserOnFarms[]
+
+  farms          Farm[]
+
   @@map("users")
 }
 
@@ -34,7 +38,8 @@ model Farm{
   farm_city  String
   farm_lat   Float 
   farm_lng   Float
-  owner       String
+  owner       User          @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  owner_id    String
   created_by  String
   updated_by  String?
 

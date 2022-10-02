@@ -4,7 +4,7 @@ class CreateFarmDTO {
   farm_city: string;
   farm_lat: number;
   farm_lng: number;
-  owner: string;
+  owner_id: string;
   created_by: string;
   updated_by?: string;
 
