@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaModule } from '@root/core';
 import {
@@ -55,8 +55,11 @@ describe('UserService', () => {
 
     service = module.get<ICreateFarmService>(CreateFarmService);
 
-    findUserRepo.by_login.mockResolvedValue(userModelMocked);
+    findUserRepo.by_id.mockResolvedValue(userModelMocked);
     findFarmRepo.by_id.mockResolvedValue(null);
+    createFarmRepo.create.mockResolvedValue({
+      farm_id: createFarmMocked.farm_id,
+    });
   });
 
   it('should providers to be defined', () => {
@@ -130,14 +133,14 @@ describe('UserService', () => {
   });
 
   it('shoul be throw Unauthorized if user does not a type MASTER or DEALER', async () => {
-    findUserRepo.by_login.mockResolvedValue({
+    findUserRepo.by_id.mockResolvedValueOnce({
       ...userModelMocked,
       userType: 'USER',
     });
 
     const response = service.start(createFarmMocked);
 
-    await expect(response).rejects.toThrow('Unauthorized');
+    await expect(response).rejects.toThrow(new UnauthorizedException().message);
   });
 
   // Tests Create Farm
@@ -157,6 +160,16 @@ describe('UserService', () => {
     const response = service.start(createFarmMocked);
 
     await expect(response).rejects.toThrow('QUERY ERROR');
+  });
+
+  it('shoul be throw a error if createFarm return null', async () => {
+    createFarmRepo.create.mockResolvedValueOnce(null);
+
+    const response = service.start(createFarmMocked);
+
+    await expect(response).rejects.toThrow(
+      'Does not possible to create a new farm',
+    );
   });
 
   it('shoul be have a new farm created if user to have a type MASTER and created_by column to be a user_id of this user', async () => {
