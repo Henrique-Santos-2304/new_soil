@@ -18,6 +18,7 @@ CREATE TABLE "farms" (
     "farm_city" TEXT NOT NULL,
     "farm_lat" DOUBLE PRECISION NOT NULL,
     "farm_lng" DOUBLE PRECISION NOT NULL,
+    "owner" TEXT NOT NULL,
     "created_by" TEXT NOT NULL,
     "updated_by" TEXT,
 

@@ -14,6 +14,7 @@ import {
   authGuardProvider,
   encrypterProvider,
   jwtStrategyProvider,
+  loggerServiceProvider,
   tokenProvider,
 } from '../utils';
 
@@ -39,6 +40,7 @@ const allUtilsUserProviders: Provider[] = [
   encrypterProvider,
   jwtStrategyProvider,
   authGuardProvider,
+  loggerServiceProvider,
 ];
 
 const userProviders: Provider[] = [

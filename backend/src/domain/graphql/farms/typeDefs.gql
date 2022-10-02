@@ -1,0 +1,20 @@
+type ResponseCreateFarm {
+  status: String!
+  error: String
+  farm_id: String
+}
+
+type Farms {
+  farm_id: String!
+  farm_name: String!
+  farm_city: String!
+  farm_lat: Float!
+  farm_lng: Float!
+  owner: String!
+  created_by: String!
+  updated_by: String
+
+  admins: [String]
+  dealers: [String]
+  users: [String]
+}

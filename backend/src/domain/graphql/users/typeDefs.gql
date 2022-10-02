@@ -11,6 +11,7 @@ enum UserType {
 type ResponseCreateUser {
   status: String!
   error: String
+  user_id: String
 }
 
 type ResponseGetUsers {
