@@ -35,6 +35,8 @@ model Farm{
   farm_city  String
   farm_lat   Float 
   farm_long  Float
+  created_by  String
+  updated_by  String?
 
   admins            AdminsOnFarms[]
   dealers           DealersOnFarms[]
