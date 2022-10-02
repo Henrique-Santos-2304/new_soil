@@ -140,6 +140,25 @@ describe('UserService', () => {
     await expect(response).rejects.toThrow('Unauthorized');
   });
 
+  // Tests Create Farm
+
+  it('shoul be create Farm to have been called once time and with data valids', async () => {
+    const spy = jest.spyOn(createFarmRepo, 'create');
+
+    await service.start(createFarmMocked);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(createFarmMocked);
+  });
+
+  it('shoul be throw a QUERY ERROR if createFarm throw error', async () => {
+    createFarmRepo.create.mockRejectedValueOnce(new Error('QUERY ERROR'));
+
+    const response = service.start(createFarmMocked);
+
+    await expect(response).rejects.toThrow('QUERY ERROR');
+  });
+
   it('shoul be have a new farm created if user to have a type MASTER and created_by column to be a user_id of this user', async () => {
     const response = await service.start(createFarmMocked);
 
