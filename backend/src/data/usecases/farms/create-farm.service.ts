@@ -1,12 +1,12 @@
+import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import {
-  CreateFarmDTO,
-  ICreateFarmRepo,
   ICreateFarmService,
   IFindFarmsRepo,
   IFindUserRepo,
+  ICreateFarmRepo,
   UserModel,
+  CreateFarmDTO,
 } from '@contracts/index';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 class CreateFarmService implements ICreateFarmService {
@@ -16,16 +16,34 @@ class CreateFarmService implements ICreateFarmService {
     @Inject('ICreateFarmRepo') private readonly createFarmRepo: ICreateFarmRepo,
   ) {}
 
+  async verifyDealersAdminUsersExists(
+    dealer: string[],
+    admins: string[],
+    users: string[],
+  ): Promise<void> {
+    if (dealer && dealer.length > 0) {
+      for (const user of dealer) await this.checkUserExistsInDb(user, 'DEALER');
+    }
+
+    if (admins && admins.length > 0) {
+      for (const user of admins) await this.checkUserExistsInDb(user, 'ADMIN');
+    }
+
+    if (users && users.length > 0) {
+      for (const user of users) await this.checkUserExistsInDb(user, 'USERS');
+    }
+  }
+
   async checkFarmAlreadyExistsInDb(farm_id: string): Promise<void> {
     const farmAlreadyExists = await this.findFarmRepo.by_id({ farm_id });
 
     if (farmAlreadyExists) throw new Error('Farm Already Exists');
   }
 
-  async checkUserCreatorExistsInDb(user_id: string): Promise<UserModel> {
+  async checkUserExistsInDb(user_id: string, type: string): Promise<UserModel> {
     const userExists = await this.findUserRepo.by_id({ user_id });
 
-    if (!userExists) throw new Error('Does Not Found User');
+    if (!userExists) throw new Error(`Does Not Found User of ${type}`);
 
     return userExists;
   }
@@ -45,7 +63,17 @@ class CreateFarmService implements ICreateFarmService {
 
   async start(farm: CreateFarmDTO): ICreateFarmService.Response {
     await this.checkFarmAlreadyExistsInDb(farm.farm_id);
-    const { userType } = await this.checkUserCreatorExistsInDb(farm.created_by);
+    await this.checkUserExistsInDb(farm.owner_id, 'OWNER');
+    await this.verifyDealersAdminUsersExists(
+      farm.dealers,
+      farm.admins,
+      farm.users,
+    );
+    const { userType } = await this.checkUserExistsInDb(
+      farm.created_by,
+      'CREATOR',
+    );
+
     this.verifyUserToHaveAcessForCreateFarm(userType);
     const { farm_id } = await this.createNewFarmInDb(farm);
     return { status: 'Sucess', farm_id };

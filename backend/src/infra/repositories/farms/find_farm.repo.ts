@@ -19,7 +19,7 @@ class FindFarmRepo implements IFindFarmsRepo {
   }: IFindFarmsByUser.Params): IFindFarmsByUser.Response {
     try {
       const farms = await this.prisma.farm.findMany({
-        where: { admins: { some: { adminId: user_id } } },
+        where: { owner_id: user_id },
       });
 
       return farms;

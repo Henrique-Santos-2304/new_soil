@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { CreateFarmService } from '@root/data/usecases/farms/create-farm.service';
+import { CreateFarmService } from '@usecases/index';
 
 const createFarmsServiceProvider: Provider = {
   provide: 'ICreateFarmService',

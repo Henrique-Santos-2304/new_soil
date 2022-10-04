@@ -1,6 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { CreateFarmRepo } from '@root/infra/repositories/farms';
-import { FindFarmRepo } from '@root/infra/repositories/farms/find_farm.repo';
+import { FindFarmRepo, CreateFarmRepo } from '@db/index';
 
 const findFarmsRepoProvider: Provider = {
   provide: 'IFindFarmsRepo',

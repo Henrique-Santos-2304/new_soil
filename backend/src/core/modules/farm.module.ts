@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { farmsProviders } from '../providers/modules';
+import { farmsProviders } from '../providers';
 
 @Module({
   providers: farmsProviders,
 })
-export class UserModule {}
+export class FarmModule {}

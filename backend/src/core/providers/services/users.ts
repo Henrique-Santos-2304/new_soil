@@ -3,7 +3,7 @@ import {
   AuthUserService,
   CreateUserService,
   GetAllUserService,
-} from '@root/data';
+} from '@usecases/index';
 
 const createUserServiceProvider: Provider = {
   provide: 'ICreateUserService',

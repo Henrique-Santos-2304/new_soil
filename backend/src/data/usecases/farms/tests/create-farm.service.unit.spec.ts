@@ -112,16 +112,27 @@ describe('UserService', () => {
 
     await service.start(createFarmMocked);
 
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith({ user_id: createFarmMocked.owner_id });
     expect(spy).toHaveBeenCalledWith({ user_id: createFarmMocked.created_by });
   });
 
-  it('shoul be throw a UserDoesNotFound if findUserrepo not return a user', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce(null);
+  it('shoul be findUser.by_id to have been called five times if received admins, dealers and user', async () => {
+    const spy = jest.spyOn(findUserRepo, 'by_id');
 
-    const response = service.start(createFarmMocked);
+    await service.start({
+      ...createFarmMocked,
+      admins: ['admin'],
+      dealers: ['dealer'],
+      users: ['users'],
+    });
 
-    await expect(response).rejects.toThrow('Does Not Found User');
+    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledWith({ user_id: createFarmMocked.owner_id });
+    expect(spy).toHaveBeenCalledWith({ user_id: 'admin' });
+    expect(spy).toHaveBeenCalledWith({ user_id: 'dealer' });
+    expect(spy).toHaveBeenCalledWith({ user_id: 'users' });
+    expect(spy).toHaveBeenCalledWith({ user_id: createFarmMocked.created_by });
   });
 
   it('shoul be throw a QUERY ERROR if findUserrepo throw error', async () => {
@@ -132,11 +143,68 @@ describe('UserService', () => {
     await expect(response).rejects.toThrow('QUERY ERROR');
   });
 
-  it('shoul be throw Unauthorized if user does not a type MASTER or DEALER', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce({
-      ...userModelMocked,
-      userType: 'USER',
+  // Check users exists in db
+  it('shoul be throw a User Owner not exists if findUserrepo not return a user', async () => {
+    findUserRepo.by_id.mockResolvedValueOnce(null);
+
+    const response = service.start(createFarmMocked);
+
+    await expect(response).rejects.toThrow('Does Not Found User of OWNER');
+  });
+
+  it('should be throw a error if admins received not exists in db', async () => {
+    findUserRepo.by_id
+      .mockResolvedValueOnce(userModelMocked)
+      .mockResolvedValueOnce(null);
+    const response = service.start({
+      ...createFarmMocked,
+      admins: ['not_exist'],
     });
+
+    await expect(response).rejects.toThrow('Does Not Found User of ADMIN');
+  });
+
+  it('should be throw a error if dealers received not exists in db', async () => {
+    findUserRepo.by_id
+      .mockResolvedValueOnce(userModelMocked)
+      .mockResolvedValueOnce(null);
+    const response = service.start({
+      ...createFarmMocked,
+      dealers: ['not_exist'],
+    });
+
+    await expect(response).rejects.toThrow('Does Not Found User of DEALER');
+  });
+
+  it('should be throw a error if users received not exists in db', async () => {
+    findUserRepo.by_id
+      .mockResolvedValueOnce(userModelMocked)
+      .mockResolvedValueOnce(null);
+    const response = service.start({
+      ...createFarmMocked,
+      users: ['users'],
+    });
+
+    await expect(response).rejects.toThrow('Does Not Found User of USER');
+  });
+
+  it('shoul be throw a User CREATOR not exists if findUserrepo not return a user', async () => {
+    findUserRepo.by_id
+      .mockResolvedValueOnce(userModelMocked)
+      .mockResolvedValueOnce(null);
+
+    const response = service.start(createFarmMocked);
+
+    await expect(response).rejects.toThrow('Does Not Found User of CREATOR');
+  });
+
+  it('shoul be throw Unauthorized if user does not a type MASTER or DEALER', async () => {
+    findUserRepo.by_id
+      .mockResolvedValueOnce(userModelMocked)
+      .mockResolvedValueOnce({
+        ...userModelMocked,
+        userType: 'USER',
+      });
 
     const response = service.start(createFarmMocked);
 

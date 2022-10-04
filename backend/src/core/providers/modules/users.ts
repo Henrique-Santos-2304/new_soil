@@ -1,10 +1,11 @@
 import { Provider } from '@nestjs/common';
+import { createUserRepoProvider, findUserRepoProvider } from '../repos';
+
 import {
   authUserControllerProvider,
   createUserControllerProvider,
   getUsersControllerProvider,
 } from '../controllers';
-import { createUserRepoProvider, findUserByLoginRepoProvider } from '../repos';
 import {
   authUserServiceProvider,
   createUserServiceProvider,
@@ -20,7 +21,7 @@ import {
 
 const allUserReposProvider: Provider[] = [
   createUserRepoProvider,
-  findUserByLoginRepoProvider,
+  findUserRepoProvider,
 ];
 
 const allControllersUserProviders: Provider[] = [

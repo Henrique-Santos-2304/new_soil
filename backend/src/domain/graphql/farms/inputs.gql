@@ -4,7 +4,7 @@ input CreateFarmInput {
   farm_city: String!
   farm_lat: Float!
   farm_lng: Float!
-  owner: String!
+  owner_id: String!
   created_by: String!
   updated_by: String
 

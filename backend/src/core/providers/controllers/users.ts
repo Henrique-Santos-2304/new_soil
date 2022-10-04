@@ -3,7 +3,7 @@ import {
   AuthUserResolver,
   CreateUserResolver,
   GetUsersResolver,
-} from '@root/presentation';
+} from '@resolvers/index';
 
 const createUserControllerProvider: Provider = {
   provide: 'ICreateUserController',

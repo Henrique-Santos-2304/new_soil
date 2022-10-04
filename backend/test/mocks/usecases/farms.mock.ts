@@ -9,7 +9,7 @@ const createFarmMocked: CreateFarmDTO = {
   owner_id: 'soil_owner',
   created_by: 'user_id',
   updated_by: null,
-  admins: ['user_id'],
+  admins: [],
   dealers: [],
   users: [],
 };

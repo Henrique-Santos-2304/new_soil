@@ -46,7 +46,7 @@ namespace ICreateFarmController {
   export type Response = Promise<{
     status: string;
     error?: string;
-    farm_id: string;
+    farm_id?: string;
   }>;
 }
 

@@ -1,14 +1,14 @@
 import { Provider } from '@nestjs/common';
-import { CreateUserRepo, FindUserRepo } from '@root/infra';
+import { CreateUserRepo, FindUserRepo } from '@db/index';
 
 const createUserRepoProvider: Provider = {
   provide: 'ICreateUserRepo',
   useClass: CreateUserRepo,
 };
 
-const findUserByLoginRepoProvider: Provider = {
+const findUserRepoProvider: Provider = {
   provide: 'IFindUserRepo',
   useClass: FindUserRepo,
 };
 
-export { createUserRepoProvider, findUserByLoginRepoProvider };
+export { createUserRepoProvider, findUserRepoProvider };
