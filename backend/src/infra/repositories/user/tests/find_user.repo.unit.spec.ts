@@ -23,7 +23,8 @@ describe('Find User Repo', () => {
     prisma = module.get<PrismaService>(PrismaService);
     logger = module.get<Logger>(Logger);
 
-    prisma.user.findFirst = jest.fn().mockResolvedValueOnce(userModelMocked);
+    prisma.user.findFirst = jest.fn().mockResolvedValue(userModelMocked);
+    prisma.user.findMany = jest.fn().mockResolvedValue([userModelMocked]);
   });
 
   it('should be defined', () => {
@@ -220,6 +221,75 @@ describe('Find User Repo', () => {
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith(
       'Erro ao buscar usuario no banco de dados...',
+    );
+
+    //method error
+    expect(logger.error).toHaveBeenCalledTimes(1);
+    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+  });
+
+  // all
+  it('should repo.all to have been called with data válids', async () => {
+    const spy = jest.spyOn(repo, 'all');
+    await repo.all();
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith();
+  });
+
+  it('should prisma.user.findFist in all to have been called with data válids', async () => {
+    const spy = jest.spyOn(prisma.user, 'findMany');
+    await repo.all();
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      select: { user_id: true, login: true, userType: true },
+    });
+  });
+
+  it('should to return list users if not exists users in db', async () => {
+    prisma.user.findMany = jest.fn().mockResolvedValueOnce([
+      {
+        user_id: 'soil_id',
+        login: 'soil',
+        userType: 'MASTER',
+        password: '1234',
+      },
+    ]);
+    const value = await repo.all();
+
+    expect(value).toHaveLength(1);
+    expect(value[0]).toHaveProperty('user_id');
+    expect(value[0]).toHaveProperty('userType', 'MASTER');
+    expect(value[0]).toHaveProperty('password', '1234');
+
+    expect(value[0]).toHaveProperty('login', 'soil');
+  });
+
+  it('should to return an empty list  not find user', async () => {
+    jest.spyOn(repo, 'all');
+    prisma.user.findMany = jest.fn().mockResolvedValueOnce([]);
+    const value = await repo.all();
+    expect(value).toEqual([]);
+  });
+
+  it('should to to throw "QUERY ERROR" when database all return erro', async () => {
+    prisma.user.findMany = jest.fn().mockRejectedValueOnce(new Error());
+    const value = repo.all();
+    await expect(value).rejects.toThrow('QUERY_ERROR');
+  });
+
+  it('should log an erro when database without_login return error', async () => {
+    prisma.user.findMany = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+
+    const value = repo.all();
+    await expect(value).rejects.toThrow();
+    // method log
+    expect(logger.log).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith(
+      'Erro ao buscar usuarios no banco de dados...',
     );
 
     //method error

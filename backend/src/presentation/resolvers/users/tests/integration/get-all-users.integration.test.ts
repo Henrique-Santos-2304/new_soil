@@ -10,7 +10,7 @@ import {
 import { PrismaService } from '@root/infra';
 import { prismaTest } from '@testRoot/setup';
 import { gql } from 'apollo-server-express';
-import { getTokenMocked } from '@testRoot/mocks/get-token';
+import { getTokenMocked } from '@testRoot/mocks/get_data/get-token';
 
 describe('Create User', () => {
   let app: INestApplication;

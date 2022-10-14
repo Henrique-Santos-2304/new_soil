@@ -30,7 +30,7 @@ class CreateFarmService implements ICreateFarmService {
     }
 
     if (users && users.length > 0) {
-      for (const user of users) await this.checkUserExistsInDb(user, 'USERS');
+      for (const user of users) await this.checkUserExistsInDb(user, 'USER');
     }
   }
 

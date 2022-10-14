@@ -4,7 +4,7 @@ type ResponseCreateFarm {
   farm_id: String
 }
 
-type Farms {
+type Farm {
   farm_id: String!
   farm_name: String!
   farm_city: String!

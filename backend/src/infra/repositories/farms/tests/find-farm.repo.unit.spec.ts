@@ -113,17 +113,11 @@ describe('Find Farms Repo', () => {
 
   it('should prisma.farm.findFist in fin_by_user to have been called with data válids', async () => {
     const spy = jest.spyOn(prisma.farm, 'findMany');
-    await repo.by_user({ user_id: createFarmMocked.admins[0] });
+    await repo.by_user({ user_id: createFarmMocked.owner_id });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
-      where: {
-        admins: {
-          some: {
-            adminId: createFarmMocked.admins[0],
-          },
-        },
-      },
+      where: { owner_id: createFarmMocked.owner_id },
     });
   });
 

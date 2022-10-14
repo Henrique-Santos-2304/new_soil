@@ -124,7 +124,7 @@ describe('Create User', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: "MASTER"
+            userType: MASTER
             internal_password: "@Inatel123"
           }
         ) {
