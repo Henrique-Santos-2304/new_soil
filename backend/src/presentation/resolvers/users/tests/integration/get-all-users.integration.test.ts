@@ -12,7 +12,7 @@ import { prismaTest } from '@testRoot/setup';
 import { gql } from 'apollo-server-express';
 import { getTokenMocked } from '@testRoot/mocks/get_data/get-token';
 
-describe('Create User', () => {
+describe('Get All Users Integration', () => {
   let app: INestApplication;
   let controller: IGetUserController;
   let service: IGetAllUserService;

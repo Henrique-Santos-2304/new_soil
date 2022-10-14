@@ -11,7 +11,7 @@ import { createFarmMocked, userModelMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { CreateFarmService } from '../create-farm.service';
 
-describe('UserService', () => {
+describe('Create Farm Service', () => {
   let service: ICreateFarmService;
   let createFarmRepo: MockProxy<ICreateFarmRepo>;
   let findUserRepo: MockProxy<IFindUserRepo>;

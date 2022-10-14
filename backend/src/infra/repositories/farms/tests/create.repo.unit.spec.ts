@@ -5,7 +5,7 @@ import { PrismaService } from '@root/infra/config_acess_db';
 import { createFarmMocked } from '@testRoot/mocks';
 import { CreateFarmRepo } from '../create.repo';
 
-describe('UserRepo', () => {
+describe('Create Farm Repo', () => {
   let repo: ICreateFarmRepo;
   let prisma: PrismaService;
   let logger: Logger;

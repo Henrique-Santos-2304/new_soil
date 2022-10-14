@@ -4,7 +4,7 @@ import { createUserRequestMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { CreateUserResolver } from '../../create-user.resolver';
 
-describe('UserService', () => {
+describe('Create User Controller', () => {
   let controller: ICreateUserController;
   let service: MockProxy<ICreateUserService>;
 

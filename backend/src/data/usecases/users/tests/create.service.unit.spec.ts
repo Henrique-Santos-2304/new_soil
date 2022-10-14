@@ -15,7 +15,7 @@ import {
 } from '@testRoot/index';
 import { CreateUserService } from '../create.service';
 
-describe('UserService', () => {
+describe('Create User Service', () => {
   let service: ICreateUserService;
   let createUserrepo: MockProxy<ICreateUserRepo>;
   let findUserRepo: MockProxy<IFindUserRepo>;

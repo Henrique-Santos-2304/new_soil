@@ -5,7 +5,7 @@ import { PrismaService } from '@root/infra/config_acess_db';
 import { createUserMocked, userModelMocked } from '@testRoot/mocks';
 import { CreateUserRepo } from '../create.repo';
 
-describe('UserRepo', () => {
+describe('Create User Repo', () => {
   let repo: ICreateUserRepo;
   let prisma: PrismaService;
   let logger: Logger;

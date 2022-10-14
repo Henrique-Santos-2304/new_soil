@@ -14,7 +14,7 @@ import { PrismaService } from '@root/infra';
 import { createUserMocked } from '@testRoot/mocks';
 import { prismaTest } from '@testRoot/setup';
 
-describe('Create User', () => {
+describe('Create User Integration', () => {
   let app: INestApplication;
   let controller: ICreateUserController;
   let service: ICreateUserService;

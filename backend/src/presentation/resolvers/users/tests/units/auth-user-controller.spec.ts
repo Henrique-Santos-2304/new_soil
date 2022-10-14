@@ -5,7 +5,7 @@ import { authUserRequestMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { AuthUserResolver } from '../../auth-user-controller.resolver';
 
-describe('AuthUserController', () => {
+describe('Auth User Controller', () => {
   let controller: IAuthUserController;
   let service: MockProxy<IAuthUserService>;
   const ctx = {
