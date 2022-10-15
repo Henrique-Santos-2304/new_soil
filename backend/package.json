@@ -1,8 +1,8 @@
 {
-  "name": "academy",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "new_soil",
+  "version": "2.0",
+  "description": "New Software of SoilTech with clean arch and microservices",
+  "author": "Henrique",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

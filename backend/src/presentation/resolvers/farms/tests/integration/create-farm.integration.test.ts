@@ -41,12 +41,6 @@ describe('Create Farm Integration', () => {
 
     app = moduleRef.createNestApplication();
 
-    service = moduleRef.get('ICreateFarmService');
-    controller = moduleRef.get('ICreateFarmController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-    findFarmRepo = moduleRef.get('IFindFarmsRepo');
-    createFarmRepo = moduleRef.get('ICreateFarmRepo');
-
     await app.init();
 
     token = await getTokenMocked(app);
@@ -63,6 +57,12 @@ describe('Create Farm Integration', () => {
   });
 
   it('should be defined this respective providers of service', () => {
+    service = app.get('ICreateFarmService');
+    controller = app.get('ICreateFarmController');
+    findUserRepo = app.get('IFindUserRepo');
+    findFarmRepo = app.get('IFindFarmsRepo');
+    createFarmRepo = app.get('ICreateFarmRepo');
+
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(findUserRepo).toBeDefined();
@@ -85,7 +85,6 @@ describe('Create Farm Integration', () => {
       .mutate(mutationCreateFarm)
       .variables({ createFarm: { ...createFarmMocked, farm_name: 33 } });
 
-    console.log(errors);
     expect(errors[0]).toHaveProperty(
       'message',
       'Variable "$createFarm" got invalid value 33 at "createFarm.farm_name"; String cannot represent a non string value: 33',
@@ -191,7 +190,6 @@ describe('Create Farm Integration', () => {
         },
       });
 
-    console.log(data);
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty('error', 'Farm Already Exists');
   });

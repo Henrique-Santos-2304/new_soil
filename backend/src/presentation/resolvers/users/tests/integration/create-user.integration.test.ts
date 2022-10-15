@@ -1,8 +1,6 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-import { Test } from '@nestjs/testing';
-import { graphqlModule, PrismaModule, UserModule } from '@root/core';
 import {
   ICreateUserController,
   ICreateUserRepo,
@@ -10,51 +8,35 @@ import {
   IEncrypterData,
   IFindUserRepo,
 } from '@root/domain';
-import { PrismaService } from '@root/infra';
 import { createUserMocked } from '@testRoot/mocks';
-import { prismaTest } from '@testRoot/setup';
+import { integrationTestManager, prismaTest } from '@testRoot/setup';
 
 describe('Create User Integration', () => {
   let app: INestApplication;
-  let controller: ICreateUserController;
-  let service: ICreateUserService;
-  let findUserRepo: IFindUserRepo;
-  let createUserRepo: ICreateUserRepo;
-  let encrypter: IEncrypterData;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [UserModule, graphqlModule, PrismaModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(prismaTest)
-      .compile();
-
-    app = moduleRef.createNestApplication();
-
-    service = moduleRef.get('ICreateUserService');
-    controller = moduleRef.get('ICreateUserController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-    createUserRepo = moduleRef.get('ICreateUserRepo');
-    encrypter = moduleRef.get('IEncrypterData');
-
-    await app.init();
+    app = integrationTestManager.getApp();
   });
 
-  afterEach(async () => {
-    await prismaTest.user.deleteMany();
-  });
+  it('should be defined this respective providers of service', async () => {
+    const createUserController = await app.resolve<ICreateUserController>(
+      'ICreateUserController',
+    );
+    const createUserService = await app.resolve<ICreateUserService>(
+      'ICreateUserService',
+    );
+    const encrypterData = await app.resolve<IEncrypterData>('IEncrypterData');
 
-  afterAll(async () => {
-    await app.close();
-  });
+    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
+    const createUserRepo = await app.resolve<ICreateUserRepo>(
+      'ICreateUserRepo',
+    );
 
-  it('should be defined this respective providers of service', () => {
-    expect(controller).toBeDefined();
-    expect(service).toBeDefined();
+    expect(createUserController).toBeDefined();
+    expect(createUserService).toBeDefined();
     expect(findUserRepo).toBeDefined();
     expect(createUserRepo).toBeDefined();
-    expect(encrypter).toBeDefined();
+    expect(encrypterData).toBeDefined();
   });
 
   it('should be "{status: Fail}" if received password type inválid', async () => {
@@ -124,7 +106,7 @@ describe('Create User Integration', () => {
           data: {
             login: "soil"
             password: "password"
-            userType: MASTER
+            userType: "MASTER"
             internal_password: "@Inatel123"
           }
         ) {
@@ -134,7 +116,6 @@ describe('Create User Integration', () => {
       }
     `);
 
-    console.log(errors[0]);
     expect(errors[0]).toHaveProperty('message');
   });
 
@@ -184,8 +165,6 @@ describe('Create User Integration', () => {
   });
 
   it('should be user to have been created with password encrypted', async () => {
-    jest.spyOn(encrypter, 'encrypt').mockResolvedValueOnce('passwod_encrypted');
-
     await request(app.getHttpServer()).mutate(gql`
       mutation CREATE_USER {
         createUser(
@@ -206,7 +185,7 @@ describe('Create User Integration', () => {
       where: { login: 'soil' },
     });
 
-    expect(user.password).toEqual('passwod_encrypted');
+    expect(user.password).not.toEqual('password');
   });
 
   it('should be a {status: Sucess} with all data válids', async () => {
@@ -214,7 +193,7 @@ describe('Create User Integration', () => {
       mutation CREATE_USER {
         createUser(
           data: {
-            login: "soil"
+            login: "soil_tech_test"
             password: "password"
             userType: MASTER
             internal_password: "@Inatel123"
@@ -225,7 +204,7 @@ describe('Create User Integration', () => {
         }
       }
     `);
-
+    console.log(data.createUser);
     expect(data.createUser).toHaveProperty('status', 'Sucess');
   });
 

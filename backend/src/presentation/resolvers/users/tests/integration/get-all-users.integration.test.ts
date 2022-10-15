@@ -65,7 +65,6 @@ describe('Get All Users Integration', () => {
         }
       }
     `);
-    console.log(errors[0]);
     expect(errors[0]).toHaveProperty('message');
   });
 
