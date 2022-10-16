@@ -8,6 +8,7 @@ import {
   IEncrypterData,
   IFindUserRepo,
 } from '@root/domain';
+
 import { createUserMocked, createUserRequestMocked } from '@testRoot/mocks';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { mutationCreateUser } from '@testRoot/mocks/gql/users';
@@ -147,7 +148,6 @@ describe('Create User Integration', () => {
       .variables({
         user: { ...createUserRequestMocked },
       });
-
     expect(data.createUser).toHaveProperty('status', 'Sucess');
   });
 

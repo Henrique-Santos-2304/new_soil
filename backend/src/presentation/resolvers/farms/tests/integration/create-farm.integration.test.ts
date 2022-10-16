@@ -24,6 +24,7 @@ describe('Create Farm Integration', () => {
   beforeAll(async () => {
     app = integrationTestManager.getApp();
     token = (await integrationTestManager.authUser()).token;
+
     masterId = await getUserMasterId();
     adminId = await getUserAdminId();
   });
