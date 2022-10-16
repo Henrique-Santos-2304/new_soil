@@ -30,8 +30,7 @@ module.exports = {
     '@resolvers/(.*)': '<rootDir>/src/presentation/resolvers/$1',
     '@utils/(.*)': '<rootDir>/src/shared/$1',
     '@core/(.*)': '<rootDir>/src/core/$1',
+    '@modules/(.*)': '<rootDir>/src/core/modules/$1',
     '@testRoot/(.*)': '<rootDir>/test/$1',
   },
 };
-// globalSetup: '<rootDir>/__tests__/setup/global-setup.ts'
-// globalTeardown: '<rootDir>/__tests__/setup/global-teardown.ts'

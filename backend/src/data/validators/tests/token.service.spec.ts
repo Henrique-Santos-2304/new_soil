@@ -5,7 +5,7 @@ import { IGenerateUserToken, ITokenService } from '@root/domain';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { TokenService } from '../auth';
 
-describe('Token Jwt Service', () => {
+describe('Token Jwt Service Unit', () => {
   let token: ITokenService;
   let logger: Logger;
   let jwt: MockProxy<JwtService>;

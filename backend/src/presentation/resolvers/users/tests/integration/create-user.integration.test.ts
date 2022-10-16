@@ -1,8 +1,6 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-import { Test } from '@nestjs/testing';
-import { graphqlModule, PrismaModule, UserModule } from '@root/core';
 import {
   ICreateUserController,
   ICreateUserRepo,
@@ -10,221 +8,145 @@ import {
   IEncrypterData,
   IFindUserRepo,
 } from '@root/domain';
-import { PrismaService } from '@root/infra';
-import { createUserMocked } from '@testRoot/mocks';
-import { prismaTest } from '@testRoot/setup';
+import { createUserMocked, createUserRequestMocked } from '@testRoot/mocks';
+import { integrationTestManager, prismaTest } from '@testRoot/setup';
+import { mutationCreateUser } from '@testRoot/mocks/gql/users';
 
 describe('Create User Integration', () => {
   let app: INestApplication;
-  let controller: ICreateUserController;
-  let service: ICreateUserService;
-  let findUserRepo: IFindUserRepo;
-  let createUserRepo: ICreateUserRepo;
-  let encrypter: IEncrypterData;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [UserModule, graphqlModule, PrismaModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(prismaTest)
-      .compile();
-
-    app = moduleRef.createNestApplication();
-
-    service = moduleRef.get('ICreateUserService');
-    controller = moduleRef.get('ICreateUserController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-    createUserRepo = moduleRef.get('ICreateUserRepo');
-    encrypter = moduleRef.get('IEncrypterData');
-
-    await app.init();
+    app = integrationTestManager.getApp();
   });
 
   afterEach(async () => {
-    await prismaTest.user.deleteMany();
+    const user = await prismaTest.user.findFirst({
+      where: { login: createUserRequestMocked.login },
+    });
+
+    if (user)
+      await prismaTest.user.delete({ where: { user_id: user.user_id } });
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
+  it('should be defined this respective providers of service', async () => {
+    const createUserController = await app.resolve<ICreateUserController>(
+      'ICreateUserController',
+    );
+    const createUserService = await app.resolve<ICreateUserService>(
+      'ICreateUserService',
+    );
+    const encrypterData = await app.resolve<IEncrypterData>('IEncrypterData');
 
-  it('should be defined this respective providers of service', () => {
-    expect(controller).toBeDefined();
-    expect(service).toBeDefined();
+    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
+    const createUserRepo = await app.resolve<ICreateUserRepo>(
+      'ICreateUserRepo',
+    );
+
+    expect(createUserController).toBeDefined();
+    expect(createUserService).toBeDefined();
     expect(findUserRepo).toBeDefined();
     expect(createUserRepo).toBeDefined();
-    expect(encrypter).toBeDefined();
+    expect(encrypterData).toBeDefined();
   });
 
   it('should be "{status: Fail}" if received password type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: 1234
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked, password: 123 },
+      });
 
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$user" got invalid value 123 at "user.password"; String cannot represent a non string value: 123',
+    );
   });
 
   it('should be "{status: Fail}" if received internal_password type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: 1234
-            userType: MASTER
-            internal_password: 123
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked, internal_password: 123 },
+      });
 
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$user" got invalid value 123 at "user.internal_password"; String cannot represent a non string value: 123',
+    );
   });
 
   it('should be "{status: Fail}" if received login type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: 123
-            password: "1234"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked, login: 123 },
+      });
 
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$user" got invalid value 123 at "user.login"; String cannot represent a non string value: 123',
+    );
   });
 
   it('should be "{status: Fail}" if received userType type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "password"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked, userType: 123 },
+      });
 
-    console.log(errors[0]);
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$user" got invalid value 123 at "user.userType"; Enum "UserType" cannot represent non-string value: 123.',
+    );
   });
 
   it('should be "{status: Fail}" if internal_password is not valid', async () => {
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "password"
-            userType: MASTER
-            internal_password: "@soil123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked, internal_password: '123' },
+      });
 
     expect(data.createUser).toHaveProperty('status', 'Fail');
     expect(data.createUser).toHaveProperty('error', 'Invalid Credentials');
   });
+
   it('should be "{status: Fail}" if this user already exist in db', async () => {
     await prismaTest.user.create({
       data: createUserMocked,
     });
 
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "password"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked },
+      });
 
     expect(data.createUser).toHaveProperty('status', 'Fail');
     expect(data.createUser).toHaveProperty('error', 'User already exists');
   });
 
   it('should be user to have been created with password encrypted', async () => {
-    jest.spyOn(encrypter, 'encrypt').mockResolvedValueOnce('passwod_encrypted');
-
-    await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "password"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked },
+      });
 
     const user = await prismaTest.user.findFirst({
-      where: { login: 'soil' },
+      where: { login: createUserRequestMocked.login },
     });
 
-    expect(user.password).toEqual('passwod_encrypted');
+    expect(user.password).not.toEqual('password');
   });
 
   it('should be a {status: Sucess} with all data válids', async () => {
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "password"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: { ...createUserRequestMocked },
+      });
 
     expect(data.createUser).toHaveProperty('status', 'Sucess');
   });

@@ -4,7 +4,7 @@ import { IEncrypterData } from '@root/domain';
 import { EncrypterData } from '../encrypter.service';
 import * as bcrypt from 'bcrypt';
 
-describe('Encrypter Service', () => {
+describe('Encrypter Service Unit', () => {
   let encrypter: IEncrypterData;
   let logger: Logger;
 

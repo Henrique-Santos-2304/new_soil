@@ -8,7 +8,7 @@ import { userModelMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { AuthUserService } from '../auth-user.service';
 
-describe('Auth User Service', () => {
+describe('Auth User Service Unit', () => {
   const loginUser = { login: 'soil', password: '1234' };
   let service: IAuthUserService;
   let findUserRepo: MockProxy<IFindUserRepo>;

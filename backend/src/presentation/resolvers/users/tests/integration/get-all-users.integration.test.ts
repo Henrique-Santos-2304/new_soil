@@ -1,53 +1,33 @@
 import request from 'supertest-graphql';
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { graphqlModule, PrismaModule, UserModule } from '@root/core';
 import {
   IFindUserRepo,
   IGetAllUserService,
   IGetUserController,
 } from '@root/domain';
-import { PrismaService } from '@root/infra';
-import { prismaTest } from '@testRoot/setup';
+import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { gql } from 'apollo-server-express';
-import { getTokenMocked } from '@testRoot/mocks/get_data/get-token';
+import { createUserStub } from '@testRoot/stub';
+import { mutationGetAllUsers } from '@testRoot/mocks/gql/users';
 
 describe('Get All Users Integration', () => {
   let app: INestApplication;
-  let controller: IGetUserController;
-  let service: IGetAllUserService;
-  let findUserRepo: IFindUserRepo;
+
   let token: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [UserModule, graphqlModule, PrismaModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(prismaTest)
-      .compile();
+    app = integrationTestManager.getApp();
 
-    app = moduleRef.createNestApplication();
-
-    service = moduleRef.get('ICreateUserService');
-    controller = moduleRef.get('ICreateUserController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-
-    await app.init();
-
-    token = await getTokenMocked(app);
+    token = (await integrationTestManager.authUser()).token;
   });
 
-  afterEach(async () => {
-    await prismaTest.user.deleteMany();
-  });
+  it('should be defined this respective providers of service', async () => {
+    const service = await app.resolve<IGetAllUserService>('IGetAllUserService');
+    const controller = await app.resolve<IGetUserController>(
+      'IGetUserController',
+    );
+    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
 
-  afterAll(async () => {
-    await prismaTest.user.deleteMany();
-    await app.close();
-  });
-
-  it('should be defined this respective providers of service', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(findUserRepo).toBeDefined();
@@ -65,33 +45,18 @@ describe('Get All Users Integration', () => {
         }
       }
     `);
+
     console.log(errors[0]);
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Unknown argument "data" on field "Query.getUsers".',
+    );
   });
 
   it('should be return users if query sucess', async () => {
-    await prismaTest.user.create({
-      data: {
-        login: 'soilTest',
-        password: 'password',
-        user_id: 'soilTest',
-        userType: 'MASTER',
-      },
-    });
-    const { data }: any = await request(app.getHttpServer()).set(
-      'authorization',
-      `Bearer ${token}`,
-    ).query(gql`
-      query getUsers {
-        getUsers {
-          status
-          error
-          users {
-            user_id
-          }
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .query(mutationGetAllUsers);
 
     expect(data.getUsers).toHaveProperty('status', 'Sucess');
     expect(data.getUsers).toHaveProperty('users');
@@ -101,23 +66,14 @@ describe('Get All Users Integration', () => {
   it('should be return list empty if not exists users', async () => {
     await prismaTest.user.deleteMany();
 
-    const { data }: any = await request(app.getHttpServer()).set(
-      'authorization',
-      `Bearer ${token}`,
-    ).query(gql`
-      query getUsers {
-        getUsers {
-          status
-          error
-          users {
-            user_id
-          }
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .query(mutationGetAllUsers);
 
     expect(data.getUsers).toHaveProperty('status', 'Sucess');
     expect(data.getUsers).toHaveProperty('users');
     expect(data.getUsers.users).toHaveLength(0);
+
+    await createUserStub(app);
   });
 });

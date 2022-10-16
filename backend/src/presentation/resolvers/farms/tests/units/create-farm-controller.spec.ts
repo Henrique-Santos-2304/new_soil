@@ -4,7 +4,7 @@ import { createFarmMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { CreateFarmResolver } from '../../create-farm-controller.resolver';
 
-describe('Create Farm Controllers', () => {
+describe('Create Farm Controller Unit', () => {
   let controller: ICreateFarmController;
   let service: MockProxy<ICreateFarmService>;
 

@@ -14,4 +14,10 @@ const createFarmMocked: CreateFarmDTO = {
   users: [],
 };
 
-export { createFarmMocked };
+const createFarmMockStub: CreateFarmDTO = {
+  ...createFarmMocked,
+  farm_id: 'soil_farm_test',
+  farm_name: 'soil_farm_test',
+};
+
+export { createFarmMocked, createFarmMockStub };

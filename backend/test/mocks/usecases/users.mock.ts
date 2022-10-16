@@ -8,7 +8,7 @@ const createUserMocked: CreateUserDto = {
 
 const createUserRequestMocked: ICreateUserService.Params = {
   ...createUserMocked,
-  internal_password: process.env.INTERNAL_PASSWORD,
+  internal_password: process.env.INTERNAL_PASSWORD.toString(),
 };
 
 const authUserRequestMocked = {

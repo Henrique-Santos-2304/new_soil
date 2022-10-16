@@ -1,11 +1,7 @@
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import request from 'supertest-graphql';
-import { Test } from '@nestjs/testing';
 import { mutationCreateFarm } from '@testRoot/mocks/gql/farms';
-import { FarmModule, graphqlModule, PrismaModule } from '@root/core';
-import { PrismaService } from '@root/infra';
-import { prismaTest } from '@testRoot/setup';
-import { getTokenMocked } from '@testRoot/mocks/get_data/get-token';
+import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import {
   ICreateFarmController,
   ICreateFarmRepo,
@@ -21,48 +17,28 @@ import {
 
 describe('Create Farm Integration', () => {
   let app: INestApplication;
-  let controller: ICreateFarmController;
-  let service: ICreateFarmService;
-  let findFarmRepo: IFindFarmsRepo;
-  let findUserRepo: IFindUserRepo;
   let token: string;
   let masterId: string;
   let adminId: string;
 
-  let createFarmRepo: ICreateFarmRepo;
-
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [FarmModule, graphqlModule, PrismaModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(prismaTest)
-      .compile();
-
-    app = moduleRef.createNestApplication();
-
-    service = moduleRef.get('ICreateFarmService');
-    controller = moduleRef.get('ICreateFarmController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-    findFarmRepo = moduleRef.get('IFindFarmsRepo');
-    createFarmRepo = moduleRef.get('ICreateFarmRepo');
-
-    await app.init();
-
-    token = await getTokenMocked(app);
+    app = integrationTestManager.getApp();
+    token = (await integrationTestManager.authUser()).token;
     masterId = await getUserMasterId();
     adminId = await getUserAdminId();
   });
 
-  afterEach(async () => {
-    await prismaTest.farm.deleteMany();
-  });
+  it('should be defined this respective providers of service', async () => {
+    const service = await app.resolve<ICreateFarmService>('ICreateFarmService');
+    const controller = await app.resolve<ICreateFarmController>(
+      'ICreateFarmController',
+    );
+    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
+    const createFarmRepo = await app.resolve<ICreateFarmRepo>(
+      'ICreateFarmRepo',
+    );
 
-  afterAll(async () => {
-    await app.close();
-  });
-
-  it('should be defined this respective providers of service', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(findUserRepo).toBeDefined();
@@ -85,7 +61,6 @@ describe('Create Farm Integration', () => {
       .mutate(mutationCreateFarm)
       .variables({ createFarm: { ...createFarmMocked, farm_name: 33 } });
 
-    console.log(errors);
     expect(errors[0]).toHaveProperty(
       'message',
       'Variable "$createFarm" got invalid value 33 at "createFarm.farm_name"; String cannot represent a non string value: 33',
@@ -191,9 +166,12 @@ describe('Create Farm Integration', () => {
         },
       });
 
-    console.log(data);
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty('error', 'Farm Already Exists');
+
+    await prismaTest.farm.delete({
+      where: { farm_id: createFarmMocked.farm_id },
+    });
   });
 
   it('given the error "User not found type OWNER" if not exists an user with user_id received', async () => {
@@ -335,5 +313,9 @@ describe('Create Farm Integration', () => {
 
     expect(data.createFarm).toHaveProperty('status', 'Sucess');
     expect(data.createFarm).toHaveProperty('farm_id', createFarmMocked.farm_id);
+
+    await prismaTest.farm.delete({
+      where: { farm_id: createFarmMocked.farm_id },
+    });
   });
 });

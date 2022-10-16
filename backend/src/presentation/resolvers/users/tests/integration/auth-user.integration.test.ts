@@ -1,8 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
-import gql from 'graphql-tag';
-import { Test } from '@nestjs/testing';
-import { graphqlModule, PrismaModule, UserModule } from '@root/core';
+import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import {
   IAuthUserController,
   IAuthUserService,
@@ -10,91 +8,64 @@ import {
   IFindUserRepo,
   ITokenService,
 } from '@root/domain';
-import { PrismaService } from '@root/infra';
-import { prismaTest } from '@testRoot/setup';
+import {
+  mutationAuthUser,
+  mutationCreateUser,
+} from '@testRoot/mocks/gql/users';
+import { authUserRequestMocked } from '@testRoot/mocks';
 
 describe('Auth User Integration', () => {
   let app: INestApplication;
-  let controller: IAuthUserController;
-  let service: IAuthUserService;
-  let findUserRepo: IFindUserRepo;
-  let encrypter: IEncrypterData;
-  let token: ITokenService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [UserModule, graphqlModule, PrismaModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(prismaTest)
-      .compile();
-
-    app = moduleRef.createNestApplication();
-
-    service = moduleRef.get('IAuthUserService');
-    controller = moduleRef.get('IAuthUserController');
-    findUserRepo = moduleRef.get('IFindUserRepo');
-    encrypter = moduleRef.get('IEncrypterData');
-    token = moduleRef.get('ITokenService');
-
-    await app.init();
+    app = integrationTestManager.getApp();
   });
 
-  afterEach(async () => {
-    await prismaTest.user.deleteMany();
-  });
+  it('should be defined this respective providers of service', async () => {
+    const service = await app.resolve<IAuthUserService>('IAuthUserService');
+    const controller = await app.resolve<IAuthUserController>(
+      'IAuthUserController',
+    );
+    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
+    const encrypter = await app.resolve<IEncrypterData>('IEncrypterData');
+    const tokenService = await app.resolve<ITokenService>('ITokenService');
 
-  afterAll(async () => {
-    await app.close();
-  });
-
-  it('should be defined this respective providers of service', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(findUserRepo).toBeDefined();
-    expect(token).toBeDefined();
+    expect(tokenService).toBeDefined();
     expect(encrypter).toBeDefined();
   });
 
   it('should be "{status: Fail}" if received password type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation AUTH_USER {
-        authUser(data: { login: "soils", password: 1234 }) {
-          status
-          error
-          token
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationAuthUser)
+      .variables({ authUser: { ...authUserRequestMocked, password: 123 } });
+    console.log(errors[0]);
 
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$authUser" got invalid value 123 at "authUser.password"; String cannot represent a non string value: 123',
+    );
   });
 
   it('should be "{status: Fail}" if received login type inválid', async () => {
-    const { errors } = await request(app.getHttpServer()).mutate(gql`
-      mutation AUTH_USER {
-        authUser(data: { login: 1234, password: "1234" }) {
-          status
-          error
-          token
-        }
-      }
-    `);
+    const { errors } = await request(app.getHttpServer())
+      .mutate(mutationAuthUser)
+      .variables({ authUser: { ...authUserRequestMocked, login: 123 } });
 
-    expect(errors[0]).toHaveProperty('message');
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$authUser" got invalid value 123 at "authUser.login"; String cannot represent a non string value: 123',
+    );
   });
 
   it('should be "{status: Fail}" if this user not exists in db', async () => {
-    await prismaTest.user.deleteMany();
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        authUser(data: { login: "soil", password: "1234" }) {
-          status
-          error
-          token
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationAuthUser)
+      .variables({
+        authUser: { ...authUserRequestMocked, login: 'soil_not_exist' },
+      });
 
     expect(data.authUser).toHaveProperty('status', 'Fail');
     expect(data.authUser).toHaveProperty('error', 'Invalid Credentials');
@@ -102,49 +73,42 @@ describe('Auth User Integration', () => {
 
   it('should be "{status: Fail}" if password is not correct', async () => {
     await prismaTest.user.create({
-      data: { login: 'soil', password: '1234', userType: 'MASTER' },
+      data: { login: 'soil_unit_test', password: '1234', userType: 'MASTER' },
     });
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        authUser(data: { login: "soil", password: "123" }) {
-          status
-          error
-          token
-        }
-      }
-    `);
+
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationAuthUser)
+      .variables({
+        authUser: { login: 'soil_unit_test', password: 'password_invalid' },
+      });
 
     expect(data.authUser).toHaveProperty('status', 'Fail');
     expect(data.authUser).toHaveProperty('error', 'Invalid Credentials');
+
+    const user = await prismaTest.user.findFirst({
+      where: { login: 'soil_unit_test' },
+    });
+
+    if (user)
+      await prismaTest.user.delete({ where: { user_id: user.user_id } });
   });
 
   it('should be a {status: Sucess, token} with all data válids', async () => {
-    await prismaTest.user.deleteMany();
-    await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        createUser(
-          data: {
-            login: "soil"
-            password: "1234"
-            userType: MASTER
-            internal_password: "@Inatel123"
-          }
-        ) {
-          status
-          error
-        }
-      }
-    `);
+    await request(app.getHttpServer())
+      .mutate(mutationCreateUser)
+      .variables({
+        user: {
+          ...authUserRequestMocked,
+          userType: 'MASTER',
+          internal_password: '@Inatel123',
+        },
+      });
 
-    const { data }: any = await request(app.getHttpServer()).mutate(gql`
-      mutation CREATE_USER {
-        authUser(data: { login: "soil", password: "1234" }) {
-          status
-          error
-          token
-        }
-      }
-    `);
+    const { data }: any = await request(app.getHttpServer())
+      .mutate(mutationAuthUser)
+      .variables({
+        authUser: { ...authUserRequestMocked },
+      });
 
     expect(data.authUser).toHaveProperty('status', 'Sucess');
     expect(data.authUser).toHaveProperty('token');

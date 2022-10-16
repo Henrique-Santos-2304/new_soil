@@ -5,7 +5,7 @@ import { IFindUserRepo, IGetAllUserService } from '@root/domain';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetAllUserService } from '../get-user.service';
 
-describe('Get All User Service', () => {
+describe('Get All User Service Unit', () => {
   let service: IGetAllUserService;
   let findUserRepo: MockProxy<IFindUserRepo>;
   let logger: MockProxy<Logger>;

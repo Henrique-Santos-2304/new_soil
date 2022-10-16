@@ -1,12 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from '@root/data/index';
-import {
-  ICreateUserController,
-  ICreateUserService,
-  ICreateFarmController,
-  ICreateFarmService,
-} from '@root/domain';
+import { ICreateUserController, ICreateUserService } from '@root/domain';
 
 @Resolver()
 class CreateUserResolver implements ICreateUserController {

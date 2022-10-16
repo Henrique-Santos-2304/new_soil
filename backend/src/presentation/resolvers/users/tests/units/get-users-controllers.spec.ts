@@ -3,7 +3,7 @@ import { IGetAllUserService, IGetUserController } from '@root/domain';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetUsersResolver } from '../../get-users.resolver';
 
-describe('Get Users Controller', () => {
+describe('Get Users Controller Unit', () => {
   let controller: IGetUserController;
   let service: MockProxy<IGetAllUserService>;
 
