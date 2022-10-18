@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
+import { authUserRequestMocked } from '@testRoot/mocks';
 import {
   IAuthUserController,
   IAuthUserService,
@@ -12,7 +13,6 @@ import {
   mutationAuthUser,
   mutationCreateUser,
 } from '@testRoot/mocks/gql/users';
-import { authUserRequestMocked } from '@testRoot/mocks';
 
 describe('Auth User Integration', () => {
   let app: INestApplication;

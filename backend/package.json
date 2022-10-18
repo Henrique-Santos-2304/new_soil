@@ -1,6 +1,6 @@
 {
   "name": "new_soil",
-  "version": "2.0",
+  "version": "2.0.0",
   "description": "New Software of SoilTech with clean arch and microservices",
   "author": "Henrique",
   "private": true,
