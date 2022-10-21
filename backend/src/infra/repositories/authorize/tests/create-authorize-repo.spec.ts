@@ -1,12 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ICreateFarmRepo } from '@root/domain';
 import { ICreateAuthorizeRepo } from '@root/domain/repositories/authorize/create-authorize.domain';
 import { PrismaService } from '@root/infra/config_acess_db';
-import { createAuthorizeMock, createFarmMocked } from '@testRoot/mocks';
+import { createAuthorizeMock } from '@testRoot/mocks';
 import { CreateAuthorizeRepo } from '../create-authorize.repo';
 
-describe('Create Farm Repo Unit', () => {
+describe('Create Authorize Repo Unit', () => {
   let repo: ICreateAuthorizeRepo;
   let prisma: PrismaService;
   let logger: Logger;

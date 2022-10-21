@@ -41,6 +41,17 @@ export type Farm = {
   users: string[]
 }
 
+/**
+ * Model Authorize
+ * 
+ */
+export type Authorize = {
+  authorize_id: string
+  created_by: string
+  farm_id: string | null
+  pivot_id: string | null
+}
+
 
 /**
  * Enums
@@ -218,6 +229,16 @@ export class PrismaClient<
     * ```
     */
   get farm(): Prisma.FarmDelegate<GlobalReject>;
+
+  /**
+   * `prisma.authorize`: Exposes CRUD operations for the **Authorize** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Authorizes
+    * const authorizes = await prisma.authorize.findMany()
+    * ```
+    */
+  get authorize(): Prisma.AuthorizeDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -692,7 +713,8 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
-    Farm: 'Farm'
+    Farm: 'Farm',
+    Authorize: 'Authorize'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2825,11 +2847,889 @@ export namespace Prisma {
 
 
   /**
+   * Model Authorize
+   */
+
+
+  export type AggregateAuthorize = {
+    _count: AuthorizeCountAggregateOutputType | null
+    _min: AuthorizeMinAggregateOutputType | null
+    _max: AuthorizeMaxAggregateOutputType | null
+  }
+
+  export type AuthorizeMinAggregateOutputType = {
+    authorize_id: string | null
+    created_by: string | null
+    farm_id: string | null
+    pivot_id: string | null
+  }
+
+  export type AuthorizeMaxAggregateOutputType = {
+    authorize_id: string | null
+    created_by: string | null
+    farm_id: string | null
+    pivot_id: string | null
+  }
+
+  export type AuthorizeCountAggregateOutputType = {
+    authorize_id: number
+    created_by: number
+    farm_id: number
+    pivot_id: number
+    _all: number
+  }
+
+
+  export type AuthorizeMinAggregateInputType = {
+    authorize_id?: true
+    created_by?: true
+    farm_id?: true
+    pivot_id?: true
+  }
+
+  export type AuthorizeMaxAggregateInputType = {
+    authorize_id?: true
+    created_by?: true
+    farm_id?: true
+    pivot_id?: true
+  }
+
+  export type AuthorizeCountAggregateInputType = {
+    authorize_id?: true
+    created_by?: true
+    farm_id?: true
+    pivot_id?: true
+    _all?: true
+  }
+
+  export type AuthorizeAggregateArgs = {
+    /**
+     * Filter which Authorize to aggregate.
+     * 
+    **/
+    where?: AuthorizeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Authorizes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<AuthorizeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: AuthorizeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Authorizes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Authorizes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Authorizes
+    **/
+    _count?: true | AuthorizeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuthorizeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuthorizeMaxAggregateInputType
+  }
+
+  export type GetAuthorizeAggregateType<T extends AuthorizeAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuthorize]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuthorize[P]>
+      : GetScalarType<T[P], AggregateAuthorize[P]>
+  }
+
+
+
+
+  export type AuthorizeGroupByArgs = {
+    where?: AuthorizeWhereInput
+    orderBy?: Enumerable<AuthorizeOrderByWithAggregationInput>
+    by: Array<AuthorizeScalarFieldEnum>
+    having?: AuthorizeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuthorizeCountAggregateInputType | true
+    _min?: AuthorizeMinAggregateInputType
+    _max?: AuthorizeMaxAggregateInputType
+  }
+
+
+  export type AuthorizeGroupByOutputType = {
+    authorize_id: string
+    created_by: string
+    farm_id: string | null
+    pivot_id: string | null
+    _count: AuthorizeCountAggregateOutputType | null
+    _min: AuthorizeMinAggregateOutputType | null
+    _max: AuthorizeMaxAggregateOutputType | null
+  }
+
+  type GetAuthorizeGroupByPayload<T extends AuthorizeGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<AuthorizeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuthorizeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuthorizeGroupByOutputType[P]>
+            : GetScalarType<T[P], AuthorizeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuthorizeSelect = {
+    authorize_id?: boolean
+    created_by?: boolean
+    farm_id?: boolean
+    pivot_id?: boolean
+  }
+
+  export type AuthorizeGetPayload<
+    S extends boolean | null | undefined | AuthorizeArgs,
+    U = keyof S
+      > = S extends true
+        ? Authorize
+    : S extends undefined
+    ? never
+    : S extends AuthorizeArgs | AuthorizeFindManyArgs
+    ?'include' extends U
+    ? Authorize 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof Authorize ? Authorize[P] : never
+  } 
+    : Authorize
+  : Authorize
+
+
+  type AuthorizeCountArgs = Merge<
+    Omit<AuthorizeFindManyArgs, 'select' | 'include'> & {
+      select?: AuthorizeCountAggregateInputType | true
+    }
+  >
+
+  export interface AuthorizeDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one Authorize that matches the filter.
+     * @param {AuthorizeFindUniqueArgs} args - Arguments to find a Authorize
+     * @example
+     * // Get one Authorize
+     * const authorize = await prisma.authorize.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends AuthorizeFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, AuthorizeFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Authorize'> extends True ? CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>> : CheckSelect<T, Prisma__AuthorizeClient<Authorize | null >, Prisma__AuthorizeClient<AuthorizeGetPayload<T> | null >>
+
+    /**
+     * Find the first Authorize that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeFindFirstArgs} args - Arguments to find a Authorize
+     * @example
+     * // Get one Authorize
+     * const authorize = await prisma.authorize.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends AuthorizeFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, AuthorizeFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Authorize'> extends True ? CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>> : CheckSelect<T, Prisma__AuthorizeClient<Authorize | null >, Prisma__AuthorizeClient<AuthorizeGetPayload<T> | null >>
+
+    /**
+     * Find zero or more Authorizes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Authorizes
+     * const authorizes = await prisma.authorize.findMany()
+     * 
+     * // Get first 10 Authorizes
+     * const authorizes = await prisma.authorize.findMany({ take: 10 })
+     * 
+     * // Only select the `authorize_id`
+     * const authorizeWithAuthorize_idOnly = await prisma.authorize.findMany({ select: { authorize_id: true } })
+     * 
+    **/
+    findMany<T extends AuthorizeFindManyArgs>(
+      args?: SelectSubset<T, AuthorizeFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Authorize>>, PrismaPromise<Array<AuthorizeGetPayload<T>>>>
+
+    /**
+     * Create a Authorize.
+     * @param {AuthorizeCreateArgs} args - Arguments to create a Authorize.
+     * @example
+     * // Create one Authorize
+     * const Authorize = await prisma.authorize.create({
+     *   data: {
+     *     // ... data to create a Authorize
+     *   }
+     * })
+     * 
+    **/
+    create<T extends AuthorizeCreateArgs>(
+      args: SelectSubset<T, AuthorizeCreateArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Create many Authorizes.
+     *     @param {AuthorizeCreateManyArgs} args - Arguments to create many Authorizes.
+     *     @example
+     *     // Create many Authorizes
+     *     const authorize = await prisma.authorize.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends AuthorizeCreateManyArgs>(
+      args?: SelectSubset<T, AuthorizeCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Authorize.
+     * @param {AuthorizeDeleteArgs} args - Arguments to delete one Authorize.
+     * @example
+     * // Delete one Authorize
+     * const Authorize = await prisma.authorize.delete({
+     *   where: {
+     *     // ... filter to delete one Authorize
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends AuthorizeDeleteArgs>(
+      args: SelectSubset<T, AuthorizeDeleteArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Update one Authorize.
+     * @param {AuthorizeUpdateArgs} args - Arguments to update one Authorize.
+     * @example
+     * // Update one Authorize
+     * const authorize = await prisma.authorize.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends AuthorizeUpdateArgs>(
+      args: SelectSubset<T, AuthorizeUpdateArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Delete zero or more Authorizes.
+     * @param {AuthorizeDeleteManyArgs} args - Arguments to filter Authorizes to delete.
+     * @example
+     * // Delete a few Authorizes
+     * const { count } = await prisma.authorize.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends AuthorizeDeleteManyArgs>(
+      args?: SelectSubset<T, AuthorizeDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Authorizes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Authorizes
+     * const authorize = await prisma.authorize.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends AuthorizeUpdateManyArgs>(
+      args: SelectSubset<T, AuthorizeUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Authorize.
+     * @param {AuthorizeUpsertArgs} args - Arguments to update or create a Authorize.
+     * @example
+     * // Update or create a Authorize
+     * const authorize = await prisma.authorize.upsert({
+     *   create: {
+     *     // ... data to create a Authorize
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Authorize we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends AuthorizeUpsertArgs>(
+      args: SelectSubset<T, AuthorizeUpsertArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Find one Authorize that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {AuthorizeFindUniqueOrThrowArgs} args - Arguments to find a Authorize
+     * @example
+     * // Get one Authorize
+     * const authorize = await prisma.authorize.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends AuthorizeFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, AuthorizeFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Find the first Authorize that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeFindFirstOrThrowArgs} args - Arguments to find a Authorize
+     * @example
+     * // Get one Authorize
+     * const authorize = await prisma.authorize.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends AuthorizeFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, AuthorizeFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__AuthorizeClient<Authorize>, Prisma__AuthorizeClient<AuthorizeGetPayload<T>>>
+
+    /**
+     * Count the number of Authorizes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeCountArgs} args - Arguments to filter Authorizes to count.
+     * @example
+     * // Count the number of Authorizes
+     * const count = await prisma.authorize.count({
+     *   where: {
+     *     // ... the filter for the Authorizes we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuthorizeCountArgs>(
+      args?: Subset<T, AuthorizeCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuthorizeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Authorize.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuthorizeAggregateArgs>(args: Subset<T, AuthorizeAggregateArgs>): PrismaPromise<GetAuthorizeAggregateType<T>>
+
+    /**
+     * Group by Authorize.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthorizeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuthorizeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuthorizeGroupByArgs['orderBy'] }
+        : { orderBy?: AuthorizeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuthorizeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuthorizeGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Authorize.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__AuthorizeClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Authorize base type for findUnique actions
+   */
+  export type AuthorizeFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * Filter, which Authorize to fetch.
+     * 
+    **/
+    where: AuthorizeWhereUniqueInput
+  }
+
+  /**
+   * Authorize: findUnique
+   */
+  export interface AuthorizeFindUniqueArgs extends AuthorizeFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Authorize base type for findFirst actions
+   */
+  export type AuthorizeFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * Filter, which Authorize to fetch.
+     * 
+    **/
+    where?: AuthorizeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Authorizes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<AuthorizeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Authorizes.
+     * 
+    **/
+    cursor?: AuthorizeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Authorizes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Authorizes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Authorizes.
+     * 
+    **/
+    distinct?: Enumerable<AuthorizeScalarFieldEnum>
+  }
+
+  /**
+   * Authorize: findFirst
+   */
+  export interface AuthorizeFindFirstArgs extends AuthorizeFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Authorize findMany
+   */
+  export type AuthorizeFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * Filter, which Authorizes to fetch.
+     * 
+    **/
+    where?: AuthorizeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Authorizes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<AuthorizeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Authorizes.
+     * 
+    **/
+    cursor?: AuthorizeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Authorizes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Authorizes.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<AuthorizeScalarFieldEnum>
+  }
+
+
+  /**
+   * Authorize create
+   */
+  export type AuthorizeCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * The data needed to create a Authorize.
+     * 
+    **/
+    data: XOR<AuthorizeCreateInput, AuthorizeUncheckedCreateInput>
+  }
+
+
+  /**
+   * Authorize createMany
+   */
+  export type AuthorizeCreateManyArgs = {
+    /**
+     * The data used to create many Authorizes.
+     * 
+    **/
+    data: Enumerable<AuthorizeCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Authorize update
+   */
+  export type AuthorizeUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * The data needed to update a Authorize.
+     * 
+    **/
+    data: XOR<AuthorizeUpdateInput, AuthorizeUncheckedUpdateInput>
+    /**
+     * Choose, which Authorize to update.
+     * 
+    **/
+    where: AuthorizeWhereUniqueInput
+  }
+
+
+  /**
+   * Authorize updateMany
+   */
+  export type AuthorizeUpdateManyArgs = {
+    /**
+     * The data used to update Authorizes.
+     * 
+    **/
+    data: XOR<AuthorizeUpdateManyMutationInput, AuthorizeUncheckedUpdateManyInput>
+    /**
+     * Filter which Authorizes to update
+     * 
+    **/
+    where?: AuthorizeWhereInput
+  }
+
+
+  /**
+   * Authorize upsert
+   */
+  export type AuthorizeUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * The filter to search for the Authorize to update in case it exists.
+     * 
+    **/
+    where: AuthorizeWhereUniqueInput
+    /**
+     * In case the Authorize found by the `where` argument doesn't exist, create a new Authorize with this data.
+     * 
+    **/
+    create: XOR<AuthorizeCreateInput, AuthorizeUncheckedCreateInput>
+    /**
+     * In case the Authorize was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<AuthorizeUpdateInput, AuthorizeUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Authorize delete
+   */
+  export type AuthorizeDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+    /**
+     * Filter which Authorize to delete.
+     * 
+    **/
+    where: AuthorizeWhereUniqueInput
+  }
+
+
+  /**
+   * Authorize deleteMany
+   */
+  export type AuthorizeDeleteManyArgs = {
+    /**
+     * Filter which Authorizes to delete
+     * 
+    **/
+    where?: AuthorizeWhereInput
+  }
+
+
+  /**
+   * Authorize: findUniqueOrThrow
+   */
+  export type AuthorizeFindUniqueOrThrowArgs = AuthorizeFindUniqueArgsBase
+      
+
+  /**
+   * Authorize: findFirstOrThrow
+   */
+  export type AuthorizeFindFirstOrThrowArgs = AuthorizeFindFirstArgsBase
+      
+
+  /**
+   * Authorize without action
+   */
+  export type AuthorizeArgs = {
+    /**
+     * Select specific fields to fetch from the Authorize
+     * 
+    **/
+    select?: AuthorizeSelect | null
+  }
+
+
+
+  /**
    * Enums
    */
 
   // Based on
   // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
+
+  export const AuthorizeScalarFieldEnum: {
+    authorize_id: 'authorize_id',
+    created_by: 'created_by',
+    farm_id: 'farm_id',
+    pivot_id: 'pivot_id'
+  };
+
+  export type AuthorizeScalarFieldEnum = (typeof AuthorizeScalarFieldEnum)[keyof typeof AuthorizeScalarFieldEnum]
+
 
   export const FarmScalarFieldEnum: {
     farm_id: 'farm_id',
@@ -3007,6 +3907,47 @@ export namespace Prisma {
     users?: StringNullableListFilter
   }
 
+  export type AuthorizeWhereInput = {
+    AND?: Enumerable<AuthorizeWhereInput>
+    OR?: Enumerable<AuthorizeWhereInput>
+    NOT?: Enumerable<AuthorizeWhereInput>
+    authorize_id?: StringFilter | string
+    created_by?: StringFilter | string
+    farm_id?: StringNullableFilter | string | null
+    pivot_id?: StringNullableFilter | string | null
+  }
+
+  export type AuthorizeOrderByWithRelationInput = {
+    authorize_id?: SortOrder
+    created_by?: SortOrder
+    farm_id?: SortOrder
+    pivot_id?: SortOrder
+  }
+
+  export type AuthorizeWhereUniqueInput = {
+    authorize_id?: string
+  }
+
+  export type AuthorizeOrderByWithAggregationInput = {
+    authorize_id?: SortOrder
+    created_by?: SortOrder
+    farm_id?: SortOrder
+    pivot_id?: SortOrder
+    _count?: AuthorizeCountOrderByAggregateInput
+    _max?: AuthorizeMaxOrderByAggregateInput
+    _min?: AuthorizeMinOrderByAggregateInput
+  }
+
+  export type AuthorizeScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<AuthorizeScalarWhereWithAggregatesInput>
+    OR?: Enumerable<AuthorizeScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<AuthorizeScalarWhereWithAggregatesInput>
+    authorize_id?: StringWithAggregatesFilter | string
+    created_by?: StringWithAggregatesFilter | string
+    farm_id?: StringNullableWithAggregatesFilter | string | null
+    pivot_id?: StringNullableWithAggregatesFilter | string | null
+  }
+
   export type UserCreateInput = {
     user_id?: string
     login: string
@@ -3155,6 +4096,55 @@ export namespace Prisma {
     admins?: FarmUpdateadminsInput | Enumerable<string>
     dealers?: FarmUpdatedealersInput | Enumerable<string>
     users?: FarmUpdateusersInput | Enumerable<string>
+  }
+
+  export type AuthorizeCreateInput = {
+    authorize_id?: string
+    created_by: string
+    farm_id?: string | null
+    pivot_id?: string | null
+  }
+
+  export type AuthorizeUncheckedCreateInput = {
+    authorize_id?: string
+    created_by: string
+    farm_id?: string | null
+    pivot_id?: string | null
+  }
+
+  export type AuthorizeUpdateInput = {
+    authorize_id?: StringFieldUpdateOperationsInput | string
+    created_by?: StringFieldUpdateOperationsInput | string
+    farm_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pivot_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthorizeUncheckedUpdateInput = {
+    authorize_id?: StringFieldUpdateOperationsInput | string
+    created_by?: StringFieldUpdateOperationsInput | string
+    farm_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pivot_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthorizeCreateManyInput = {
+    authorize_id?: string
+    created_by: string
+    farm_id?: string | null
+    pivot_id?: string | null
+  }
+
+  export type AuthorizeUpdateManyMutationInput = {
+    authorize_id?: StringFieldUpdateOperationsInput | string
+    created_by?: StringFieldUpdateOperationsInput | string
+    farm_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pivot_id?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthorizeUncheckedUpdateManyInput = {
+    authorize_id?: StringFieldUpdateOperationsInput | string
+    created_by?: StringFieldUpdateOperationsInput | string
+    farm_id?: NullableStringFieldUpdateOperationsInput | string | null
+    pivot_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter = {
@@ -3355,6 +4345,27 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedStringNullableFilter
     _max?: NestedStringNullableFilter
+  }
+
+  export type AuthorizeCountOrderByAggregateInput = {
+    authorize_id?: SortOrder
+    created_by?: SortOrder
+    farm_id?: SortOrder
+    pivot_id?: SortOrder
+  }
+
+  export type AuthorizeMaxOrderByAggregateInput = {
+    authorize_id?: SortOrder
+    created_by?: SortOrder
+    farm_id?: SortOrder
+    pivot_id?: SortOrder
+  }
+
+  export type AuthorizeMinOrderByAggregateInput = {
+    authorize_id?: SortOrder
+    created_by?: SortOrder
+    farm_id?: SortOrder
+    pivot_id?: SortOrder
   }
 
   export type FarmCreateNestedManyWithoutOwnerInput = {

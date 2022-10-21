@@ -4,9 +4,16 @@ import {
   UserModule,
   PrismaModule,
   FarmModule,
+  AuthorizeModule,
 } from '@modules/index';
 
 @Module({
-  imports: [graphqlModule, PrismaModule, UserModule, FarmModule],
+  imports: [
+    graphqlModule,
+    PrismaModule,
+    UserModule,
+    FarmModule,
+    AuthorizeModule,
+  ],
 })
 export class AppModule {}

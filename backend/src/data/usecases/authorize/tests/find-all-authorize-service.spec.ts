@@ -6,7 +6,7 @@ import { authorizeModelMock } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { FindAuthorizeService } from '../find_all_authorize.service';
 
-describe('Create Authorize Service Unit', () => {
+describe('Find Authorize Service Unit', () => {
   let service: IFindAllAuthorizeService;
   let findAuthorizeRepo: MockProxy<IFindAuthorizeRepo>;
 

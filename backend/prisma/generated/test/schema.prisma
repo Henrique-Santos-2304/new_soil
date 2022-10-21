@@ -46,3 +46,12 @@ model Farm {
 
   @@map("farms")    
 }
+
+model Authorize {
+  authorize_id  String   @id @unique @default(uuid())
+  created_by    String
+  farm_id       String?
+  pivot_id      String?
+
+  @@map("authorize")
+}
