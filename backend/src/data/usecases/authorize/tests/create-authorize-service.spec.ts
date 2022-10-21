@@ -52,12 +52,9 @@ describe('Create Authorize Service Unit', () => {
 
     service = module.get<ICreateAuthorizeService>(CreateAuthorizeService);
 
-    findAuthorizeRepo.by_farm.mockResolvedValue({
-      ...createAuthorizeMock,
-      authorize_id: 'id',
-    });
+    findAuthorizeRepo.by_farm.mockResolvedValue(null);
     createAuthorizeRepo.create.mockResolvedValue({
-      authorize_id: 'id',
+      authorize_id: authorizeMock.authorize_id,
     });
   });
 
@@ -85,7 +82,7 @@ describe('Create Authorize Service Unit', () => {
     await service.start(createAuthorizeMock);
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ farm_id: createAuthorizeMock.farm_id });
+    expect(spy).toHaveBeenCalledWith(createAuthorizeMock.farm_id);
   });
 
   it('should be throw a AuthorizedAlreadExist if findAuthorizerepo return a data', async () => {
@@ -137,9 +134,6 @@ describe('Create Authorize Service Unit', () => {
     const response = await service.start(createAuthorizeMock);
 
     expect(response).toHaveProperty('status', 'Sucess');
-    expect(response).toHaveProperty(
-      'authorize_id',
-      createAuthorizeMock.farm_id,
-    );
+    expect(response).toHaveProperty('authorize_id', authorizeMock.authorize_id);
   });
 });
