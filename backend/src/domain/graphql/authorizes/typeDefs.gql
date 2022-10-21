@@ -1,0 +1,12 @@
+type ResponseFindAuthorize {
+  status: String!
+  error: String
+  authorizies: [Authorize]!
+}
+
+type Authorize {
+  authorize_id: String!
+  created_by: String!
+  farm_id: String
+  pivot_id: String
+}
