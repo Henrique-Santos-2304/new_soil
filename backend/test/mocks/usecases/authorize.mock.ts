@@ -4,4 +4,6 @@ const createAuthorizeMock = {
   created_by: 'new_user',
 };
 
-export { createAuthorizeMock };
+const authorizeModelMock = { ...createAuthorizeMock, authorize_id: 'id' };
+
+export { createAuthorizeMock, authorizeModelMock };
