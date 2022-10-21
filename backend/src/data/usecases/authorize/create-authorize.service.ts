@@ -14,18 +14,25 @@ class CreateAuthorizeService implements ICreateAuthorizeService {
     private readonly createAuthorizeRepo: ICreateAuthorizeRepo,
   ) {}
 
-  async start(authorize: CreateAuthorizeDto): ICreateAuthorizeService.Response {
-    const authorizeExists = await this.findAuthorizeRepo.by_farm(
-      authorize.farm_id!,
-    );
+  async checkAuthorizeofFarmAlreadExist(farm_id: string): Promise<void> {
+    const authorizeExists = await this.findAuthorizeRepo.by_farm(farm_id!);
     if (authorizeExists) throw new Error('Authorize Already Exists');
+  }
 
+  async createNewAuthorizeInDb(authorize: CreateAuthorizeDto): Promise<string> {
     const createAuthorize = await this.createAuthorizeRepo.create(authorize);
 
     if (!createAuthorize)
       throw new Error('Does not possible to create a new farm');
 
-    return { status: 'Sucess', authorize_id: createAuthorize.authorize_id };
+    return createAuthorize.authorize_id;
+  }
+
+  async start(authorize: CreateAuthorizeDto): ICreateAuthorizeService.Response {
+    await this.checkAuthorizeofFarmAlreadExist(authorize.farm_id);
+    const authorize_id = await this.createNewAuthorizeInDb(authorize);
+
+    return { status: 'Sucess', authorize_id };
   }
 }
 
