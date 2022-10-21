@@ -45,7 +45,7 @@ describe('Create Authorize Service Unit', () => {
   // // Test FindAuthorizeRepo
 
   it('should be FindAuthorizeRepo.all to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(findAuthorizeRepo, 'by_farm');
+    const spy = jest.spyOn(findAuthorizeRepo, 'all');
 
     await service.start();
 
