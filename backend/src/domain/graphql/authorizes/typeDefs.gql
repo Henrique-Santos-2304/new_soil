@@ -1,7 +1,7 @@
 type ResponseFindAuthorize {
   status: String!
   error: String
-  authorizies: [Authorize]!
+  authorize: [Authorize]
 }
 
 type Authorize {

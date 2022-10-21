@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   IFindAllAuthorizeService,
@@ -10,18 +11,27 @@ import { GetAuthorizationsResolver } from '../../find-all-authorize.resolver';
 describe('Get Authorization Controller Unit', () => {
   let controller: IGetAuthorizationsController;
   let service: MockProxy<IFindAllAuthorizeService>;
+  let logger: Logger;
 
   beforeEach(async () => {
     service = mock();
+
     const getAuthorizeService = {
       provide: 'IFindAllAuthorizeService',
       useValue: service,
     };
+    const loggerMock = {
+      provide: Logger,
+      useValue: { log: jest.fn(), error: jest.fn(), warn: jest.fn() },
+    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GetAuthorizationsResolver, getAuthorizeService],
+      providers: [GetAuthorizationsResolver, getAuthorizeService, loggerMock],
     }).compile();
 
-    controller = module.get(GetAuthorizationsResolver);
+    controller = module.get<IGetAuthorizationsController>(
+      GetAuthorizationsResolver,
+    );
+    logger = module.get<Logger>(Logger);
 
     service.start.mockResolvedValue({
       status: 'Sucess',
@@ -43,6 +53,15 @@ describe('Get Authorization Controller Unit', () => {
     expect(spy).toHaveBeenCalledWith();
   });
 
+  it('should be to log init request', async () => {
+    const spy = jest.spyOn(logger, 'log');
+
+    await controller.getAuthorizations();
+
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith('Buscando pedidos de altorização...');
+  });
+
   it('should service to have been called', async () => {
     const spy = jest.spyOn(service, 'start');
 
@@ -60,9 +79,37 @@ describe('Get Authorization Controller Unit', () => {
     expect(response).toHaveProperty('error', 'QUERY ERROR');
   });
 
+  it('should be logger the error received', async () => {
+    const spyLog = jest.spyOn(logger, 'log');
+    const spyErr = jest.spyOn(logger, 'error');
+
+    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+
+    await controller.getAuthorizations();
+    expect(spyLog).toHaveBeenCalledTimes(2);
+    expect(spyLog).toHaveBeenCalledWith('Buscando pedidos de altorização...');
+
+    expect(spyLog).toHaveBeenCalledWith(
+      'Busca realizada Finalizada com erros...\n',
+    );
+
+    expect(spyErr).toHaveBeenCalledTimes(1);
+    expect(spyErr).toHaveBeenCalledWith('QUERY ERROR');
+  });
+
   it('should be list authorizations if service pass with sucess', async () => {
     const response = await controller.getAuthorizations();
     expect(response).toHaveProperty('status', 'Sucess');
     expect(response).toHaveProperty('authorize', [authorizeModelMock]);
+  });
+
+  it('should be logger message sucess request', async () => {
+    const spyLog = jest.spyOn(logger, 'log');
+
+    await controller.getAuthorizations();
+    expect(spyLog).toHaveBeenCalledTimes(2);
+    expect(spyLog).toHaveBeenCalledWith('Buscando pedidos de altorização...');
+
+    expect(spyLog).toHaveBeenCalledWith(`Busca realizada com sucesso...\n`);
   });
 });

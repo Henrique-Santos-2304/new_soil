@@ -6,22 +6,24 @@ import { IGetAllUserService } from '@contracts/index';
 @Resolver()
 class GetUsersResolver implements IGetUserController {
   constructor(
+    private readonly logger: Logger,
+
     @Inject('IGetAllUserService')
     private readonly getAllUserService: IGetAllUserService,
   ) {}
 
   logInitRequest() {
-    Logger.warn('');
+    this.logger.warn('');
 
-    Logger.log(`Busca de usuarios iniciada.....`);
+    this.logger.log(`Busca de usuarios iniciada.....`);
   }
 
   logFinishRequest(err: boolean, message?: string) {
     const messageSucess = `Busca de usúarios realizada com sucesso...\n`;
     const messageError =
       'Requisição para buscar Usúarios Finalizada com erros...\n';
-    Logger.log(err ? messageError : messageSucess);
-    err && message && Logger.error(message);
+    this.logger.log(err ? messageError : messageSucess);
+    err && message && this.logger.error(message);
   }
 
   @Query()
