@@ -20,6 +20,12 @@ import { AuthorizeModel, FarmModel } from '@root/domain/models';
 */
 interface IFindAuthorizeRepo {
   all(): IGetallAuthorize.Response;
+  by_farm(farm_id: IGetByFarmAuthorize.Params): IGetByFarmAuthorize.Response;
+}
+
+namespace IGetByFarmAuthorize {
+  export type Params = string;
+  export type Response = Promise<AuthorizeModel>;
 }
 
 namespace IGetallAuthorize {
