@@ -2,6 +2,10 @@ import { Inject, Logger } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
 import { IGetAllUserController, IGetUserController } from '@root/domain';
 import { IGetAllUserService } from '@contracts/index';
+import {
+  logFinishRequestFind,
+  logInitRequest,
+} from '@root/shared/usecases/logs-request';
 
 @Resolver()
 class GetUsersResolver implements IGetUserController {
@@ -12,29 +16,15 @@ class GetUsersResolver implements IGetUserController {
     private readonly getAllUserService: IGetAllUserService,
   ) {}
 
-  logInitRequest() {
-    this.logger.warn('');
-
-    this.logger.log(`Busca de usuarios iniciada.....`);
-  }
-
-  logFinishRequest(err: boolean, message?: string) {
-    const messageSucess = `Busca de usúarios realizada com sucesso...\n`;
-    const messageError =
-      'Requisição para buscar Usúarios Finalizada com erros...\n';
-    this.logger.log(err ? messageError : messageSucess);
-    err && message && this.logger.error(message);
-  }
-
   @Query()
   async getUsers(): IGetAllUserController.Response {
     try {
-      this.logInitRequest();
+      logInitRequest(this.logger, 'Busca de usuarios iniciada...');
       const users = await this.getAllUserService.start();
-      this.logFinishRequest(false);
+      logFinishRequestFind(this.logger, false);
       return { status: 'Sucess', users };
     } catch (err) {
-      this.logFinishRequest(true, err.message);
+      logFinishRequestFind(this.logger, true, err.message);
       return { status: 'Fail', error: err.message };
     }
   }

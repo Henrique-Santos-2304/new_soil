@@ -5,6 +5,10 @@ import {
   IFindAllAuthorizeService,
   IGetAuthorizationsController,
 } from '@root/domain';
+import {
+  logFinishRequestFind,
+  logInitRequest,
+} from '@root/shared/usecases/logs-request';
 
 @Resolver()
 class GetAuthorizationsResolver implements IGetAuthorizationsController {
@@ -14,27 +18,15 @@ class GetAuthorizationsResolver implements IGetAuthorizationsController {
     private readonly findAuthorizeService: IFindAllAuthorizeService,
   ) {}
 
-  logInitRequest(): void {
-    this.logger.warn('');
-    this.logger.log(`Buscando pedidos de altorização...`);
-  }
-
-  logFinishRequest(err: boolean, message?: string): void {
-    const messageSucess = `Busca realizada com sucesso...\n`;
-    const messageError = 'Busca realizada Finalizada com erros...\n';
-    this.logger.log(err ? messageError : messageSucess);
-    message && this.logger.error(message);
-  }
-
   @Query()
   async getAuthorizations(): IGetAuthorizationsController.Response {
     try {
-      this.logInitRequest();
+      logInitRequest(this.logger, 'Buscando pedidos de altorização...');
       const response = await this.findAuthorizeService.start();
-      this.logFinishRequest(false);
+      logFinishRequestFind(this.logger, false);
       return response;
     } catch (error) {
-      this.logFinishRequest(true, error.message);
+      logFinishRequestFind(this.logger, true, error.message);
       return { status: 'Fail', error: error.message };
     }
   }

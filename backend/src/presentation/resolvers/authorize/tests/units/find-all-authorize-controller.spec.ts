@@ -4,6 +4,7 @@ import {
   IFindAllAuthorizeService,
   IGetAuthorizationsController,
 } from '@root/domain';
+import { messageRequest } from '@root/shared/usecases/logs-request';
 import { authorizeModelMock } from '@testRoot/index';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetAuthorizationsResolver } from '../../find-all-authorize.resolver';
@@ -89,9 +90,7 @@ describe('Get Authorization Controller Unit', () => {
     expect(spyLog).toHaveBeenCalledTimes(2);
     expect(spyLog).toHaveBeenCalledWith('Buscando pedidos de altorização...');
 
-    expect(spyLog).toHaveBeenCalledWith(
-      'Busca realizada Finalizada com erros...\n',
-    );
+    expect(spyLog).toHaveBeenCalledWith(messageRequest.findError);
 
     expect(spyErr).toHaveBeenCalledTimes(1);
     expect(spyErr).toHaveBeenCalledWith('QUERY ERROR');
@@ -110,6 +109,6 @@ describe('Get Authorization Controller Unit', () => {
     expect(spyLog).toHaveBeenCalledTimes(2);
     expect(spyLog).toHaveBeenCalledWith('Buscando pedidos de altorização...');
 
-    expect(spyLog).toHaveBeenCalledWith(`Busca realizada com sucesso...\n`);
+    expect(spyLog).toHaveBeenCalledWith(messageRequest.findSucess);
   });
 });
