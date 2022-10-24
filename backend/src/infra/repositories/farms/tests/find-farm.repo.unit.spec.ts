@@ -229,4 +229,80 @@ describe('Find Farms Repo Unit', () => {
     expect(logger.error).toHaveBeenCalledTimes(1);
     expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
+
+  /* ****************************************************
+    Find By Role Tests
+  */
+
+  it('should repo.by_role to have been called with data válids', async () => {
+    const spy = jest.spyOn(repo, 'by_role');
+    await repo.by_role({ role: 'ADMIN', user_id: '' });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ role: 'ADMIN', user_id: '' });
+  });
+
+  it('should prisma.farms.findMany in by_role to have been called with data válids when role is ADMIN', async () => {
+    const spy = jest.spyOn(prisma.farm, 'findMany');
+    await repo.by_role({ role: 'ADMIN', user_id: '' });
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ where: { admins: { hasSome: '' } } });
+  });
+
+  it('should prisma.farms.findMany in by_role to have been called with data válids when role is DEALER', async () => {
+    const spy = jest.spyOn(prisma.farm, 'findMany');
+    await repo.by_role({ role: 'DEALER', user_id: '' });
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ where: { dealers: { hasSome: '' } } });
+  });
+
+  it('should prisma.farms.findMany in by_role to have been called with data válids when role is USER', async () => {
+    const spy = jest.spyOn(prisma.farm, 'findMany');
+    await repo.by_role({ role: 'USER', user_id: '' });
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ where: { users: { hasSome: '' } } });
+  });
+
+  it('should to return a user_id and userType and password of user when all not return an error', async () => {
+    const value = await repo.by_role({ role: 'ADMIN', user_id: '' });
+    expect(value[0]).toHaveProperty('farm_id', createFarmMocked.farm_id);
+    expect(value[0]).toHaveProperty('farm_city', createFarmMocked.farm_city);
+    expect(value[0]).toHaveProperty('farm_name', createFarmMocked.farm_name);
+    expect(value[0]).toHaveProperty('farm_lat', createFarmMocked.farm_lat);
+    expect(value[0]).toHaveProperty('farm_lng', createFarmMocked.farm_lng);
+    expect(value[0]).toHaveProperty('admins', createFarmMocked.admins);
+    expect(value[0]).toHaveProperty('users', createFarmMocked.users);
+    expect(value[0]).toHaveProperty('dealers', createFarmMocked.dealers);
+  });
+
+  it('should to return a null with all not find farm', async () => {
+    prisma.farm.findMany = jest.fn().mockResolvedValueOnce(null);
+    const value = await repo.by_role({ role: 'ADMIN', user_id: '' });
+    expect(value).toBe(null);
+  });
+
+  it('should to to throw "QUERY ERROR" when database all return erro', async () => {
+    prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new Error());
+    const value = repo.by_role({ role: 'ADMIN', user_id: '' });
+    await expect(value).rejects.toThrow(new QueryError().message);
+  });
+
+  it('should log an erro when database all return error', async () => {
+    prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new DatabaseError());
+
+    const value = repo.by_role({ role: 'ADMIN', user_id: '' });
+    await expect(value).rejects.toThrow();
+    // method log
+    expect(logger.log).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith(
+      'Erro ao buscar fazenda no banco de dados...',
+    );
+
+    //method error
+    expect(logger.error).toHaveBeenCalledTimes(1);
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+  });
 });
