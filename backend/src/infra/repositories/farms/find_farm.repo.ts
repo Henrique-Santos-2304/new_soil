@@ -1,8 +1,11 @@
 import {
+  FarmModel,
   IFindFarmById,
+  IFindFarmsByRole,
   IFindFarmsByUser,
   IFindFarmsRepo,
   IGetAllFarms,
+  UserType,
 } from '@contracts/index';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@root/infra';
@@ -14,6 +17,27 @@ class FindFarmRepo implements IFindFarmsRepo {
     private readonly prisma: PrismaService,
     private readonly logger: Logger,
   ) {}
+  handleRoleQuery(query: IFindFarmsByRole.Params) {
+    if (query.role === 'DEALER') {
+      return { dealers: { hasSome: query.user_id } };
+    } else if (query.role === 'ADMIN') {
+      return { admins: { hasSome: query.user_id } };
+    } else {
+      return { users: { hasSome: query.user_id } };
+    }
+  }
+
+  async by_role(query: IFindFarmsByRole.Params): IFindFarmsByRole.Response {
+    try {
+      return await this.prisma.farm.findMany({
+        where: this.handleRoleQuery(query),
+      });
+    } catch (err) {
+      this.logger.log('Erro ao buscar fazenda no banco de dados...');
+      this.logger.error(err.message);
+      throw new QueryError();
+    }
+  }
 
   async by_user({
     user_id,

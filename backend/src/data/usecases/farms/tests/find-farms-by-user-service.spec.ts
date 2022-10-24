@@ -47,7 +47,7 @@ describe('Get All Farms By User Service Unit', () => {
 
     findUserRepo.by_id.mockResolvedValue(userModelMocked);
     findFarmRepo.all.mockResolvedValue([createFarmMocked]);
-    findFarmRepo.by_user.mockResolvedValue([createFarmMocked]);
+    findFarmRepo.by_role.mockResolvedValue([createFarmMocked]);
   });
 
   it('shoud be service and repo to be defined', async () => {
@@ -56,7 +56,7 @@ describe('Get All Farms By User Service Unit', () => {
     expect(service).toBeDefined();
   });
 
-  it('should be findUserRepo.by_id to have been called with empty params', async () => {
+  it('should be findUserRepo.by_id to have been called with data valid', async () => {
     const spy = jest.spyOn(findUserRepo, 'by_id');
     await service.start({ user_id: userModelMocked.user_id });
     expect(spy).toHaveBeenCalledTimes(1);
@@ -76,18 +76,7 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should be findFarmRepo.all to have been called if user is MASTER', async () => {
-    const spy = jest.spyOn(findUserRepo, 'all');
-    await service.start({ user_id: userModelMocked.user_id });
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith();
-  });
-
-  it('should be findFarmRepo.all to have been called if user is DEALER', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce({
-      ...userModelMocked,
-      userType: 'DEALER',
-    });
-    const spy = jest.spyOn(findUserRepo, 'all');
+    const spy = jest.spyOn(findFarmRepo, 'all');
     await service.start({ user_id: userModelMocked.user_id });
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith();
@@ -99,47 +88,81 @@ describe('Get All Farms By User Service Unit', () => {
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
   });
 
-  it('should be service throw user not find if findFarmRepo.all not find users ', async () => {
-    findFarmRepo.all.mockResolvedValueOnce([]);
-    const response = await service.start({ user_id: userModelMocked.user_id });
-    expect(response).toHaveLength(0);
+  it('should be service throw user not find if findFarmRepo.all not find farms ', async () => {
+    findFarmRepo.all.mockResolvedValueOnce(null);
+    const response = service.start({ user_id: userModelMocked.user_id });
+    await expect(response).rejects.toThrow(new NotFoundError('Farm'));
   });
 
-  it('should be findFarmRepo.by_d to have been called if user is ADMIN ', async () => {
-    findUserRepo.by_id.mockRejectedValueOnce({
+  it('should be findFarmRepo.by_role to have been called if user is DEALER', async () => {
+    const user_id = userModelMocked.user_id;
+    findUserRepo.by_id.mockResolvedValueOnce({
+      ...userModelMocked,
+      userType: 'DEALER',
+    });
+    const spy = jest.spyOn(findFarmRepo, 'by_role');
+    await service.start({ user_id: userModelMocked.user_id });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ role: 'DEALER', user_id });
+  });
+
+  it('should be findFarmRepo.by_role to have been called if user is ADMIN', async () => {
+    const user_id = userModelMocked.user_id;
+    findUserRepo.by_id.mockResolvedValueOnce({
       ...userModelMocked,
       userType: 'ADMIN',
     });
-    const spy = jest.spyOn(findFarmRepo, 'by_user');
+    const spy = jest.spyOn(findFarmRepo, 'by_role');
     await service.start({ user_id: userModelMocked.user_id });
+
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith();
+    expect(spy).toHaveBeenCalledWith({ role: 'ADMIN', user_id });
   });
 
-  it('should be findFarmRepo.by_d to have been called if user is USER ', async () => {
-    findUserRepo.by_id.mockRejectedValueOnce({
+  it('should be findFarmRepo.by_role to have been called if user is USER', async () => {
+    const user_id = userModelMocked.user_id;
+    findUserRepo.by_id.mockResolvedValueOnce({
       ...userModelMocked,
       userType: 'USER',
     });
-    const spy = jest.spyOn(findFarmRepo, 'by_user');
+    const spy = jest.spyOn(findFarmRepo, 'by_role');
     await service.start({ user_id: userModelMocked.user_id });
+
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith();
+    expect(spy).toHaveBeenCalledWith({ role: 'USER', user_id });
   });
 
-  it('should throw error if findFarmRepo.by_user to return an error ', async () => {
-    findFarmRepo.by_user.mockRejectedValueOnce(new Error('QUERY_ERROR'));
+  it('should throw error if findFarmRepo.by_role to return an error ', async () => {
+    findUserRepo.by_id.mockResolvedValueOnce({
+      ...userModelMocked,
+      userType: 'USER',
+    });
+    findFarmRepo.by_role.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start({ user_id: userModelMocked.user_id });
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
   });
 
-  it('should be service throw user not find if findUserRepo.all not find users ', async () => {
-    findFarmRepo.by_user.mockResolvedValueOnce([]);
-    const response = await service.start({ user_id: userModelMocked.user_id });
-    expect(response).toHaveLength(0);
+  it('should be service throw user not find if findFarmRepo.by_id not find farms ', async () => {
+    findUserRepo.by_id.mockResolvedValueOnce({
+      ...userModelMocked,
+      userType: 'USER',
+    });
+    findFarmRepo.by_role.mockResolvedValueOnce(null);
+    const response = service.start({ user_id: userModelMocked.user_id });
+    await expect(response).rejects.toThrow(new NotFoundError('Farm'));
   });
 
-  it('should be service return famrs of user ', async () => {
+  it('should be service return all farms  ', async () => {
+    const response = await service.start({ user_id: userModelMocked.user_id });
+    expect(response).toHaveLength(1);
+  });
+
+  it('should be service return all farms  ', async () => {
+    findUserRepo.by_id.mockResolvedValueOnce({
+      ...userModelMocked,
+      userType: 'USER',
+    });
     const response = await service.start({ user_id: userModelMocked.user_id });
     expect(response).toHaveLength(1);
   });
