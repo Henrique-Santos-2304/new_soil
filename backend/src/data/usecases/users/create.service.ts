@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import {
   ICreateUserRepo,
   ICreateUserService,
@@ -7,6 +7,8 @@ import {
   IFindUserRepo,
   NEncrypt,
 } from '@root/domain';
+import { AlreadyExistsError } from '@root/shared/errors';
+import { NotCreatedError } from '@root/shared/errors/not-created';
 
 @Injectable()
 export class CreateUserService implements ICreateUserService {
@@ -21,7 +23,7 @@ export class CreateUserService implements ICreateUserService {
   async checkUserExists({ login }: IFindUserByLogin.Params): Promise<void> {
     const user = await this.findUserRepo.by_login({ login });
 
-    if (user) throw new Error('User already exists');
+    if (user) throw new AlreadyExistsError('User');
   }
 
   async encryptPassword({ value }: NEncrypt.Params): Promise<void> {
@@ -33,12 +35,12 @@ export class CreateUserService implements ICreateUserService {
   ): Promise<void> {
     const createdUser = await this.createUserRepo.create(user);
 
-    if (!createdUser) throw new Error('User Not Created');
+    if (!createdUser) throw new NotCreatedError('User');
   }
 
   checkPasswordInternalIsValid(password: string): void {
     const internalPassword = process.env.INTERNAL_PASSWORD;
-    if (password !== internalPassword) throw new Error('Invalid Credentials');
+    if (password !== internalPassword) throw new UnauthorizedException();
   }
 
   async start({

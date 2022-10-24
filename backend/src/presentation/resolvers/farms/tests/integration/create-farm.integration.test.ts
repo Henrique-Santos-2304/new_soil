@@ -14,6 +14,7 @@ import {
   getUserAdminId,
   getUserMasterId,
 } from '@testRoot/mocks';
+import { AlreadyExistsError, NotFoundError } from '@root/shared/errors';
 
 describe('Create Farm Integration', () => {
   let app: INestApplication;
@@ -166,13 +167,14 @@ describe('Create Farm Integration', () => {
           admins: [adminId],
         },
       });
-
-    expect(data.createFarm).toHaveProperty('status', 'Fail');
-    expect(data.createFarm).toHaveProperty('error', 'Farm Already Exists');
-
     await prismaTest.farm.delete({
       where: { farm_id: createFarmMocked.farm_id },
     });
+    expect(data.createFarm).toHaveProperty('status', 'Fail');
+    expect(data.createFarm).toHaveProperty(
+      'error',
+      new AlreadyExistsError('Farm').message,
+    );
   });
 
   it('given the error "User not found type OWNER" if not exists an user with user_id received', async () => {
@@ -192,7 +194,7 @@ describe('Create Farm Integration', () => {
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty(
       'error',
-      'Does Not Found User of OWNER',
+      new NotFoundError('User type: OWNER').message,
     );
   });
 
@@ -213,7 +215,7 @@ describe('Create Farm Integration', () => {
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty(
       'error',
-      'Does Not Found User of ADMIN',
+      new NotFoundError('User type: ADMIN').message,
     );
   });
 
@@ -234,7 +236,7 @@ describe('Create Farm Integration', () => {
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty(
       'error',
-      'Does Not Found User of DEALER',
+      new NotFoundError('User type: DEALER').message,
     );
   });
 
@@ -255,7 +257,7 @@ describe('Create Farm Integration', () => {
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty(
       'error',
-      'Does Not Found User of USER',
+      new NotFoundError('User type: USER').message,
     );
   });
 
@@ -275,7 +277,7 @@ describe('Create Farm Integration', () => {
     expect(data.createFarm).toHaveProperty('status', 'Fail');
     expect(data.createFarm).toHaveProperty(
       'error',
-      'Does Not Found User of CREATOR',
+      new NotFoundError('User type: CREATOR').message,
     );
   });
 

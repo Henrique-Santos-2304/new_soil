@@ -7,6 +7,7 @@ import {
   UserModel,
 } from '@root/domain';
 import { PrismaService } from '@root/infra';
+import { QueryError } from '@root/shared/errors';
 
 @Injectable()
 class FindUserRepo implements IFindUserRepo {
@@ -28,7 +29,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 
@@ -41,7 +42,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 
@@ -52,7 +53,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuario no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 
@@ -65,7 +66,7 @@ class FindUserRepo implements IFindUserRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar usuarios no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 }

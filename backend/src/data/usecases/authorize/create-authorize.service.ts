@@ -5,6 +5,7 @@ import {
   IFindAuthorizeRepo,
 } from '@contracts/index';
 import { Inject } from '@nestjs/common';
+import { AlreadyExistsError, NotCreatedError } from '@root/shared/errors';
 
 class CreateAuthorizeService implements ICreateAuthorizeService {
   constructor(
@@ -16,14 +17,13 @@ class CreateAuthorizeService implements ICreateAuthorizeService {
 
   async checkAuthorizeofFarmAlreadExist(farm_id: string): Promise<void> {
     const authorizeExists = await this.findAuthorizeRepo.by_farm(farm_id!);
-    if (authorizeExists) throw new Error('Authorize Already Exists');
+    if (authorizeExists) throw new AlreadyExistsError('Authorize');
   }
 
   async createNewAuthorizeInDb(authorize: CreateAuthorizeDto): Promise<string> {
     const createAuthorize = await this.createAuthorizeRepo.create(authorize);
 
-    if (!createAuthorize)
-      throw new Error('Does not possible to create a new farm');
+    if (!createAuthorize) throw new NotCreatedError('Authorize');
 
     return createAuthorize.authorize_id;
   }

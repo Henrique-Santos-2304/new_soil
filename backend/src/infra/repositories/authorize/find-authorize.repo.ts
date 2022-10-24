@@ -5,6 +5,7 @@ import {
 } from '@contracts/index';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@root/infra';
+import { QueryError } from '@root/shared/errors';
 
 @Injectable()
 class FindAuthorizeRepo implements IFindAuthorizeRepo {
@@ -21,7 +22,7 @@ class FindAuthorizeRepo implements IFindAuthorizeRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar autorização no banco de dados');
       this.logger.error(err.message);
-      throw new Error('QUERY ERROR');
+      throw new QueryError();
     }
   }
 
@@ -31,7 +32,7 @@ class FindAuthorizeRepo implements IFindAuthorizeRepo {
     } catch (err) {
       this.logger.log('Erro ao buscar autorizações no banco de dados');
       this.logger.error(err.message);
-      throw new Error('QUERY ERROR');
+      throw new QueryError();
     }
   }
 }

@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICreateFarmRepo } from '@root/domain';
 import { PrismaService } from '@root/infra/config_acess_db';
+import { DatabaseError, QueryError } from '@root/shared/errors';
 import { createFarmMocked } from '@testRoot/mocks';
 import { CreateFarmRepo } from '../create.repo';
 
@@ -60,13 +61,11 @@ describe('Create Farm Repo Unit', () => {
   it('should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.farm.create = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.create(createFarmMocked);
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError());
   });
 
   it('should log an erro when database return error', async () => {
-    prisma.farm.create = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+    prisma.farm.create = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
     const response = repo.create(createFarmMocked);
 
@@ -79,6 +78,6 @@ describe('Create Farm Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

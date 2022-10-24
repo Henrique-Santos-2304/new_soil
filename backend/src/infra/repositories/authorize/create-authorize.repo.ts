@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateAuthorizeDto } from '@root/domain';
 import { ICreateAuthorizeRepo } from '@root/domain/repositories/authorize/create-authorize.domain';
 import { PrismaService } from '@root/infra';
+import { QueryError } from '@root/shared/errors/querry-error';
 
 @Injectable()
 class CreateAuthorizeRepo implements ICreateAuthorizeRepo {
@@ -18,7 +19,7 @@ class CreateAuthorizeRepo implements ICreateAuthorizeRepo {
     } catch (err) {
       this.logger.log('Erro ao criar nova authorização...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 }

@@ -7,6 +7,7 @@ import {
   ICreateAuthorizeService,
   IFindAuthorizeRepo,
 } from '@root/domain';
+import { AlreadyExistsError, NotCreatedError } from '@root/shared/errors';
 import { createAuthorizeMock } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { CreateAuthorizeService } from '../create-authorize.service';
@@ -90,7 +91,7 @@ describe('Create Authorize Service Unit', () => {
 
     const response = service.start(createAuthorizeMock);
 
-    await expect(response).rejects.toThrow('Authorize Already Exists');
+    await expect(response).rejects.toThrow(new AlreadyExistsError('Authorize'));
   });
 
   it('shoul be throw a QUERY ERROR if FindAuthorizeRepo.by_farm throw error', async () => {
@@ -125,9 +126,7 @@ describe('Create Authorize Service Unit', () => {
 
     const response = service.start(createAuthorizeMock);
 
-    await expect(response).rejects.toThrow(
-      'Does not possible to create a new farm',
-    );
+    await expect(response).rejects.toThrow(new NotCreatedError('Authorize'));
   });
 
   it('should be have a new authorize in db', async () => {

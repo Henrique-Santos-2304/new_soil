@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaModule } from '@root/core';
 import { IEncrypterData, IFindUserRepo } from '@root/domain';
@@ -76,7 +76,7 @@ describe('Auth User Service Unit', () => {
 
     const response = service.start(loginUser);
 
-    await expect(response).rejects.toThrow('Invalid Credentials');
+    await expect(response).rejects.toThrow(new UnauthorizedException().message);
   });
 
   // Test encrypt.compare to have been called with data valids
@@ -107,7 +107,7 @@ describe('Auth User Service Unit', () => {
 
     const response = service.start(loginUser);
 
-    await expect(response).rejects.toThrow('Invalid Credentials');
+    await expect(response).rejects.toThrow(new UnauthorizedException().message);
   });
 
   //  Tests Jwt Token to have been called with data valids

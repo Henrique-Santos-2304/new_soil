@@ -1,4 +1,4 @@
-import { Logger, Provider } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaModule } from '@root/core';
@@ -14,6 +14,8 @@ import {
   userModelMocked,
 } from '@testRoot/index';
 import { CreateUserService } from '../create.service';
+import { AlreadyExistsError } from '@root/shared/errors';
+import { NotCreatedError } from '@root/shared/errors/not-created';
 
 describe('Create User Service Unit', () => {
   let service: ICreateUserService;
@@ -78,7 +80,7 @@ describe('Create User Service Unit', () => {
       internal_password: 'invalid',
     });
 
-    await expect(response).rejects.toThrow('Invalid Credentials');
+    await expect(response).rejects.toThrow(new UnauthorizedException().message);
   });
 
   // Test find user to have been called with data válid
@@ -103,7 +105,9 @@ describe('Create User Service Unit', () => {
     findUserRepo.by_login.mockResolvedValueOnce(userModelMocked);
 
     const response = service.start(createUserRequestMocked);
-    await expect(response).rejects.toThrow('User already exists');
+    await expect(response).rejects.toThrow(
+      new AlreadyExistsError('User').message,
+    );
   });
 
   // Test encrypter to have been called with password received
@@ -148,7 +152,7 @@ describe('Create User Service Unit', () => {
     createUserrepo.create.mockResolvedValueOnce(null);
     const response = service.start(createUserRequestMocked);
 
-    await expect(response).rejects.toThrow('User Not Created');
+    await expect(response).rejects.toThrow(new NotCreatedError('User').message);
   });
 
   // Test useCase return a new User created if haved sucess

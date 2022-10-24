@@ -7,6 +7,11 @@ import {
   UserModel,
   CreateFarmDTO,
 } from '@contracts/index';
+import {
+  AlreadyExistsError,
+  NotCreatedError,
+  NotFoundError,
+} from '@root/shared/errors';
 
 @Injectable()
 class CreateFarmService implements ICreateFarmService {
@@ -37,13 +42,13 @@ class CreateFarmService implements ICreateFarmService {
   async checkFarmAlreadyExistsInDb(farm_id: string): Promise<void> {
     const farmAlreadyExists = await this.findFarmRepo.by_id({ farm_id });
 
-    if (farmAlreadyExists) throw new Error('Farm Already Exists');
+    if (farmAlreadyExists) throw new AlreadyExistsError('Farm');
   }
 
   async checkUserExistsInDb(user_id: string, type: string): Promise<UserModel> {
     const userExists = await this.findUserRepo.by_id({ user_id });
 
-    if (!userExists) throw new Error(`Does Not Found User of ${type}`);
+    if (!userExists) throw new NotFoundError(`User type: ${type}`);
 
     return userExists;
   }
@@ -57,7 +62,7 @@ class CreateFarmService implements ICreateFarmService {
   async createNewFarmInDb(farm: CreateFarmDTO): Promise<{ farm_id: string }> {
     const createdUser = await this.createFarmRepo.create(farm);
 
-    if (!createdUser) throw new Error('Does not possible to create a new farm');
+    if (!createdUser) throw new NotCreatedError('Farm');
     return createdUser;
   }
 

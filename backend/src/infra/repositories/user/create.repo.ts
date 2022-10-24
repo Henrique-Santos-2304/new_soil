@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ICreateUserRepo } from '@root/domain';
 import { PrismaService } from '@root/infra';
+import { QueryError } from '@root/shared/errors';
 
 @Injectable()
 class CreateUserRepo implements ICreateUserRepo {
@@ -18,7 +19,7 @@ class CreateUserRepo implements ICreateUserRepo {
     } catch (err) {
       this.logger.log('Erro ao criar usuario no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 }

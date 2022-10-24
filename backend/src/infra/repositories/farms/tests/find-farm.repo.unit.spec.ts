@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IFindFarmsRepo } from '@root/domain';
-import { PrismaService } from '@root/infra/config_acess_db';
+import { IFindFarmsRepo } from '@contracts/index';
+import { PrismaService } from '@db/config_acess_db';
+import { DatabaseError, QueryError } from '@utils/errors';
 import { createFarmMocked } from '@testRoot/mocks';
 import { FindFarmRepo } from '../find_farm.repo';
 
@@ -76,7 +77,7 @@ describe('Find Farms Repo Unit', () => {
   it('should log an erro when database find_by_id return error', async () => {
     prisma.farm.findFirst = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_id({ farm_id: createFarmMocked.farm_id });
     await expect(value).rejects.toThrow();
@@ -88,13 +89,13 @@ describe('Find Farms Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_id return erro', async () => {
     prisma.farm.findFirst = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.by_id({ farm_id: createFarmMocked.farm_id });
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   /* ****************************************************
@@ -148,13 +149,11 @@ describe('Find Farms Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database find_by_user return erro', async () => {
     prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.by_user({ user_id: createFarmMocked.admins[0] });
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database find_by_user return error', async () => {
-    prisma.farm.findMany = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+    prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_user({ user_id: createFarmMocked.admins[0] });
     await expect(value).rejects.toThrow();
@@ -167,7 +166,7 @@ describe('Find Farms Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   /*
@@ -212,13 +211,11 @@ describe('Find Farms Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
     prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.all();
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
-    prisma.farm.findMany = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+    prisma.farm.findMany = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.all();
     await expect(value).rejects.toThrow();
@@ -230,6 +227,6 @@ describe('Find Farms Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

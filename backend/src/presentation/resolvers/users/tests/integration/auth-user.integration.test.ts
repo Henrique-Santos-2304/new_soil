@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import request from 'supertest-graphql';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { authUserRequestMocked } from '@testRoot/mocks';
@@ -68,7 +68,10 @@ describe('Auth User Integration', () => {
       });
 
     expect(data.authUser).toHaveProperty('status', 'Fail');
-    expect(data.authUser).toHaveProperty('error', 'Invalid Credentials');
+    expect(data.authUser).toHaveProperty(
+      'error',
+      new UnauthorizedException().message,
+    );
   });
 
   it('should be "{status: Fail}" if password is not correct', async () => {
@@ -83,7 +86,10 @@ describe('Auth User Integration', () => {
       });
 
     expect(data.authUser).toHaveProperty('status', 'Fail');
-    expect(data.authUser).toHaveProperty('error', 'Invalid Credentials');
+    expect(data.authUser).toHaveProperty(
+      'error',
+      new UnauthorizedException().message,
+    );
 
     const user = await prismaTest.user.findFirst({
       where: { login: 'soil_unit_test' },

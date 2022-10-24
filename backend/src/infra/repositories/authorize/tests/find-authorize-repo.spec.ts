@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IFindAuthorizeRepo } from '@root/domain';
 import { PrismaService } from '@root/infra/config_acess_db';
+import { DatabaseError, QueryError } from '@root/shared/errors';
 import { createAuthorizeMock } from '@testRoot/mocks';
 import { FindAuthorizeRepo } from '../find-authorize.repo';
 
@@ -75,13 +76,13 @@ describe('Find Authorize Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
     prisma.authorize.findMany = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.all();
-    await expect(value).rejects.toThrow('QUERY ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
     prisma.authorize.findMany = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.all();
     await expect(value).rejects.toThrow();
@@ -93,7 +94,7 @@ describe('Find Authorize Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   /*
@@ -136,13 +137,13 @@ describe('Find Authorize Repo Unit', () => {
     prisma.authorize.findFirst = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.by_farm(createAuthorizeMock.farm_id);
 
-    await expect(value).rejects.toThrow('QUERY ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
     prisma.authorize.findFirst = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_farm(createAuthorizeMock.farm_id);
 
@@ -155,6 +156,6 @@ describe('Find Authorize Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

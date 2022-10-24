@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
 import {
@@ -12,6 +12,7 @@ import {
 import { createUserMocked, createUserRequestMocked } from '@testRoot/mocks';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { mutationCreateUser } from '@testRoot/mocks/gql/users';
+import { AlreadyExistsError } from '@root/shared/errors';
 
 describe('Create User Integration', () => {
   let app: INestApplication;
@@ -110,7 +111,10 @@ describe('Create User Integration', () => {
       });
 
     expect(data.createUser).toHaveProperty('status', 'Fail');
-    expect(data.createUser).toHaveProperty('error', 'Invalid Credentials');
+    expect(data.createUser).toHaveProperty(
+      'error',
+      new UnauthorizedException().message,
+    );
   });
 
   it('should be "{status: Fail}" if this user already exist in db', async () => {
@@ -125,7 +129,10 @@ describe('Create User Integration', () => {
       });
 
     expect(data.createUser).toHaveProperty('status', 'Fail');
-    expect(data.createUser).toHaveProperty('error', 'User already exists');
+    expect(data.createUser).toHaveProperty(
+      'error',
+      new AlreadyExistsError('User').message,
+    );
   });
 
   it('should be user to have been created with password encrypted', async () => {

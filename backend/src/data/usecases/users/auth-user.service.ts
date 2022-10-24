@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import {
   IAuthUserService,
   IEncrypterData,
@@ -21,7 +21,7 @@ class AuthUserService implements IAuthUserService {
   async checkUserAlreadyExists(login: string): Promise<void> {
     const user = await this.findUserRepo.without_login({ login });
 
-    if (!user) throw new Error('Invalid Credentials');
+    if (!user) throw new UnauthorizedException();
 
     this.user = user;
   }
@@ -32,7 +32,7 @@ class AuthUserService implements IAuthUserService {
       valueCompare: password,
     });
 
-    if (!passwordIsValid) throw new Error('Invalid Credentials');
+    if (!passwordIsValid) throw new UnauthorizedException();
   }
 
   async generateUserToken(): Promise<void> {

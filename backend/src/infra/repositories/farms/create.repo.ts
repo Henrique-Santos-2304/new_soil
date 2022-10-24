@@ -1,6 +1,7 @@
 import { CreateFarmDTO, ICreateFarmRepo } from '@contracts/index';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@root/infra';
+import { QueryError } from '@root/shared/errors';
 
 @Injectable()
 class CreateFarmRepo implements ICreateFarmRepo {
@@ -22,7 +23,7 @@ class CreateFarmRepo implements ICreateFarmRepo {
     } catch (err) {
       this.logger.log('Erro ao criar fazenda no banco de dados...');
       this.logger.error(err.message);
-      throw new Error('QUERY_ERROR');
+      throw new QueryError();
     }
   }
 }

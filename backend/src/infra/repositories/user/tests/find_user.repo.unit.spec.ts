@@ -1,8 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule, Test } from '@nestjs/testing';
 import { IFindUserRepo } from '@root/domain';
 import { PrismaService } from '@root/infra/config_acess_db';
-import { createUserMocked, userModelMocked } from '@testRoot/mocks';
+import { DatabaseError, QueryError } from '@root/shared/errors';
+import { userModelMocked, createUserMocked } from '@testRoot/index';
 import { FindUserRepo } from '../find.repo';
 
 describe('Find User Repo Unit', () => {
@@ -72,7 +73,7 @@ describe('Find User Repo Unit', () => {
   it('should log an erro when database find_by_login return error', async () => {
     prisma.user.findFirst = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow();
@@ -84,13 +85,13 @@ describe('Find User Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_login return erro', async () => {
     prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.by_login({ login: userModelMocked.login });
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   /* ****************************************************
@@ -134,13 +135,13 @@ describe('Find User Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database find_by_login return erro', async () => {
     prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.by_id({ user_id: userModelMocked.user_id });
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database find_by_id return error', async () => {
     prisma.user.findFirst = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_id({ user_id: userModelMocked.user_id });
     await expect(value).rejects.toThrow();
@@ -153,7 +154,7 @@ describe('Find User Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   /*
@@ -207,13 +208,13 @@ describe('Find User Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database without_login return erro', async () => {
     prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.without_login({ login: userModelMocked.login });
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database without_login return error', async () => {
     prisma.user.findFirst = jest
       .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+      .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.without_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow();
@@ -225,7 +226,7 @@ describe('Find User Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   // all
@@ -276,13 +277,11 @@ describe('Find User Repo Unit', () => {
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
     prisma.user.findMany = jest.fn().mockRejectedValueOnce(new Error());
     const value = repo.all();
-    await expect(value).rejects.toThrow('QUERY_ERROR');
+    await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database without_login return error', async () => {
-    prisma.user.findMany = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('DATABASE ERROR'));
+    prisma.user.findMany = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.all();
     await expect(value).rejects.toThrow();
@@ -294,6 +293,6 @@ describe('Find User Repo Unit', () => {
 
     //method error
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith('DATABASE ERROR');
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

@@ -7,6 +7,11 @@ import {
   IFindFarmsRepo,
   IFindUserRepo,
 } from '@root/domain';
+import {
+  AlreadyExistsError,
+  NotCreatedError,
+  NotFoundError,
+} from '@root/shared/errors';
 import { createFarmMocked, userModelMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { CreateFarmService } from '../create-farm.service';
@@ -95,7 +100,7 @@ describe('Create Farm Service Unit', () => {
 
     const response = service.start(createFarmMocked);
 
-    await expect(response).rejects.toThrow('Farm Already Exists');
+    await expect(response).rejects.toThrow(new AlreadyExistsError('Farm'));
   });
 
   it('shoul be throw a QUERY ERROR if findFarmrepo throw error', async () => {
@@ -149,7 +154,9 @@ describe('Create Farm Service Unit', () => {
 
     const response = service.start(createFarmMocked);
 
-    await expect(response).rejects.toThrow('Does Not Found User of OWNER');
+    await expect(response).rejects.toThrow(
+      new NotFoundError('User type: OWNER'),
+    );
   });
 
   it('should be throw a error if admins received not exists in db', async () => {
@@ -161,7 +168,9 @@ describe('Create Farm Service Unit', () => {
       admins: ['not_exist'],
     });
 
-    await expect(response).rejects.toThrow('Does Not Found User of ADMIN');
+    await expect(response).rejects.toThrow(
+      new NotFoundError('User type: ADMIN'),
+    );
   });
 
   it('should be throw a error if dealers received not exists in db', async () => {
@@ -173,7 +182,9 @@ describe('Create Farm Service Unit', () => {
       dealers: ['not_exist'],
     });
 
-    await expect(response).rejects.toThrow('Does Not Found User of DEALER');
+    await expect(response).rejects.toThrow(
+      new NotFoundError('User type: DEALER'),
+    );
   });
 
   it('should be throw a error if users received not exists in db', async () => {
@@ -185,7 +196,9 @@ describe('Create Farm Service Unit', () => {
       users: ['users'],
     });
 
-    await expect(response).rejects.toThrow('Does Not Found User of USER');
+    await expect(response).rejects.toThrow(
+      new NotFoundError('User type: USER'),
+    );
   });
 
   it('shoul be throw a User CREATOR not exists if findUserrepo not return a user', async () => {
@@ -195,7 +208,9 @@ describe('Create Farm Service Unit', () => {
 
     const response = service.start(createFarmMocked);
 
-    await expect(response).rejects.toThrow('Does Not Found User of CREATOR');
+    await expect(response).rejects.toThrow(
+      new NotFoundError('User type: CREATOR'),
+    );
   });
 
   it('shoul be throw Unauthorized if user does not a type MASTER or DEALER', async () => {
@@ -235,9 +250,7 @@ describe('Create Farm Service Unit', () => {
 
     const response = service.start(createFarmMocked);
 
-    await expect(response).rejects.toThrow(
-      'Does not possible to create a new farm',
-    );
+    await expect(response).rejects.toThrow(new NotCreatedError('Farm'));
   });
 
   it('shoul be have a new farm created if user to have a type MASTER and created_by column to be a user_id of this user', async () => {
