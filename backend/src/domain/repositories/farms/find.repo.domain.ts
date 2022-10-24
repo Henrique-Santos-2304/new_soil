@@ -1,4 +1,4 @@
-import { FarmModel } from '@root/domain/models';
+import { FarmModel, UserType } from '@root/domain/models';
 
 /*
   Repositório para acesso ao banco de dados, com a função de buscar um usuario no banco de dados
@@ -6,6 +6,7 @@ import { FarmModel } from '@root/domain/models';
   ****************************************************************************
 
   @Params: 
+  by_role: {query: string}
       by_user = { user_id }
       by_id = { farm_id }
       all = void
@@ -25,7 +26,13 @@ import { FarmModel } from '@root/domain/models';
 interface IFindFarmsRepo {
   by_user({ user_id }: IFindFarmsByUser.Params): IFindFarmsByUser.Response;
   by_id({ farm_id }: IFindFarmById.Params): IFindFarmById.Response;
+  by_role(query: IFindFarmsByRole.Params): IFindFarmsByRole.Response;
   all(): IGetAllFarms.Response;
+}
+
+namespace IFindFarmsByRole {
+  export type Params = { role: Omit<UserType, 'MASTER'>; user_id: string };
+  export type Response = Promise<FarmModel[]>;
 }
 
 namespace IFindFarmsByUser {
@@ -42,4 +49,10 @@ namespace IGetAllFarms {
   export type Response = Promise<FarmModel[]>;
 }
 
-export { IFindFarmsRepo, IFindFarmsByUser, IFindFarmById, IGetAllFarms };
+export {
+  IFindFarmsRepo,
+  IFindFarmsByUser,
+  IFindFarmById,
+  IGetAllFarms,
+  IFindFarmsByRole,
+};
