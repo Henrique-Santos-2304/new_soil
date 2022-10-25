@@ -1,3 +1,7 @@
+input GetFarmsByUserInput {
+  user_id: String
+}
+
 input CreateFarmInput {
   farm_id: String!
   farm_name: String!

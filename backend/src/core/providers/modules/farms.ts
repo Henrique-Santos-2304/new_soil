@@ -1,19 +1,31 @@
 import { Logger, Provider } from '@nestjs/common';
-import { createFarmControllerProvider } from '../controllers';
+import {
+  createFarmControllerProvider,
+  findFarmControllerProvider,
+} from '../controllers';
 import {
   createFarmsRepoProvider,
   findFarmsRepoProvider,
   findUserRepoProvider,
 } from '../repos';
-import { createFarmsServiceProvider } from '../services';
+import {
+  createFarmsServiceProvider,
+  findFarmByUserServiceProvider,
+} from '../services';
 
 const allFarmsRepoProvider: Provider[] = [
   createFarmsRepoProvider,
   findFarmsRepoProvider,
   findUserRepoProvider,
 ];
-const allFarmsServiceProvider: Provider[] = [createFarmsServiceProvider];
-const allFarmsControllers: Provider[] = [createFarmControllerProvider];
+const allFarmsServiceProvider: Provider[] = [
+  createFarmsServiceProvider,
+  findFarmByUserServiceProvider,
+];
+const allFarmsControllers: Provider[] = [
+  createFarmControllerProvider,
+  findFarmControllerProvider,
+];
 const allUtilsFarmProviders: Provider[] = [Logger];
 
 const farmsProviders: Provider[] = [

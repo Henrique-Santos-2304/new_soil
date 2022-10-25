@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { IAuthUserService } from '@root/domain';
+import { IAuthUserService, UserModel } from '@root/domain';
 import { PrismaService } from '@root/infra';
 import { prismaTest } from './prisma.config';
 import { Test } from '@nestjs/testing';
@@ -38,6 +38,10 @@ class IntegrationTestManager {
 
     this.token = user.token;
     return { token: this.token };
+  }
+
+  async getUserId(): Promise<UserModel> {
+    return await prismaTest.user.findFirst({ where: { login: 'soil_test' } });
   }
 
   getToken = () => this.token;

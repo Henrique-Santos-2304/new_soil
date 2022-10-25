@@ -34,6 +34,7 @@ class GetFarmsByUser implements IGetAllFarmsByUserService {
       role: userType,
       user_id: this.user_id,
     });
+
     if (!farms) throw new NotFoundError('Farm');
 
     return farms;

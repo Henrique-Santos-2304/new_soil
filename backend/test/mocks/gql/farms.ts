@@ -9,3 +9,25 @@ export const mutationCreateFarm = gql`
     }
   }
 `;
+
+export const queryFindFarmsByUser = gql`
+  query GET_ALL_FARMS($dataId: GetFarmsByUserInput!) {
+    getFarmByUser(data: $dataId) {
+      status
+      error
+      farms {
+        farm_id
+        farm_name
+        farm_city
+        farm_lat
+        farm_lng
+        owner_id
+        created_by
+        admins
+        dealers
+        updated_by
+        users
+      }
+    }
+  }
+`;

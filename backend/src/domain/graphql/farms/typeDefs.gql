@@ -4,13 +4,19 @@ type ResponseCreateFarm {
   farm_id: String
 }
 
+type ResponseFindFarmsByUser {
+  status: String!
+  error: String
+  farms: [Farm]
+}
+
 type Farm {
   farm_id: String!
   farm_name: String!
   farm_city: String!
   farm_lat: Float!
   farm_lng: Float!
-  owner: String!
+  owner_id: String!
   created_by: String!
   updated_by: String
 

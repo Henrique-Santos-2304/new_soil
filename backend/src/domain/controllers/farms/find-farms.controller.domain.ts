@@ -1,15 +1,15 @@
-/* Busca usuarios 
+/* Busca fazendas de usuario 
 
   *****************************************************************
     @Params: {
-      getUsers: void
+      getFarmByUser({user_id: string}): void
     }
     
   *****************************************************************
     @Response: 
       Em caso de sucesso: {
         status: 'Sucess',
-        users: UserModel[]
+        users: FarmModel[]
       }, 
       Em caso de erro: {
         status: 'Fail',
@@ -22,18 +22,21 @@
   ******************************************************************
     */
 
-import { UserModel } from '@root/domain';
+import { FarmModel } from '@root/domain';
 
-interface IGetUserController {
-  getUsers(): IGetAllUserController.Response;
+interface IGetFarmsController {
+  getFarmByUser({
+    user_id,
+  }: IGetFarmsController.Params): IGetFarmsController.Response;
 }
 
-namespace IGetAllUserController {
+namespace IGetFarmsController {
+  export type Params = { user_id: string };
   export type Response = Promise<{
     status: string;
     error?: string;
-    users?: Omit<UserModel, 'password'>[];
+    farms?: FarmModel[];
   }>;
 }
 
-export { IGetUserController, IGetAllUserController };
+export { IGetFarmsController };
