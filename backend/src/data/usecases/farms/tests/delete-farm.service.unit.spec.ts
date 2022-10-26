@@ -35,6 +35,11 @@ describe('Get All Farms By User Service Unit', () => {
       useValue: findFarmRepo,
     };
 
+    const delFarmProvider = {
+      provide: 'IDeleteFarmRepo',
+      useValue: deleteFarmRepo,
+    };
+
     const loggerProvider = { provide: Logger, useValue: logger };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +48,7 @@ describe('Get All Farms By User Service Unit', () => {
         DeleteFarmService,
         findFarmProvider,
         findUserProvider,
+        delFarmProvider,
         loggerProvider,
       ],
     }).compile();
@@ -50,8 +56,7 @@ describe('Get All Farms By User Service Unit', () => {
     service = module.get<IDeleteFarmService>(DeleteFarmService);
 
     findUserRepo.by_id.mockResolvedValue(userModelMocked);
-    findFarmRepo.all.mockResolvedValue([createFarmMocked]);
-    findFarmRepo.by_role.mockResolvedValue([createFarmMocked]);
+    findFarmRepo.by_id.mockResolvedValue(createFarmMocked);
     deleteFarmRepo.by_id.mockResolvedValue();
     deleteFarmRepo.by_user.mockResolvedValue();
   });
@@ -65,18 +70,16 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should be service throw unauthorized with userType USER ', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce(null);
     const response = service.start({
-      user_id: userModelMocked.user_id,
       userType: 'USER',
+      user_id: 'user',
     });
     await expect(response).rejects.toThrow(new UnauthorizedException());
   });
 
   it('should be service throw unauthorized with userType ADMIN ', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce(null);
     const response = service.start({
-      user_id: userModelMocked.user_id,
+      user_id: 'user',
       userType: 'ADMIN',
     });
     await expect(response).rejects.toThrow(new UnauthorizedException());
@@ -86,17 +89,17 @@ describe('Get All Farms By User Service Unit', () => {
   it('should be findUserRepo.by_id to have been called with data valid', async () => {
     const spy = jest.spyOn(findUserRepo, 'by_id');
     await service.start({
-      user_id: userModelMocked.user_id,
+      user_id: 'user',
       userType: 'MASTER',
     });
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ user_id: userModelMocked.user_id });
+    expect(spy).toHaveBeenCalledWith({ user_id: 'user' });
   });
 
   it('should throw error if findUserRepo.by_id to return an error ', async () => {
     findUserRepo.by_id.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start({
-      user_id: userModelMocked.user_id,
+      user_id: 'soil',
       userType: 'MASTER',
     });
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
@@ -105,18 +108,18 @@ describe('Get All Farms By User Service Unit', () => {
   it('should be service throw user not find if findUserRepo.by_id not find users ', async () => {
     findUserRepo.by_id.mockResolvedValueOnce(null);
     const response = service.start({
-      user_id: userModelMocked.user_id,
+      user_id: 'soil',
       userType: 'MASTER',
     });
     await expect(response).rejects.toThrow(new NotFoundError('User'));
   });
 
   it('should be service return void if deleted with sucess ', async () => {
-    const response = service.start({
-      user_id: userModelMocked.user_id,
+    const response = await service.start({
+      user_id: 'soil',
       userType: 'MASTER',
     });
-    await expect(response).toBeUndefined();
+    expect(response).toBeUndefined();
   });
 
   // Test del by id
@@ -145,14 +148,14 @@ describe('Get All Farms By User Service Unit', () => {
       farm_id: 'soil',
       userType: 'MASTER',
     });
-    await expect(response).rejects.toThrow(new NotFoundError('User'));
+    await expect(response).rejects.toThrow(new NotFoundError('Farm'));
   });
 
   it('should be service return void if deleted with sucess ', async () => {
-    const response = service.start({
+    const response = await service.start({
       farm_id: 'soil',
       userType: 'MASTER',
     });
-    await expect(response).toBeUndefined();
+    expect(response).toBeUndefined();
   });
 });
