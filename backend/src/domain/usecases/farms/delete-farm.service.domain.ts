@@ -20,12 +20,22 @@
 
 */
 
+import { UserType } from '@root/domain/models';
+
 interface IDeleteFarmService {
-  start({ user_id }: IDeleteFarmService.Params): IDeleteFarmService.Response;
+  start({
+    user_id,
+    farm_id,
+    userType,
+  }: IDeleteFarmService.Params): IDeleteFarmService.Response;
 }
 
 namespace IDeleteFarmService {
-  export type Params = { user_id?: string; farm_id?: string };
+  export type Params = {
+    userType: UserType;
+    user_id?: string;
+    farm_id?: string;
+  };
   export type Response = Promise<void>;
 }
 
