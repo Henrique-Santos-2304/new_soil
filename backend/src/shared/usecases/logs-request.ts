@@ -7,6 +7,8 @@ const messageRequest = {
   createdError: 'Criação de dados Finalizada com erros...\n',
   authSucess: `Usuario autenticado com sucesso...\n`,
   authError: 'Requisição para autenticar Usuario Finalizada com erros...\n',
+  deleteError: 'Erro ao deletar dados...',
+  deleteSucess: 'Dados deletados com sucesso..',
 };
 
 const logInitRequest = (logger: Logger, message: string): void => {
@@ -44,10 +46,21 @@ const logFinishRequestCreate = (
   message && logger.error(message);
 };
 
+const logFinishRequestDelete = (
+  logger: Logger,
+  err: boolean,
+  message?: string,
+): void => {
+  const { deleteError, deleteSucess } = messageRequest;
+  logger.log(err ? deleteError : deleteSucess);
+  message && logger.error(message);
+};
+
 export {
   logInitRequest,
   logFinishRequestFind,
   logFinishRequestCreate,
   logFinishRequestAuth,
+  logFinishRequestDelete,
   messageRequest,
 };

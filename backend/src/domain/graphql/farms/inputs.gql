@@ -2,6 +2,12 @@ input GetFarmsByUserInput {
   user_id: String
 }
 
+input DeleteFarmsInput {
+  userType: UserType!
+  farm_id: String
+  user_id: String
+}
+
 input CreateFarmInput {
   farm_id: String!
   farm_name: String!

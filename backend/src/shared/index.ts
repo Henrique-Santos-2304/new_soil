@@ -4,3 +4,6 @@
     ficaram aqui.
     Ex: Exceptions, utilitários...
 */
+
+export * from './errors';
+export * from './usecases';

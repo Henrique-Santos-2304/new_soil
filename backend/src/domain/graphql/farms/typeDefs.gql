@@ -10,6 +10,11 @@ type ResponseFindFarmsByUser {
   farms: [Farm]
 }
 
+type ResponseDeleteFarms {
+  status: String!
+  error: String
+}
+
 type Farm {
   farm_id: String!
   farm_name: String!

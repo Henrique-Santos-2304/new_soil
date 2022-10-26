@@ -20,19 +20,26 @@
 
 */
 
-interface IDeleteFarmService {
+import { UserType } from '@root/domain/models';
+
+interface IDeleteFarmController {
   delFarm({
+    userType,
     user_id,
     farm_id,
-  }: IDeleteFarmService.Params): IDeleteFarmService.Response;
+  }: IDeleteFarmController.Params): IDeleteFarmController.Response;
 }
 
-namespace IDeleteFarmService {
-  export type Params = { user_id?: string; farm_id?: string };
+namespace IDeleteFarmController {
+  export type Params = {
+    userType: UserType;
+    user_id?: string;
+    farm_id?: string;
+  };
   export type Response = Promise<{
     status: string;
     error?: string;
   }>;
 }
 
-export { IDeleteFarmService };
+export { IDeleteFarmController };

@@ -1,3 +1,4 @@
 type Mutation {
   createFarm(data: CreateFarmInput): ResponseCreateFarm
+  delFarm(data: DeleteFarmsInput): ResponseDeleteFarms
 }

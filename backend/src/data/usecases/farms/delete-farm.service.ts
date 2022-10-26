@@ -1,13 +1,14 @@
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import {
   IDeleteFarmRepo,
   IDeleteFarmService,
   IFindFarmsRepo,
   IFindUserRepo,
   UserType,
-} from '@root/domain';
+} from '@contracts/index';
 import { NotFoundError } from '@root/shared/errors';
 
+@Injectable()
 class DeleteFarmService implements IDeleteFarmService {
   constructor(
     @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
