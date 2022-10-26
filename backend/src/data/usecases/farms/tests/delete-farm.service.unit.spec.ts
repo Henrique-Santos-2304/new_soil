@@ -85,6 +85,15 @@ describe('Get All Farms By User Service Unit', () => {
     await expect(response).rejects.toThrow(new UnauthorizedException());
   });
 
+  it('should be service throw unauthorized with userType ADMIN ', async () => {
+    const response = service.start({
+      userType: 'MASTER',
+    });
+    await expect(response).rejects.toThrow(
+      new Error('user_id and farm_id not available, please set one form query'),
+    );
+  });
+
   // Test del by user
   it('should be findUserRepo.by_id to have been called with data valid', async () => {
     const spy = jest.spyOn(findUserRepo, 'by_id');

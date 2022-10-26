@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { CreateFarmResolver } from '@resolvers/index';
+import { CreateFarmResolver, DeleteFarmResolver } from '@resolvers/index';
 import { GetFarmsResolver } from '@root/presentation/resolvers/farms/find-farm-by-user-controller.resolver';
 
 const createFarmControllerProvider: Provider = {
@@ -12,4 +12,13 @@ const findFarmControllerProvider: Provider = {
   useClass: GetFarmsResolver,
 };
 
-export { createFarmControllerProvider, findFarmControllerProvider };
+const deleteFarmControllerProvider: Provider = {
+  provide: 'IDeleteFarmController',
+  useClass: DeleteFarmResolver,
+};
+
+export {
+  createFarmControllerProvider,
+  findFarmControllerProvider,
+  deleteFarmControllerProvider,
+};

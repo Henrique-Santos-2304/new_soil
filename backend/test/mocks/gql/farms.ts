@@ -31,3 +31,12 @@ export const queryFindFarmsByUser = gql`
     }
   }
 `;
+
+export const mutationDelFarm = gql`
+  mutation DEL_FARM($data: DeleteFarmsInput!) {
+    delFarm(data: $data) {
+      status
+      error
+    }
+  }
+`;

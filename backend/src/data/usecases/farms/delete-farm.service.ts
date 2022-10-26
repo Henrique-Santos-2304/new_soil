@@ -48,6 +48,12 @@ class DeleteFarmService implements IDeleteFarmService {
   }: IDeleteFarmService.Params): IDeleteFarmService.Response {
     await this.checkAuthorizeForDeleteFarm(userType);
 
+    if (!user_id && !farm_id) {
+      throw new Error(
+        'user_id and farm_id not available, please set one form query',
+      );
+    }
+
     if (user_id) {
       await this.checkUserExist(user_id);
       await this.delFarmByUser(user_id);

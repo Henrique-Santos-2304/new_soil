@@ -1,6 +1,6 @@
 import { Provider } from '@nestjs/common';
 import { GetFarmsByUser } from '@root/data/usecases/farms/find-farms-by-user.service';
-import { CreateFarmService } from '@usecases/index';
+import { CreateFarmService, DeleteFarmService } from '@usecases/index';
 
 const createFarmsServiceProvider: Provider = {
   provide: 'ICreateFarmService',
@@ -12,4 +12,13 @@ const findFarmByUserServiceProvider: Provider = {
   useClass: GetFarmsByUser,
 };
 
-export { createFarmsServiceProvider, findFarmByUserServiceProvider };
+const deleteFarmServiceProvider: Provider = {
+  provide: 'IDeleteFarmService',
+  useClass: DeleteFarmService,
+};
+
+export {
+  createFarmsServiceProvider,
+  findFarmByUserServiceProvider,
+  deleteFarmServiceProvider,
+};
