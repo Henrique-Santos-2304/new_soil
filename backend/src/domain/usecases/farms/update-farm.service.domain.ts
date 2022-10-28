@@ -1,4 +1,4 @@
-import { CreateFarmDTO } from '@contracts/index';
+import { CreateFarmDTO, UpdateFarmDTO } from '@contracts/index';
 import { UserRequestAuth } from '@root/domain/utils/user-request';
 
 /*
@@ -59,7 +59,11 @@ interface IUpdateFarmService {
 }
 
 namespace IUpdateFarmService {
-  export type Params = { user: UserRequestAuth; newFarm: CreateFarmDTO };
+  export type Params = {
+    user: UserRequestAuth;
+    farm_id: CreateFarmDTO['farm_id'];
+    newFarm: UpdateFarmDTO;
+  };
   export type Response = Promise<{ farm_id: string }>;
 }
 

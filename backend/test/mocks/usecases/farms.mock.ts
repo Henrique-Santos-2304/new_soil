@@ -20,8 +20,12 @@ const createFarmMockStub: CreateFarmDTO = {
   farm_name: 'soil_farm_test',
 };
 
-const updateFarmMock = { ...createFarmMocked, farm_name: 'mock' };
+const { admins, dealers, updated_by, users, created_by, owner_id, ...rest } =
+  createFarmMocked;
+
+const updateFarmMock = { ...rest, farm_name: 'mock' };
 const serviceUpdateFarmMock: IUpdateFarmService.Params = {
+  farm_id: 'test',
   user: {
     user_id: 'id',
     userType: 'MASTER',

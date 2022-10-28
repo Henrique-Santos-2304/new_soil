@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IUpdateFarmRepo } from '@contracts/index';
 import { PrismaService } from '@db/config_acess_db';
 import { DatabaseError, QueryError } from '@utils/errors';
-import { createFarmMocked } from '@testRoot/mocks';
+import { createFarmMocked, updateFarmMock } from '@testRoot/mocks';
 import { UpdateFarmRepo } from '../update-farm.repo';
 
 describe('Update Farm Repo Unit', () => {
@@ -35,43 +35,67 @@ describe('Update Farm Repo Unit', () => {
 
   it('should repo.create to have been called with data válids', async () => {
     const spy = jest.spyOn(repo, 'put');
-    await repo.put({ ...createFarmMocked, farm_name: 'att_farm' });
+    await repo.put({
+      ...updateFarmMock,
+      farm_name: 'att_farm',
+      updated_by: 'id',
+    });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
-      ...createFarmMocked,
+      ...updateFarmMock,
       farm_name: 'att_farm',
+      updated_by: 'id',
     });
   });
 
   it('should prisma.user.update to have been called with data válids', async () => {
-    await repo.put({ ...createFarmMocked, farm_name: 'att_farm' });
+    await repo.put({
+      ...updateFarmMock,
+      farm_name: 'att_farm',
+      updated_by: 'id',
+    });
 
     expect(prisma.farm.update).toHaveBeenCalled();
     expect(prisma.farm.update).toHaveBeenCalledTimes(1);
     expect(prisma.farm.update).toHaveBeenCalledWith({
-      data: { ...createFarmMocked, farm_name: 'att_farm' },
+      data: {
+        ...updateFarmMock,
+        farm_name: 'att_farm',
+        updated_by: 'id',
+      },
       where: { farm_id: createFarmMocked.farm_id },
       select: { farm_id: true },
     });
   });
 
   it('should to return a farm Created with action not ocurred an error', async () => {
-    const value = await repo.put(createFarmMocked);
+    const value = await repo.put({
+      ...updateFarmMock,
+      updated_by: 'id',
+    });
 
     expect(value).toHaveProperty('farm_id');
   });
 
   it('should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new Error());
-    const value = repo.put({ ...createFarmMocked, farm_name: 'att_farm' });
+    const value = repo.put({
+      ...updateFarmMock,
+      farm_name: 'att_farm',
+      updated_by: 'id',
+    });
     await expect(value).rejects.toThrow(new QueryError());
   });
 
   it('should log an erro when database return error', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
-    const response = repo.put({ ...createFarmMocked, farm_name: 'att_farm' });
+    const response = repo.put({
+      ...updateFarmMock,
+      farm_name: 'att_farm',
+      updated_by: 'id',
+    });
 
     // method log
     await expect(response).rejects.toThrow();
