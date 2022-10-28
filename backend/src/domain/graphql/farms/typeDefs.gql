@@ -15,6 +15,12 @@ type ResponseDeleteFarms {
   error: String
 }
 
+type ResponseUpdateFarm {
+  status: String!
+  error: String
+  farm_id: String
+}
+
 type Farm {
   farm_id: String!
   farm_name: String!

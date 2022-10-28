@@ -8,6 +8,25 @@ input DeleteFarmsInput {
   user_id: String
 }
 
+input UpdateFarmUserData {
+  user_id: String!
+  userType: UserType!
+}
+
+input UpdateFarmDTO {
+  farm_id: String!
+  farm_name: String!
+  farm_city: String!
+  farm_lat: Float!
+  farm_lng: Float!
+}
+
+input RequestUpdateFarmInput {
+  user: UpdateFarmUserData!
+  farm_id: String!
+  newFarm: UpdateFarmDTO!
+}
+
 input CreateFarmInput {
   farm_id: String!
   farm_name: String!
