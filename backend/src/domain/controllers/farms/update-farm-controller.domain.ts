@@ -67,7 +67,7 @@ namespace IUpdateFarmController {
     farm_id: CreateFarmDTO['farm_id'];
     newFarm: UpdateFarmDTO;
   };
-  export type Response = Promise<ResponseWithoutData & { farm_id: string }>;
+  export type Response = Promise<ResponseWithoutData & { farm_id?: string }>;
 }
 
 export { IUpdateFarmController };
