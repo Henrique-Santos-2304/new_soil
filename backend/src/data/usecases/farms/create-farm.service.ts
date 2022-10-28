@@ -53,7 +53,7 @@ class CreateFarmService implements ICreateFarmService {
     return userExists;
   }
 
-  verifyUserToHaveAcessForCreateFarm(userType: string): void {
+  async verifyUserToHaveAcessForCreateFarm(userType: string): Promise<void> {
     if (userType !== 'MASTER' && userType !== 'DEALER') {
       throw new UnauthorizedException();
     }
@@ -66,7 +66,7 @@ class CreateFarmService implements ICreateFarmService {
     return createdUser;
   }
 
-  async start(farm: CreateFarmDTO): ICreateFarmService.Response {
+  async start(farm: ICreateFarmService.Params): ICreateFarmService.Response {
     await this.checkFarmAlreadyExistsInDb(farm.farm_id);
     await this.checkUserExistsInDb(farm.owner_id, 'OWNER');
     await this.verifyDealersAdminUsersExists(
@@ -79,7 +79,7 @@ class CreateFarmService implements ICreateFarmService {
       'CREATOR',
     );
 
-    this.verifyUserToHaveAcessForCreateFarm(userType);
+    await this.verifyUserToHaveAcessForCreateFarm(userType);
     const { farm_id } = await this.createNewFarmInDb(farm);
     return { status: 'Sucess', farm_id };
   }

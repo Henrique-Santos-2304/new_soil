@@ -1,5 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
-import { CreateUserDto } from '@root/domain/models';
+import { CreateUserDto, ResponseWithoutData } from '@contracts/index';
 /* Autenticação de usuario via login
   *****************************************************************
     @Params: {
@@ -34,11 +34,11 @@ namespace IAuthUserController {
   export type Params = Omit<CreateUserDto, 'userType'>;
   export type Context = ExecutionContext | any;
 
-  export type Response = Promise<{
-    status: string;
-    token?: string;
-    error?: string;
-  }>;
+  export type Response = Promise<
+    ResponseWithoutData & {
+      token?: string;
+    }
+  >;
 }
 
 export { IAuthUserController };

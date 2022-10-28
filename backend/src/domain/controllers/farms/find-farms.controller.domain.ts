@@ -22,7 +22,7 @@
   ******************************************************************
     */
 
-import { FarmModel } from '@root/domain';
+import { FarmModel, ResponseWithoutData } from '@contracts/index';
 
 interface IGetFarmsController {
   getFarmByUser({
@@ -32,11 +32,11 @@ interface IGetFarmsController {
 
 namespace IGetFarmsController {
   export type Params = { user_id: string };
-  export type Response = Promise<{
-    status: string;
-    error?: string;
-    farms?: FarmModel[];
-  }>;
+  export type Response = Promise<
+    ResponseWithoutData & {
+      farms?: FarmModel[];
+    }
+  >;
 }
 
 export { IGetFarmsController };

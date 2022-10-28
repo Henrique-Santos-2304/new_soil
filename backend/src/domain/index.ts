@@ -9,3 +9,4 @@ export * from './usecases';
 export * from './repositories';
 export * from './validators';
 export * from './controllers';
+export * from './utils';

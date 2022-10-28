@@ -33,7 +33,7 @@
   ******************************************************************
   */
 
-import { CreateFarmDTO } from '@root/domain';
+import { CreateFarmDTO, ResponseWithoutData } from '@contracts/index';
 
 interface ICreateFarmController {
   createFarm(
@@ -43,11 +43,11 @@ interface ICreateFarmController {
 
 namespace ICreateFarmController {
   export type Params = CreateFarmDTO;
-  export type Response = Promise<{
-    status: string;
-    error?: string;
-    farm_id?: string;
-  }>;
+  export type Response = Promise<
+    ResponseWithoutData & {
+      farm_id?: string;
+    }
+  >;
 }
 
 export { ICreateFarmController };

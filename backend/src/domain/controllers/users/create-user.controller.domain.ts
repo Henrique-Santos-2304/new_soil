@@ -26,7 +26,7 @@
         USER: Acesso Moderado as sua respectiva fazendas 
     */
 
-import { CreateUserDto } from '@root/domain';
+import { CreateUserDto, ResponseWithoutData } from '@contracts/index';
 
 interface ICreateUserController {
   createUser(
@@ -36,7 +36,7 @@ interface ICreateUserController {
 
 namespace ICreateUserController {
   export type Params = CreateUserDto & { internal_password: string };
-  export type Response = Promise<{ status: string; error?: string }>;
+  export type Response = Promise<ResponseWithoutData>;
 }
 
 export { ICreateUserController };

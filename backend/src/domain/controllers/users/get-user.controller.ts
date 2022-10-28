@@ -22,18 +22,18 @@
   ******************************************************************
     */
 
-import { UserModel } from '@root/domain';
+import { ResponseWithoutData, UserModel } from '@contracts/index';
 
 interface IGetUserController {
   getUsers(): IGetAllUserController.Response;
 }
 
 namespace IGetAllUserController {
-  export type Response = Promise<{
-    status: string;
-    error?: string;
-    users?: Omit<UserModel, 'password'>[];
-  }>;
+  export type Response = Promise<
+    ResponseWithoutData & {
+      users?: Omit<UserModel, 'password'>[];
+    }
+  >;
 }
 
 export { IGetUserController, IGetAllUserController };

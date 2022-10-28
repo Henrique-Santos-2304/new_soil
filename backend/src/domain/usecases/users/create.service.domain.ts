@@ -1,4 +1,4 @@
-import { CreateUserDto } from '@contracts/index';
+import { CreateUserDto, ResponseWithoutData } from '@contracts/index';
 
 /*
   Serviço para lógica de fluxo para criação de um novo Usuario
@@ -42,7 +42,7 @@ interface ICreateUserService {
 
 namespace ICreateUserService {
   export type Params = CreateUserDto & { internal_password: string };
-  export type Response = Promise<{ status: 'Sucess' }>;
+  export type Response = Promise<ResponseWithoutData>;
 }
 
 export { ICreateUserService };

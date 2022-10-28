@@ -1,4 +1,4 @@
-import { AuthUserDto } from '@contracts/index';
+import { AuthUserDto, ResponseWithoutData } from '@contracts/index';
 
 /*
   Serviço para lógica de fluxo para Autenticação de Usuario
@@ -46,7 +46,7 @@ interface IAuthUserService {
 
 namespace IAuthUserService {
   export type Params = AuthUserDto;
-  export type Response = Promise<{ status: string; token: string }>;
+  export type Response = Promise<ResponseWithoutData & { token: string }>;
 }
 
 export { IAuthUserService };

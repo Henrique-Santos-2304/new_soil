@@ -10,13 +10,13 @@ import { CreateFarmDTO, ResponseWithoutData } from '@contracts/index';
       farm_city: string;
       farm_lat: number;
       farm_lng: number;
-      owner_id: string  *** Usuario dono da fazenda ***
+      owner: string  *** Usuario dono da fazenda ***
 
       created_by: string  *** Usuario criador da fazenda ***
       updated_by: string *** Ultimo usuario a atualizar a fazenda ***
-      admins_id: string[];
-      dealer_id?: string;
-      user_id?: string[];
+      admins: string[];
+      users?: string[];
+      dealers: string[]
     }
     
   *****************************************************************
@@ -29,38 +29,37 @@ import { CreateFarmDTO, ResponseWithoutData } from '@contracts/index';
   ****************************************************************
   Fluxo de Trabalho:
 
-  1 - Conectar com IFindUserRepo e verificar se o usuario criador existe,
+  1 - Conectar com IFindFarmRepo e verificar se a fazenda existe,
       
-      1 - Se não existir levanta erro "User Does not found"
+      1 - Se não existir levanta erro "Farm Does not found"
       2 - Se Existir segue o fluxo 
 
-  2 - Verificar se UserType, para liberar criação da fazenda
-      1 - Se for Master libera a criação da fazenda
-      2 - Se for Dealer emitir uma mensagem ao usúario Master,
-          liberando a criação da fazenda no sistema. 
-          **** 
-            Verificar e pensar melhor forma de implementar essa autorização
-          ***
+  2 - Verificar se UserType, para liberar atualização da fazenda
+      1 - Se for Master ou revendedor libera a atualização da fazenda
       3 - Se não retornar Unauthorized
 
-  3 - Conecta com findFarmRepo e verifica se a fazenda a ser criada já existe
-      1 - Se existir levanta erro "Farm Already Exists"
+  3- Verificar os tipo de dados recebidos são diferentes dos existentes na tabela
+      - se for igual finaliza a request com erro "New data is equal to a old data"
+
+  3 - Se na atualização vier novo usuario ou for atualizado o dono,
+      Conectar com IFindUserRepo para verificar se usuario existe
+      1 - Se não existir levantar error User Does Not Found
       2 - Se não segue o fluxo
       
-  4 - Conecta com ICreateFarmRepo com a função de salvar essa nova fazenda
+  4 - Conecta com IUpdateFarmRepo com a função de atualizar essa fazenda
       no banco de dados 
 
   5 - Retorna uma das opções mostradas acima no @Response de acordo 
       com o resultado do fluxo de serviço
 */
 
-interface ICreateFarmService {
-  start(farm: ICreateFarmService.Params): ICreateFarmService.Response;
+interface IUpdateFarmController {
+  putFarm(farm: IUpdateFarmController.Params): IUpdateFarmController.Response;
 }
 
-namespace ICreateFarmService {
+namespace IUpdateFarmController {
   export type Params = CreateFarmDTO;
   export type Response = Promise<ResponseWithoutData & { farm_id: string }>;
 }
 
-export { ICreateFarmService };
+export { IUpdateFarmController };

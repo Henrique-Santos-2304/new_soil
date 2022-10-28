@@ -1,4 +1,4 @@
-import { AuthorizeModel } from '@root/domain/models';
+import { AuthorizeModel } from '@contracts/index';
 
 /*
   Serviço para lógica de fluxo para buscar todas os pedidos authirzação para criar novos dados

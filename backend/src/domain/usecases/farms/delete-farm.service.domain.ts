@@ -20,7 +20,7 @@
 
 */
 
-import { UserType } from '@root/domain/models';
+import { UserType } from '@contracts/index';
 
 interface IDeleteFarmService {
   start({

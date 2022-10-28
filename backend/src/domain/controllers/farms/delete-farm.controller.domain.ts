@@ -20,7 +20,7 @@
 
 */
 
-import { UserType } from '@root/domain/models';
+import { UserType, ResponseWithoutData } from '@contracts/index';
 
 interface IDeleteFarmController {
   delFarm({
@@ -36,10 +36,7 @@ namespace IDeleteFarmController {
     user_id?: string;
     farm_id?: string;
   };
-  export type Response = Promise<{
-    status: string;
-    error?: string;
-  }>;
+  export type Response = Promise<ResponseWithoutData>;
 }
 
 export { IDeleteFarmController };

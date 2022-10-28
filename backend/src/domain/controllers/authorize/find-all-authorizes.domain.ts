@@ -22,18 +22,18 @@
   ******************************************************************
     */
 
-import { AuthorizeModel } from '@root/domain/models';
+import { AuthorizeModel, ResponseWithoutData } from '@contracts/index';
 
 interface IGetAuthorizationsController {
   getAuthorizations(): IGetAuthorizationsController.Response;
 }
 
 namespace IGetAuthorizationsController {
-  export type Response = Promise<{
-    status: string;
-    error?: string;
-    authorizations?: AuthorizeModel[];
-  }>;
+  export type Response = Promise<
+    ResponseWithoutData & {
+      authorizations?: AuthorizeModel[];
+    }
+  >;
 }
 
 export { IGetAuthorizationsController };
