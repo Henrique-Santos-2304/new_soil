@@ -1,4 +1,4 @@
-import { CreateFarmDTO } from '@root/domain';
+import { CreateFarmDTO, IUpdateFarmService } from '@root/domain';
 
 const createFarmMocked: CreateFarmDTO = {
   farm_id: 'soil_farm',
@@ -20,4 +20,18 @@ const createFarmMockStub: CreateFarmDTO = {
   farm_name: 'soil_farm_test',
 };
 
-export { createFarmMocked, createFarmMockStub };
+const updateFarmMock = { ...createFarmMocked, farm_name: 'mock' };
+const serviceUpdateFarmMock: IUpdateFarmService.Params = {
+  user: {
+    user_id: 'id',
+    userType: 'MASTER',
+  },
+  newFarm: updateFarmMock,
+};
+
+export {
+  createFarmMocked,
+  createFarmMockStub,
+  updateFarmMock,
+  serviceUpdateFarmMock,
+};

@@ -1,4 +1,5 @@
 import { CreateFarmDTO, ResponseWithoutData } from '@contracts/index';
+import { UserRequestAuth } from '@root/domain/utils/user-request';
 
 /*
   Serviço para lógica de fluxo para criação de um novo Fazenda
@@ -52,13 +53,12 @@ import { CreateFarmDTO, ResponseWithoutData } from '@contracts/index';
   5 - Retorna uma das opções mostradas acima no @Response de acordo 
       com o resultado do fluxo de serviço
 */
-
 interface IUpdateFarmController {
   putFarm(farm: IUpdateFarmController.Params): IUpdateFarmController.Response;
 }
 
 namespace IUpdateFarmController {
-  export type Params = CreateFarmDTO;
+  export type Params = { user: UserRequestAuth; newFarm: CreateFarmDTO };
   export type Response = Promise<ResponseWithoutData & { farm_id: string }>;
 }
 

@@ -1,4 +1,5 @@
 import { CreateFarmDTO } from '@contracts/index';
+import { UserRequestAuth } from '@root/domain/utils/user-request';
 
 /*
   Serviço para lógica de fluxo para criação de um novo Fazenda
@@ -58,7 +59,7 @@ interface IUpdateFarmService {
 }
 
 namespace IUpdateFarmService {
-  export type Params = CreateFarmDTO;
+  export type Params = { user: UserRequestAuth; newFarm: CreateFarmDTO };
   export type Response = Promise<{ farm_id: string }>;
 }
 
