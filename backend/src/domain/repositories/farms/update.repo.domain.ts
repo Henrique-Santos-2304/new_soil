@@ -30,7 +30,7 @@ import { CreateFarmDTO, FarmModel } from '@root/domain/models';
 */
 
 interface IUpdateFarmRepo {
-  update(farm: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response;
+  put(farm: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response;
 }
 
 namespace IUpdateFarmRepo {
