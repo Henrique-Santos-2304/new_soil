@@ -11,5 +11,3 @@ services:
       - ./.env
     volumes:
       - ../../db/scripts:/docker-entrypoint-initdb.d
-    extra_hosts:
-      - 'host.docker.internal:172.17.0.1'

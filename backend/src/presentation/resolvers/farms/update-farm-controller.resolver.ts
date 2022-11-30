@@ -1,7 +1,7 @@
 import { IUpdateFarmController, IUpdateFarmService } from '@contracts/index';
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { logFinishRequestUpdate, logInitRequest } from '@root/shared';
+import { logFinishRequestUpdate, logInitRequest } from '@utils/index';
 
 @Resolver()
 class UpdateFarmResolver implements IUpdateFarmController {

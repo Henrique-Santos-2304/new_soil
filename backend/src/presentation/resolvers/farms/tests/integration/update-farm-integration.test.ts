@@ -1,6 +1,6 @@
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import request from 'supertest-graphql';
-import { mutationCreateFarm } from '@testRoot/mocks/gql/farms';
+import { mutationUpdateFarm } from '@testRoot/mocks/gql/farms';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import {
   ICreateFarmController,
@@ -16,6 +16,7 @@ import {
   createFarmMocked,
   getUserAdminId,
   getUserMasterId,
+  updateFarmMock,
 } from '@testRoot/mocks';
 import { AlreadyExistsError, NotFoundError } from '@root/shared/errors';
 
@@ -47,100 +48,196 @@ describe('Update Farm Integration', () => {
     expect(findFarmRepo).toBeDefined();
   });
 
-  // it('should be graphql type errors if received farm_id type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, farm_id: 33 } });
+  it('should be graphql type errors if received farm_id type inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 33,
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: updateFarmMock,
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty('message');
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.farm_id"; String cannot represent a non string value: 33',
+    );
+  });
 
-  // it('should be graphql type errors if received farm_name type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, farm_name: 33 } });
+  it('should be graphql type errors if received user_id type inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 33,
+            userType: 'MASTER',
+          },
+          newFarm: updateFarmMock,
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value 33 at "createFarm.farm_name"; String cannot represent a non string value: 33',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.user.user_id"; String cannot represent a non string value: 33',
+    );
+  });
 
-  // it('should be graphql type errors if received farm_city type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, farm_city: 33 } });
+  it('should be graphql type errors if received user_typetype inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 33,
+          },
+          newFarm: updateFarmMock,
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty('message');
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.user.userType"; Enum "UserType" cannot represent non-string value: 33.',
+    );
+  });
 
-  // it('should be graphql type errors if received farm_lat type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, farm_lat: 'string' } });
+  it('should be graphql type errors if received farm_name inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: { ...updateFarmMock, farm_name: 33 },
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value "string" at "createFarm.farm_lat"; Float cannot represent non numeric value: "string"',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.newFarm.farm_name"; String cannot represent a non string value: 33',
+    );
+  });
 
-  // it('should be graphql type errors if received farm_lng type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, farm_lng: 'string' } });
+  it('should be graphql type errors if received new farm_id inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: { ...updateFarmMock, farm_id: 33 },
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value "string" at "createFarm.farm_lng"; Float cannot represent non numeric value: "string"',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.newFarm.farm_id"; String cannot represent a non string value: 33',
+    );
+  });
 
-  // it('should be graphql type errors if received owner_id type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, owner_id: 33 } });
+  it('should be graphql type errors if received farm_city inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: { ...updateFarmMock, farm_city: 33 },
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value 33 at "createFarm.owner_id"; String cannot represent a non string value: 33',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value 33 at "putFarm.newFarm.farm_city"; String cannot represent a non string value: 33',
+    );
+  });
 
-  // it('should be graphql type errors  if received created_by type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({ createFarm: { ...createFarmMocked, created_by: 33 } });
+  it('should be graphql type errors if received farm_lat inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: { ...updateFarmMock, farm_lat: '33' },
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value 33 at "createFarm.created_by"; String cannot represent a non string value: 33',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value "33" at "putFarm.newFarm.farm_lat"; Float cannot represent non numeric value: "33"',
+    );
+  });
 
-  // it('should be graphql type errors  if received admins type inválid', async () => {
-  //   const { errors } = await request(app.getHttpServer())
-  //     .set('authorization', `Bearer ${token}`)
-  //     .mutate(mutationCreateFarm)
-  //     .variables({
-  //       createFarm: {
-  //         ...createFarmMocked,
-  //         admins: [33, 66],
-  //       },
-  //     });
+  it('should be graphql type errors if received farm_lng inválid', async () => {
+    const { errors } = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: { ...updateFarmMock, farm_lng: '33' },
+        },
+      });
 
-  //   expect(errors[0]).toHaveProperty(
-  //     'message',
-  //     'Variable "$createFarm" got invalid value 33 at "createFarm.admins[0]"; String cannot represent a non string value: 33',
-  //   );
-  // });
+    expect(errors[0]).toHaveProperty(
+      'message',
+      'Variable "$putFarm" got invalid value "33" at "putFarm.newFarm.farm_lng"; Float cannot represent non numeric value: "33"',
+    );
+  });
+
+  it('should be return an error if farm_id not exist in db', async () => {
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: 'id',
+          user: {
+            user_id: 'id',
+            userType: 'MASTER',
+          },
+          newFarm: updateFarmMock,
+        },
+      });
+
+    console.log(data);
+    expect(data.putFarm).toHaveProperty('status', 'Fail');
+    expect(data.putFarm).toHaveProperty(
+      'error',
+      new NotFoundError('Farm').message,
+    );
+  });
 
   // it('should be to throw farm already exists', async () => {
   //   await request(app.getHttpServer())
