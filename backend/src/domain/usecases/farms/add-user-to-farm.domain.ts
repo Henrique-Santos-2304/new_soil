@@ -1,4 +1,4 @@
-import { CreateFarmDTO, UserModel } from '@contracts/index';
+import { CreateFarmDTO, CreateUserDto, UserModel } from '@contracts/index';
 
 /*
   Serviço para lógica de fluxo para criação de um novo Fazenda
@@ -36,16 +36,23 @@ import { CreateFarmDTO, UserModel } from '@contracts/index';
 */
 
 interface IAddUserIntoFarmService {
-  start(farm: IAddUserIntoFarmService.Params): IAddUserIntoFarmService.Response;
+  start({
+    farm_id,
+    auth,
+    data,
+  }: IAddUserIntoFarmService.Params): IAddUserIntoFarmService.Response;
 }
 
 namespace IAddUserIntoFarmService {
   export type Params = {
-    user_id: string;
-    userType: UserModel['userType'];
+    auth: {
+      user_id: string;
+      userType: UserModel['userType'];
+    };
     farm_id: CreateFarmDTO['farm_id'];
-    add_user_id: string;
-    table: 'admins' | 'dealers' | 'users';
+    data: {
+      add_user: CreateUserDto;
+    };
   };
 
   export type Response = Promise<{ farm_id: string; user_id: string }>;
