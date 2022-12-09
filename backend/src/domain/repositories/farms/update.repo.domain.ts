@@ -36,6 +36,10 @@ import {
 
 interface IUpdateFarmRepo {
   put(farm: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response;
+  addUser({
+    farm_id,
+    data,
+  }: IUpdateFarmRepo.AddUserParams): IUpdateFarmRepo.AddUserResponse;
 }
 
 namespace IUpdateFarmRepo {
@@ -44,6 +48,16 @@ namespace IUpdateFarmRepo {
     farm: UpdatedFarmDTORepo;
   };
   export type Response = Promise<{ farm_id: FarmModel['farm_id'] }>;
+
+  export type AddUserParams = {
+    farm_id: string;
+    data: {
+      admins?: FarmModel['admins'];
+      users?: FarmModel['users'];
+      dealers?: FarmModel['dealers'];
+    };
+  };
+  export type AddUserResponse = Promise<{ farm_id: FarmModel['farm_id'] }>;
 }
 
 export { IUpdateFarmRepo };

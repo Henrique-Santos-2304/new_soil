@@ -20,6 +20,11 @@ describe('Update Farm Repo Unit', () => {
     },
   };
 
+  const callAddUser = {
+    farm_id: 'id',
+    data: { users: ['user1'] },
+  };
+
   beforeEach(async () => {
     const loggerProvider = {
       provide: Logger,
@@ -42,7 +47,9 @@ describe('Update Farm Repo Unit', () => {
     expect(repo).toBeDefined();
   });
 
-  it('should repo.create to have been called with data válids', async () => {
+  //tests update farm repo
+
+  it('(put farm) should repo.update to have been called with data válids', async () => {
     const spy = jest.spyOn(repo, 'put');
     await repo.put(callUpdated);
 
@@ -51,7 +58,7 @@ describe('Update Farm Repo Unit', () => {
     expect(spy).toHaveBeenCalledWith(callUpdated);
   });
 
-  it('should prisma.user.update to have been called with data válids', async () => {
+  it('(put farm) should prisma.user.update to have been called with data válids', async () => {
     await repo.put(callUpdated);
 
     expect(prisma.farm.update).toHaveBeenCalled();
@@ -63,13 +70,13 @@ describe('Update Farm Repo Unit', () => {
     });
   });
 
-  it('should to return a farm Created with action not ocurred an error', async () => {
+  it('(put farm) should to return a farm Created with action not ocurred an error', async () => {
     const value = await repo.put(callUpdated);
 
     expect(value).toHaveProperty('farm_id');
   });
 
-  it('should to throw "QUERY ERROR" when database return erro', async () => {
+  it('(put farm) should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new Error());
 
     const value = repo.put({
@@ -80,7 +87,7 @@ describe('Update Farm Repo Unit', () => {
     await expect(value).rejects.toThrow(new QueryError());
   });
 
-  it('should log an erro when database return error', async () => {
+  it('(put farm) should log an erro when database return error', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
     const response = repo.put(callUpdated);
@@ -90,6 +97,60 @@ describe('Update Farm Repo Unit', () => {
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith(
       'Erro ao atualizar fazenda no banco de dados...',
+    );
+
+    //method error
+    expect(logger.error).toHaveBeenCalledTimes(1);
+    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+  });
+
+  // tests add user into farm repo
+
+  it('(add user) should repo.update to have been called with data válids', async () => {
+    const spy = jest.spyOn(repo, 'addUser');
+    await repo.addUser(callAddUser);
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(callAddUser);
+  });
+
+  it('(add user) should prisma.user.update to have been called with data válids', async () => {
+    await repo.addUser(callAddUser);
+
+    expect(prisma.farm.update).toHaveBeenCalled();
+    expect(prisma.farm.update).toHaveBeenCalledTimes(1);
+    expect(prisma.farm.update).toHaveBeenCalledWith({
+      data: { ...callAddUser.data },
+      where: { farm_id: callAddUser.farm_id },
+      select: { farm_id: true },
+    });
+  });
+
+  it('(add user) should to return a farm Created with action not ocurred an error', async () => {
+    const value = await repo.addUser(callAddUser);
+
+    expect(value).toHaveProperty('farm_id');
+  });
+
+  it('(add user) should to throw "QUERY ERROR" when database return erro', async () => {
+    prisma.farm.update = jest.fn().mockRejectedValueOnce(new Error());
+
+    const value = repo.addUser(callAddUser);
+
+    await expect(value).rejects.toThrow(new QueryError());
+  });
+
+  it('(add user) should log an erro when database return error', async () => {
+    prisma.farm.update = jest.fn().mockRejectedValueOnce(new DatabaseError());
+
+    const response = repo.addUser(callAddUser);
+
+    // method log
+    await expect(response).rejects.toThrow();
+    expect(logger.log).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith(
+      'Erro ao adicionar novo usuario na fazenda no banco de dados...',
     );
 
     //method error
