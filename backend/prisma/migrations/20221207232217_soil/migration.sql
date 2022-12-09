@@ -48,9 +48,6 @@ CREATE UNIQUE INDEX "farms_farm_id_key" ON "farms"("farm_id");
 CREATE UNIQUE INDEX "farms_farm_name_key" ON "farms"("farm_name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "farms_owner_id_key" ON "farms"("owner_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "authorize_authorize_id_key" ON "authorize"("authorize_id");
 
 -- AddForeignKey

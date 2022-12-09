@@ -71,6 +71,12 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be service to have been called with data valids', async () => {
+    findFarmRepo.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+        owner_id: serviceUpdateFarmMock.user.user_id,
+      })
+      .mockResolvedValueOnce(null);
     const spy = jest.spyOn(service, 'start');
 
     await service.start({ ...serviceUpdateFarmMock });
@@ -82,12 +88,25 @@ describe('Update Farm Service Unit', () => {
   // Test FindFarmRepo
 
   it('should be findFarm.by_id to have been called once time and with data valids', async () => {
+    findFarmRepo.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+        owner_id: serviceUpdateFarmMock.user.user_id,
+      })
+      .mockResolvedValueOnce(null);
+
     const spy = jest.spyOn(findFarmRepo, 'by_id');
 
     await service.start({ ...serviceUpdateFarmMock });
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ farm_id: createFarmMocked.farm_id });
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith({
+      farm_id: serviceUpdateFarmMock.farm_id,
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      farm_id: serviceUpdateFarmMock.newFarm.farm_id,
+    });
   });
 
   it('should be throw "Farm not found" if not exists farm with farm_id received', async () => {
@@ -148,7 +167,11 @@ describe('Update Farm Service Unit', () => {
     const response = service.start({
       ...serviceUpdateFarmMock,
       newFarm: {
-        ...updateFarmMock,
+        farm_id: createFarmMocked.farm_id,
+        farm_name: updateFarmMock.farm_name,
+        farm_city: createFarmMocked.farm_city,
+        farm_lat: createFarmMocked.farm_lat,
+        farm_lng: createFarmMocked.farm_lng,
       },
     });
 
@@ -195,12 +218,48 @@ describe('Update Farm Service Unit', () => {
         farm_id: 'new_farm_id',
       },
     });
-
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
-      ...updateFarmMock,
-      farm_id: 'new_farm_id',
-      updated_by: serviceUpdateFarmMock.user.user_id,
+      farm_id: serviceUpdateFarmMock.farm_id,
+      farm: {
+        farm_id: 'new_farm_id',
+        farm_name: updateFarmMock.farm_name,
+        farm_city: updateFarmMock.farm_city,
+        updated_by: serviceUpdateFarmMock.user.user_id,
+      },
+    });
+  });
+
+  it('should be updateFarmRepo to have been called without farm_id, farm_name and farm_city', async () => {
+    findFarmRepo.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+        owner_id: '',
+        dealers: [serviceUpdateFarmMock.user.user_id],
+      })
+      .mockResolvedValueOnce(null);
+
+    const spy = jest.spyOn(updateFarmRepo, 'put');
+
+    await service.start({
+      ...serviceUpdateFarmMock,
+      user: { ...serviceUpdateFarmMock.user, userType: 'DEALER' },
+      newFarm: {
+        farm_id: createFarmMocked.farm_id,
+        farm_name: createFarmMocked.farm_name,
+        farm_city: createFarmMocked.farm_city,
+        farm_lat: 22.987665,
+        farm_lng: -73.985,
+      },
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      farm_id: serviceUpdateFarmMock.farm_id,
+      farm: {
+        farm_lat: 22.987665,
+        farm_lng: -73.985,
+        updated_by: serviceUpdateFarmMock.user.user_id,
+      },
     });
   });
 

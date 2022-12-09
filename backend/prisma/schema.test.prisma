@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://test:test_pass@localhost:5492/test_db"
+  url      = "postgresql://new_soil:new_soil2021@localhost:5492/new_soildb_test"
 }
 
 enum UserType{
@@ -36,13 +36,13 @@ model Farm {
   farm_lat   Float 
   farm_lng   Float
   owner       User          @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
-  owner_id    String        @unique
+  owner_id    String        
   created_by  String
   updated_by  String?
 
-  admins            String[]   
-  dealers           String[]
-  users             String[]
+  admins            String[]  @default([]) 
+  dealers           String[]  @default([]) 
+  users             String[]  @default([])  
 
   @@map("farms")    
 }

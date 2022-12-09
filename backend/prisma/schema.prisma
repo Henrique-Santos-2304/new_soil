@@ -34,15 +34,14 @@ model Farm {
   farm_city  String
   farm_lat   Float 
   farm_lng   Float
-owner       User          @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  owner       User?          @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
   owner_id    String        
   created_by  String
   updated_by  String?
 
-  admins            String[]   
-  dealers           String[]
-  users             String[]
-
+  admins            String[]  @default([]) 
+  dealers           String[]  @default([]) 
+  users             String[]  @default([]) 
   @@map("farms")    
 }
 

@@ -44,6 +44,10 @@ class IntegrationTestManager {
     return await prismaTest.user.findFirst({ where: { login: 'soil_test' } });
   }
 
+  async getSimpleUserId(): Promise<UserModel> {
+    return await prismaTest.user.findFirst({ where: { login: 'soil_test2' } });
+  }
+
   getToken = () => this.token;
   getApp = () => this.app;
 }

@@ -58,7 +58,7 @@ describe('Get All Users Integration', () => {
 
     expect(data.getUsers).toHaveProperty('status', 'Sucess');
     expect(data.getUsers).toHaveProperty('users');
-    expect(data.getUsers.users).toHaveLength(1);
+    expect(data.getUsers.users).toHaveLength(2);
   });
 
   it('should be return list empty if not exists users', async () => {

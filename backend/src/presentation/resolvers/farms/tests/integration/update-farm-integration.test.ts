@@ -1,35 +1,32 @@
-import { INestApplication, UnauthorizedException } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest-graphql';
 import { mutationUpdateFarm } from '@testRoot/mocks/gql/farms';
-import { integrationTestManager, prismaTest } from '@testRoot/setup';
+import { integrationTestManager } from '@testRoot/setup';
 import {
-  ICreateFarmController,
-  ICreateFarmRepo,
-  ICreateFarmService,
   IFindFarmsRepo,
-  IFindUserRepo,
   IUpdateFarmController,
   IUpdateFarmRepo,
   IUpdateFarmService,
 } from '@contracts/index';
 import {
-  createFarmMocked,
-  getUserAdminId,
-  getUserMasterId,
+  createFarmMocked2,
+  createFarmMocked3,
   updateFarmMock,
 } from '@testRoot/mocks';
-import { AlreadyExistsError, NotFoundError } from '@root/shared/errors';
+import { NotFoundError } from '@root/shared/errors';
 
 describe('Update Farm Integration', () => {
   let app: INestApplication;
   let token: string;
   let user_id: string;
+  let simple_user_id: string;
 
   beforeAll(async () => {
     app = integrationTestManager.getApp();
     token = (await integrationTestManager.authUser()).token;
 
     user_id = (await integrationTestManager.getUserId()).user_id;
+    simple_user_id = (await integrationTestManager.getSimpleUserId()).user_id;
   });
 
   it('should be defined this respective providers of service', async () => {
@@ -231,12 +228,133 @@ describe('Update Farm Integration', () => {
         },
       });
 
-    console.log(data);
     expect(data.putFarm).toHaveProperty('status', 'Fail');
     expect(data.putFarm).toHaveProperty(
       'error',
       new NotFoundError('Farm').message,
     );
+  });
+
+  it('should be return an error if user_type is not Master, owner or dealer of farm', async () => {
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: createFarmMocked2.farm_id,
+          user: {
+            user_id: simple_user_id,
+            userType: 'USER',
+          },
+          newFarm: { ...updateFarmMock },
+        },
+      });
+
+    expect(data.putFarm).toHaveProperty('status', 'Fail');
+    expect(data.putFarm).toHaveProperty('error', 'Unauthorized');
+  });
+
+  it('should be return an error if user_id it is colummn users of farm', async () => {
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id: createFarmMocked3.farm_id,
+          user: {
+            user_id: simple_user_id,
+            userType: 'USER',
+          },
+          newFarm: { ...updateFarmMock },
+        },
+      });
+
+    expect(data.putFarm).toHaveProperty('status', 'Fail');
+    expect(data.putFarm).toHaveProperty('error', 'Unauthorized');
+  });
+
+  it('should be return an error if data of att is equal an old data of db', async () => {
+    const { farm_id, farm_name, farm_city, farm_lat, farm_lng } =
+      createFarmMocked3;
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id,
+          user: {
+            user_id,
+            userType: 'MASTER',
+          },
+          newFarm: {
+            farm_id,
+            farm_name,
+            farm_city,
+            farm_lat,
+            farm_lng,
+          },
+        },
+      });
+
+    expect(data.putFarm).toHaveProperty('status', 'Fail');
+    expect(data.putFarm).toHaveProperty(
+      'error',
+      'Farm Ambiguous Data, The data received is equal a Farm data of db',
+    );
+  });
+
+  it('should be return an error if new farm_id alread exists in db', async () => {
+    const { farm_id, farm_name, farm_city, farm_lat, farm_lng } =
+      createFarmMocked3;
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id,
+          user: {
+            user_id,
+            userType: 'MASTER',
+          },
+          newFarm: {
+            farm_id: createFarmMocked2.farm_id,
+            farm_name,
+            farm_city,
+            farm_lat,
+            farm_lng,
+          },
+        },
+      });
+
+    expect(data.putFarm).toHaveProperty('status', 'Fail');
+    expect(data.putFarm).toHaveProperty('error', 'Farm Already Exists');
+  });
+
+  it('should be return Sucess if all data válids', async () => {
+    const { farm_id, farm_name, farm_city, farm_lat, farm_lng } =
+      createFarmMocked3;
+    const { data }: any = await request(app.getHttpServer())
+      .set('authorization', `Bearer ${token}`)
+      .mutate(mutationUpdateFarm)
+      .variables({
+        putFarm: {
+          farm_id,
+          user: {
+            user_id,
+            userType: 'MASTER',
+          },
+          newFarm: {
+            farm_id: 'new_id_att',
+            farm_name,
+            farm_city,
+            farm_lat,
+            farm_lng,
+          },
+        },
+      });
+
+    console.log(data);
+    expect(data.putFarm).toHaveProperty('status', 'Sucess');
   });
 
   // it('should be to throw farm already exists', async () => {

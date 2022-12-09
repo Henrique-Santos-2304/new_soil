@@ -99,7 +99,7 @@ describe('Get All Users Integration', () => {
       .variables({ dataId: { user_id } });
 
     expect(data.getFarmByUser).toHaveProperty('status', 'Sucess');
-    expect(data.getFarmByUser.farms).toHaveLength(1);
+    expect(data.getFarmByUser.farms).toHaveLength(3);
   });
   it('should be return farms of user dealer', async () => {
     const newUser = await prismaTest.user.create({

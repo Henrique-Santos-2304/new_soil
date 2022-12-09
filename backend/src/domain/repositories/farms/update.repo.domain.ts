@@ -1,4 +1,9 @@
-import { CreateFarmDTO, FarmModel, UpdateFarmDTO } from '@root/domain/models';
+import {
+  CreateFarmDTO,
+  FarmModel,
+  UpdatedFarmDTORepo,
+  UpdateFarmDTO,
+} from '@root/domain/models';
 
 /*
   Repositório para acesso ao banco de dados, com a função de criar novo usuario
@@ -34,7 +39,10 @@ interface IUpdateFarmRepo {
 }
 
 namespace IUpdateFarmRepo {
-  export type Params = UpdateFarmDTO & { updated_by: FarmModel['updated_by'] };
+  export type Params = {
+    farm_id: string;
+    farm: UpdatedFarmDTORepo;
+  };
   export type Response = Promise<{ farm_id: FarmModel['farm_id'] }>;
 }
 

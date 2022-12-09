@@ -2,7 +2,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prismaTest = new PrismaClient({
   datasources: {
-    db: { url: 'postgresql://test:test_pass@localhost:5492/test_db' },
+    db: {
+      url: 'postgresql://new_soil:new_soil2021@localhost:5492/new_soildb_test',
+    },
   },
 });
 

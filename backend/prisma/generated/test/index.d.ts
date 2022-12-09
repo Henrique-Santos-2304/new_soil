@@ -3868,7 +3868,6 @@ export namespace Prisma {
   export type FarmWhereUniqueInput = {
     farm_id?: string
     farm_name?: string
-    owner_id?: string
   }
 
   export type FarmOrderByWithAggregationInput = {

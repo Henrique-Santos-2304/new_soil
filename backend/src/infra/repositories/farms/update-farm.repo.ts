@@ -10,11 +10,14 @@ class UpdateFarmRepo implements IUpdateFarmRepo {
     private readonly logger: Logger,
   ) {}
 
-  async put(farm: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response {
+  async put({
+    farm_id,
+    farm,
+  }: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response {
     try {
       const farmCreated = await this.prisma.farm.update({
-        data: farm,
-        where: { farm_id: farm.farm_id },
+        data: { ...farm },
+        where: { farm_id },
         select: {
           farm_id: true,
         },
