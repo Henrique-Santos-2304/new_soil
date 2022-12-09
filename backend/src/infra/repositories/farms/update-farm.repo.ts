@@ -30,6 +30,29 @@ class UpdateFarmRepo implements IUpdateFarmRepo {
       throw new QueryError();
     }
   }
+
+  async addUser({
+    farm_id,
+    data,
+  }: IUpdateFarmRepo.AddUserParams): IUpdateFarmRepo.AddUserResponse {
+    try {
+      const farmCreated = await this.prisma.farm.update({
+        data,
+        where: { farm_id },
+        select: {
+          farm_id: true,
+        },
+      });
+
+      return farmCreated;
+    } catch (err) {
+      this.logger.log(
+        'Erro ao adicionar novo usuario na fazenda no banco de dados...',
+      );
+      this.logger.error(err.message);
+      throw new QueryError();
+    }
+  }
 }
 
 export { UpdateFarmRepo };
