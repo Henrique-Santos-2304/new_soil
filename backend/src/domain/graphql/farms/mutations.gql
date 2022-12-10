@@ -2,4 +2,5 @@ type Mutation {
   createFarm(data: CreateFarmInput): ResponseCreateFarm
   delFarm(data: DeleteFarmsInput): ResponseDeleteFarms
   putFarm(data: RequestUpdateFarmInput): ResponseUpdateFarm
+  addUserIntoFarm(data: RequestAddUserIntoFarmInput): 
 }

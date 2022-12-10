@@ -41,3 +41,20 @@ input CreateFarmInput {
   dealers: [String]
   users: [String]
 }
+
+input AddUserInput {
+  login: String!
+  password: String!
+  userType: UserType!
+}
+
+input AddUserIntoFarmData {
+  add_user: AddUserInput!
+  table: TableAddUserIntoFarm!
+}
+
+input RequestAddUserIntoFarmInput {
+  auth: UpdateFarmUserData!
+  farm_id: String!
+  data: AddUserIntoFarmData!
+}

@@ -21,6 +21,13 @@ type ResponseUpdateFarm {
   farm_id: String
 }
 
+type ResponseAddUserIntoFarm {
+  status: String!
+  error: String
+  user_id: String!
+  farm_id: String
+}
+
 type Farm {
   farm_id: String!
   farm_name: String!
@@ -34,4 +41,10 @@ type Farm {
   admins: [String]
   dealers: [String]
   users: [String]
+}
+
+enum TableAddUserIntoFarm {
+  admins
+  dealers
+  users
 }
