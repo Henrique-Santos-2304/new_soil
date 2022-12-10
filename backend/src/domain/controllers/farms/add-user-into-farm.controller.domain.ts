@@ -52,8 +52,9 @@ namespace IAddUserIntoFarmController {
     users?: FarmModel['users'];
     dealers?: FarmModel['dealers'];
   };
+
+  export type TableAddUser = 'users' | 'admins' | 'dealers';
   export type Params = {
-    tableAddUserIntoFarm: 'users' | 'admins' | 'dealers';
     auth: {
       user_id: string;
       userType: UserModel['userType'];
@@ -61,12 +62,12 @@ namespace IAddUserIntoFarmController {
     farm_id: CreateFarmDTO['farm_id'];
     data: {
       add_user: CreateUserDto;
-      table: IAddUserIntoFarmController.Params['tableAddUserIntoFarm'];
+      table: IAddUserIntoFarmController.TableAddUser;
     };
   };
 
   export type Response = Promise<
-    ResponseWithoutData & { farm_id: string; user_id: string }
+    ResponseWithoutData & { farm_id?: string; user_id?: string }
   >;
 }
 

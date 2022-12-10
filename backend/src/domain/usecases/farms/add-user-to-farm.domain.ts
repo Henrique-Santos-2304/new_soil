@@ -54,8 +54,9 @@ namespace IAddUserIntoFarmService {
     users?: FarmModel['users'];
     dealers?: FarmModel['dealers'];
   };
+
+  export type TableAddUser = 'users' | 'admins' | 'dealers';
   export type Params = {
-    tableAddUserIntoFarm: 'users' | 'admins' | 'dealers';
     auth: {
       user_id: string;
       userType: UserModel['userType'];
@@ -63,7 +64,7 @@ namespace IAddUserIntoFarmService {
     farm_id: CreateFarmDTO['farm_id'];
     data: {
       add_user: CreateUserDto;
-      table: IAddUserIntoFarmService.Params['tableAddUserIntoFarm'];
+      table: IAddUserIntoFarmService.TableAddUser;
     };
   };
 

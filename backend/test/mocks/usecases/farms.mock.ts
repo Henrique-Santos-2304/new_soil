@@ -1,4 +1,8 @@
-import { CreateFarmDTO, IUpdateFarmService } from '@root/domain';
+import {
+  CreateFarmDTO,
+  IAddUserIntoFarmService,
+  IUpdateFarmService,
+} from '@root/domain';
 
 const createFarmMocked: CreateFarmDTO = {
   farm_id: 'soil_farm',
@@ -52,6 +56,22 @@ const serviceUpdateFarmMock: IUpdateFarmService.Params = {
   newFarm: updateFarmMock,
 };
 
+const serviceAddUserIntoFarmMock: IAddUserIntoFarmService.Params = {
+  auth: {
+    user_id: createFarmMocked.owner_id,
+    userType: 'MASTER',
+  },
+  farm_id: createFarmMocked.farm_id,
+  data: {
+    add_user: {
+      userType: 'USER',
+      password: '1234',
+      login: 'add_user',
+    },
+    table: 'users',
+  },
+};
+
 export {
   createFarmMocked,
   createFarmMockStub,
@@ -59,4 +79,5 @@ export {
   serviceUpdateFarmMock,
   createFarmMocked2,
   createFarmMocked3,
+  serviceAddUserIntoFarmMock,
 };

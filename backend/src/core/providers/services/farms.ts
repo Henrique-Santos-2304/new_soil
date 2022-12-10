@@ -1,4 +1,5 @@
 import { Provider } from '@nestjs/common';
+import { AddUserIntoFarmService } from '@root/data/usecases/farms/add-user-into-farm.service';
 import {
   GetFarmsByUser,
   UpdateFarmService,
@@ -26,9 +27,15 @@ const updateFarmServiceProvider: Provider = {
   useClass: UpdateFarmService,
 };
 
+const addUserIntoFarmServiceProvider: Provider = {
+  provide: 'IAddUserIntoFarmService',
+  useClass: AddUserIntoFarmService,
+};
+
 export {
   createFarmsServiceProvider,
   findFarmByUserServiceProvider,
   deleteFarmServiceProvider,
   updateFarmServiceProvider,
+  addUserIntoFarmServiceProvider,
 };
