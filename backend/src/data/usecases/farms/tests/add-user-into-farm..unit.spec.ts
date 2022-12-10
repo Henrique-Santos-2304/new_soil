@@ -38,13 +38,17 @@ describe('Update Farm Service Unit', () => {
         password: '1234',
         login: 'add_user',
       },
+      table: 'users',
     },
   };
 
   beforeEach(async () => {
     updateFarmRepo = mock();
     findFarmRepo = mock();
+    findUser = mock();
+    createUserRepo = mock();
     logger = mock();
+
     const findFarmProvider = {
       provide: 'IFindFarmsRepo',
       useValue: findFarmRepo,
@@ -155,7 +159,7 @@ describe('Update Farm Service Unit', () => {
     });
     const response = service.start({
       ...serviceMock,
-      auth: { user_id: '', userType: 'USER' },
+      auth: { user_id: 'user', userType: 'USER' },
     });
 
     await expect(response).rejects.toThrow(new UnauthorizedException());
@@ -253,8 +257,43 @@ describe('Update Farm Service Unit', () => {
     await expect(response).rejects.toThrow('User not added into farm');
   });
 
-  it('should be useCases return data valids if not ocurred an error', async () => {
+  it('should be throw if received table invalid', async () => {
     const response = await service.start({ ...serviceMock });
+
+    expect(response).toHaveProperty('farm_id', serviceMock.farm_id);
+    expect(response).toHaveProperty('user_id', 'new_user');
+  });
+
+  it('should be useCases return data valids if not ocurred an error in table admin', async () => {
+    findFarmRepo.by_id.mockResolvedValue({
+      ...createFarmMocked,
+      owner_id: 'serviceUpdateFarmMock.user.user_id',
+      dealers: [serviceMock.auth.user_id],
+    });
+    const response = await service.start({
+      ...serviceMock,
+      data: {
+        ...serviceMock.data,
+        table: 'admins',
+      },
+      auth: { user_id: serviceMock.auth.user_id, userType: 'USER' },
+    });
+
+    expect(response).toHaveProperty('farm_id', serviceMock.farm_id);
+    expect(response).toHaveProperty('user_id', 'new_user');
+  });
+
+  it('should be useCases return data valids if not ocurred an error', async () => {
+    findFarmRepo.by_id.mockResolvedValue({
+      ...createFarmMocked,
+      owner_id: 'serviceUpdateFarmMock.user.user_id',
+      admins: [serviceMock.auth.user_id],
+    });
+    const response = await service.start({
+      ...serviceMock,
+      data: { ...serviceMock.data, table: 'dealers' },
+      auth: { user_id: serviceMock.auth.user_id, userType: 'USER' },
+    });
 
     expect(response).toHaveProperty('farm_id', serviceMock.farm_id);
     expect(response).toHaveProperty('user_id', 'new_user');
