@@ -35,3 +35,7 @@ afterAll(async () => {
   await integrationTestManager.afterAll();
   console.log('Finalizada configuração de jest...');
 });
+
+beforeEach(() => {
+  jest.setTimeout(60000);
+});

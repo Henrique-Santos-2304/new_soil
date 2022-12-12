@@ -31,6 +31,7 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
 
   async checkFarmExist(farm_id: CreateFarmDTO['farm_id']): Promise<void> {
     this.farmData = await this.findFarmRepo.by_id({ farm_id });
+
     if (!this.farmData) throw new NotFoundError('Farm');
   }
 

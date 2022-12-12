@@ -24,7 +24,7 @@ type ResponseUpdateFarm {
 type ResponseAddUserIntoFarm {
   status: String!
   error: String
-  user_id: String!
+  user_id: String
   farm_id: String
 }
 

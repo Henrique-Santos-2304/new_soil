@@ -10,6 +10,8 @@ import {
 } from '@contracts/index';
 import {
   createFarmMocked,
+  createFarmMocked2,
+  createFarmMocked3,
   serviceAddUserIntoFarmMock,
   serviceUpdateFarmMock,
 } from '@testRoot/index';
@@ -21,7 +23,7 @@ import {
   NotFoundError,
 } from '@root/shared';
 
-describe('Update Farm Service Unit', () => {
+describe('Add User Into Farm Farm Service Unit', () => {
   let service: IAddUserIntoFarmService;
   let updateFarmRepo: MockProxy<IUpdateFarmRepo>;
   let findUser: MockProxy<IFindUserRepo>;
@@ -29,6 +31,11 @@ describe('Update Farm Service Unit', () => {
   let findFarmRepo: MockProxy<IFindFarmsRepo>;
 
   let logger: MockProxy<Logger>;
+
+  const dataFarm = {
+    ...createFarmMocked3,
+    owner_id: serviceUpdateFarmMock.user.user_id,
+  };
 
   beforeEach(async () => {
     updateFarmRepo = mock();
@@ -73,17 +80,14 @@ describe('Update Farm Service Unit', () => {
 
     service = module.get<IAddUserIntoFarmService>(AddUserIntoFarmService);
 
-    findFarmRepo.by_id.mockResolvedValue({
-      ...createFarmMocked,
-      owner_id: serviceUpdateFarmMock.user.user_id,
-    });
+    findFarmRepo.by_id.mockResolvedValue(dataFarm);
 
     findUser.by_login.mockResolvedValue(null);
 
     createUserRepo.create.mockResolvedValue({ user_id: 'new_user' });
 
     updateFarmRepo.addUser.mockResolvedValue({
-      farm_id: createFarmMocked.farm_id,
+      farm_id: serviceAddUserIntoFarmMock.farm_id,
     });
   });
 
@@ -105,11 +109,6 @@ describe('Update Farm Service Unit', () => {
   // Test FindFarmRepo
 
   it('should be findFarm.by_id to have been called once time and with data valids', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
-      ...createFarmMocked,
-      owner_id: serviceUpdateFarmMock.user.user_id,
-    });
-
     const spy = jest.spyOn(findFarmRepo, 'by_id');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
@@ -139,7 +138,7 @@ describe('Update Farm Service Unit', () => {
   // Auth User
   it('should be throw Unauthorized if userType is USER and not exists in table DEALERS or ADMINS', async () => {
     findFarmRepo.by_id.mockResolvedValueOnce({
-      ...createFarmMocked,
+      ...dataFarm,
       dealers: [],
       admins: [],
       users: [],
@@ -156,11 +155,6 @@ describe('Update Farm Service Unit', () => {
   // Tests Find User By Login
 
   it('should be findUser.by_login to have been called once time and with data valids', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
-      ...createFarmMocked,
-      owner_id: serviceUpdateFarmMock.user.user_id,
-    });
-
     const spy = jest.spyOn(findUser, 'by_login');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
@@ -247,20 +241,9 @@ describe('Update Farm Service Unit', () => {
     await expect(response).rejects.toThrow('User not added into farm');
   });
 
-  it('should be throw if received table invalid', async () => {
-    const response = await service.start({ ...serviceAddUserIntoFarmMock });
-
-    expect(response).toHaveProperty(
-      'farm_id',
-      serviceAddUserIntoFarmMock.farm_id,
-    );
-    expect(response).toHaveProperty('user_id', 'new_user');
-  });
-
   it('should be useCases return data valids if not ocurred an error in table admin', async () => {
-    findFarmRepo.by_id.mockResolvedValue({
-      ...createFarmMocked,
-      owner_id: 'serviceUpdateFarmMock.user.user_id',
+    findFarmRepo.by_id.mockResolvedValueOnce({
+      ...dataFarm,
       dealers: [serviceAddUserIntoFarmMock.auth.user_id],
     });
     const response = await service.start({
@@ -283,9 +266,8 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be useCases return data valids if not ocurred an error', async () => {
-    findFarmRepo.by_id.mockResolvedValue({
-      ...createFarmMocked,
-      owner_id: 'serviceUpdateFarmMock.user.user_id',
+    findFarmRepo.by_id.mockResolvedValueOnce({
+      ...dataFarm,
       admins: [serviceAddUserIntoFarmMock.auth.user_id],
     });
     const response = await service.start({

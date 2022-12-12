@@ -28,7 +28,7 @@ describe('Add User Into Farm Controller Unit', () => {
     );
     logger = module.get<Logger>(Logger);
     service.start.mockResolvedValue({
-      farm_id: createFarmMocked.farm_id,
+      farm_id: serviceAddUserIntoFarmMock.farm_id,
       user_id: createFarmMocked.owner_id,
     });
   });

@@ -36,6 +36,12 @@ const createFarmMocked3: CreateFarmDTO = {
   farm_name: 'soil_farm_test3',
 };
 
+const createFarmMocked4: CreateFarmDTO = {
+  ...createFarmMockStub,
+  farm_id: 'soil_farm_test4',
+  farm_name: 'soil_farm_test4',
+};
+
 const { admins, dealers, updated_by, users, created_by, owner_id, ...rest } =
   createFarmMocked;
 
@@ -61,7 +67,7 @@ const serviceAddUserIntoFarmMock: IAddUserIntoFarmService.Params = {
     user_id: createFarmMocked.owner_id,
     userType: 'MASTER',
   },
-  farm_id: createFarmMocked.farm_id,
+  farm_id: createFarmMocked3.farm_id,
   data: {
     add_user: {
       userType: 'USER',
@@ -80,4 +86,5 @@ export {
   createFarmMocked2,
   createFarmMocked3,
   serviceAddUserIntoFarmMock,
+  createFarmMocked4,
 };

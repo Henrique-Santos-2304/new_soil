@@ -20,6 +20,17 @@ export const mutationUpdateFarm = gql`
   }
 `;
 
+export const mutationAddUserIntoFarm = gql`
+  mutation ADD_USER_INTO_FARM($addUserIntoFarm: RequestAddUserIntoFarmInput!) {
+    addUserIntoFarm(data: $addUserIntoFarm) {
+      status
+      error
+      farm_id
+      user_id
+    }
+  }
+`;
+
 export const queryFindFarmsByUser = gql`
   query GET_ALL_FARMS($dataId: GetFarmsByUserInput!) {
     getFarmByUser(data: $dataId) {
