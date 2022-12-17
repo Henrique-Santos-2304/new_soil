@@ -31,10 +31,10 @@ class UpdateFarmRepo implements IUpdateFarmRepo {
     }
   }
 
-  async addUser({
+  async addOrDeleteUser({
     farm_id,
     data,
-  }: IUpdateFarmRepo.AddUserParams): IUpdateFarmRepo.AddUserResponse {
+  }: IUpdateFarmRepo.AddOrDeleteUserParams): IUpdateFarmRepo.AddOrDeleteUserResponse {
     try {
       const farmCreated = await this.prisma.farm.update({
         data,

@@ -74,7 +74,7 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
   }
 
   async addUserToFarm(data: IAddUserIntoFarmService.Adduser) {
-    const farm = await this.updateFarmRepo.addUser({
+    const farm = await this.updateFarmRepo.addOrDeleteUser({
       farm_id: this.farmData.farm_id,
       data: { ...data },
     });

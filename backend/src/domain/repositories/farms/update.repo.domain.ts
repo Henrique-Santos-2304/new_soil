@@ -36,10 +36,10 @@ import {
 
 interface IUpdateFarmRepo {
   put(farm: IUpdateFarmRepo.Params): IUpdateFarmRepo.Response;
-  addUser({
+  addOrDeleteUser({
     farm_id,
     data,
-  }: IUpdateFarmRepo.AddUserParams): IUpdateFarmRepo.AddUserResponse;
+  }: IUpdateFarmRepo.AddOrDeleteUserParams): IUpdateFarmRepo.AddOrDeleteUserResponse;
 }
 
 namespace IUpdateFarmRepo {
@@ -49,7 +49,7 @@ namespace IUpdateFarmRepo {
   };
   export type Response = Promise<{ farm_id: FarmModel['farm_id'] }>;
 
-  export type AddUserParams = {
+  export type AddOrDeleteUserParams = {
     farm_id: string;
     data: {
       admins?: FarmModel['admins'];
@@ -57,7 +57,9 @@ namespace IUpdateFarmRepo {
       dealers?: FarmModel['dealers'];
     };
   };
-  export type AddUserResponse = Promise<{ farm_id: FarmModel['farm_id'] }>;
+  export type AddOrDeleteUserResponse = Promise<{
+    farm_id: FarmModel['farm_id'];
+  }>;
 }
 
 export { IUpdateFarmRepo };

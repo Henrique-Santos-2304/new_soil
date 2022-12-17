@@ -107,8 +107,8 @@ describe('Update Farm Repo Unit', () => {
   // tests add user into farm repo
 
   it('(add user) should repo.update to have been called with data válids', async () => {
-    const spy = jest.spyOn(repo, 'addUser');
-    await repo.addUser(callAddUser);
+    const spy = jest.spyOn(repo, 'addOrDeleteUser');
+    await repo.addOrDeleteUser(callAddUser);
 
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -116,7 +116,7 @@ describe('Update Farm Repo Unit', () => {
   });
 
   it('(add user) should prisma.user.update to have been called with data válids', async () => {
-    await repo.addUser(callAddUser);
+    await repo.addOrDeleteUser(callAddUser);
 
     expect(prisma.farm.update).toHaveBeenCalled();
     expect(prisma.farm.update).toHaveBeenCalledTimes(1);
@@ -128,7 +128,7 @@ describe('Update Farm Repo Unit', () => {
   });
 
   it('(add user) should to return a farm Created with action not ocurred an error', async () => {
-    const value = await repo.addUser(callAddUser);
+    const value = await repo.addOrDeleteUser(callAddUser);
 
     expect(value).toHaveProperty('farm_id');
   });
@@ -136,7 +136,7 @@ describe('Update Farm Repo Unit', () => {
   it('(add user) should to throw "QUERY ERROR" when database return erro', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new Error());
 
-    const value = repo.addUser(callAddUser);
+    const value = repo.addOrDeleteUser(callAddUser);
 
     await expect(value).rejects.toThrow(new QueryError());
   });
@@ -144,7 +144,7 @@ describe('Update Farm Repo Unit', () => {
   it('(add user) should log an erro when database return error', async () => {
     prisma.farm.update = jest.fn().mockRejectedValueOnce(new DatabaseError());
 
-    const response = repo.addUser(callAddUser);
+    const response = repo.addOrDeleteUser(callAddUser);
 
     // method log
     await expect(response).rejects.toThrow();

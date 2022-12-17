@@ -86,7 +86,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
 
     createUserRepo.create.mockResolvedValue({ user_id: 'new_user' });
 
-    updateFarmRepo.addUser.mockResolvedValue({
+    updateFarmRepo.addOrDeleteUser.mockResolvedValue({
       farm_id: serviceAddUserIntoFarmMock.farm_id,
     });
   });
@@ -215,7 +215,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   // Tests Update User Repo
 
   it('should be UpdateFarmRepo to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(updateFarmRepo, 'addUser');
+    const spy = jest.spyOn(updateFarmRepo, 'addOrDeleteUser');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -227,7 +227,9 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be throw a QUERY ERROR if UpdateFarmRepo throw error', async () => {
-    updateFarmRepo.addUser.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    updateFarmRepo.addOrDeleteUser.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -235,7 +237,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should useCase return "User not added into farm" if db return null', async () => {
-    updateFarmRepo.addUser.mockResolvedValueOnce(null);
+    updateFarmRepo.addOrDeleteUser.mockResolvedValueOnce(null);
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
     await expect(response).rejects.toThrow('User not added into farm');
