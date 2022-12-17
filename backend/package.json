@@ -21,7 +21,7 @@
     "test:unit": "NODE_ENV=test npm test -- --watch -c jest-unit-config.js ",
     "test:integration": "NODE_ENV=test npm test -- --watch -c jest-integration-config.js ",
     "test:staged": "NODE_ENV=test npm test --findRelatedTests",
-    "test:ci": "NODE_ENV=test npm test --collect-coverage"
+    "test:ci": "NODE_ENV=test jest --passWithNoTests --silent --noStackTrace --runInBand --detectOpenHandles --forceExit -c --collect-coverage"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.22",
