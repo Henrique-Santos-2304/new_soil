@@ -11,6 +11,12 @@ import { gql } from 'apollo-server-express';
 import { createFarmStub } from '@testRoot/stub';
 import { queryFindFarmsByUser } from '@testRoot/mocks/gql';
 import { createFarmMocked, createUserMocked } from '@testRoot/index';
+import {
+  FARM_CONTROLLER,
+  FARM_REPO,
+  FARM_SERVICE,
+  USER_REPO,
+} from '@root/shared';
 
 describe('Get All Users Integration', () => {
   let app: INestApplication;
@@ -27,13 +33,13 @@ describe('Get All Users Integration', () => {
 
   it('should be defined this respective providers of service', async () => {
     const service = await app.resolve<IGetAllFarmsByUserService>(
-      'IGetAllFarmsByUserService',
+      FARM_SERVICE.FIND,
     );
     const controller = await app.resolve<IGetFarmsController>(
-      'IGetFarmsController',
+      FARM_CONTROLLER.FIND,
     );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>(FARM_REPO.FIND);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

@@ -1,71 +1,48 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
-import { PrismaModule } from '@root/core';
-import {
-  IDeleteFarmRepo,
-  IDeleteFarmService,
-  IFindFarmsRepo,
-  IFindUserRepo,
-} from '@root/domain';
-import { FARM_REPO, USER_REPO } from '@root/shared';
+import { IDeleteFarmService } from '@root/domain';
 import { NotFoundError } from '@root/shared/errors';
-import { createFarmMocked, userModelMocked } from '@testRoot/index';
-import { mock, MockProxy } from 'jest-mock-extended';
+import {
+  createFarmMocked,
+  deleteFarmRepoMock,
+  deleteFarmRepoMockProvider,
+  findFarmRepoMock,
+  findFarmRepoMockProvider,
+  findUserRepoMock,
+  findUserRepoMockProvider,
+  loggerMockProvider,
+  prismaProviderMock,
+  userModelMocked,
+} from '@testRoot/index';
 import { DeleteFarmService } from '../delete-farm.service';
 
-describe('Get All Farms By User Service Unit', () => {
+describe('Delete Farm Service Unit', () => {
   let service: IDeleteFarmService;
-  let findFarmRepo: MockProxy<IFindFarmsRepo>;
-  let findUserRepo: MockProxy<IFindUserRepo>;
-  let deleteFarmRepo: MockProxy<IDeleteFarmRepo>;
-
-  let logger: MockProxy<Logger>;
 
   beforeEach(async () => {
-    findFarmRepo = mock();
-    findUserRepo = mock();
-    deleteFarmRepo = mock();
-    logger = mock();
-
-    const findUserProvider = {
-      provide: USER_REPO.FIND,
-      useValue: findUserRepo,
-    };
-    const findFarmProvider = {
-      provide: FARM_REPO.FIND,
-      useValue: findFarmRepo,
-    };
-
-    const delFarmProvider = {
-      provide: FARM_REPO.DELETE,
-      useValue: deleteFarmRepo,
-    };
-
-    const loggerProvider = { provide: Logger, useValue: logger };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
       providers: [
         DeleteFarmService,
-        findFarmProvider,
-        findUserProvider,
-        delFarmProvider,
-        loggerProvider,
+        findFarmRepoMockProvider,
+        findUserRepoMockProvider,
+        deleteFarmRepoMockProvider,
+        loggerMockProvider,
+        prismaProviderMock,
       ],
     }).compile();
 
     service = module.get<IDeleteFarmService>(DeleteFarmService);
 
-    findUserRepo.by_id.mockResolvedValue(userModelMocked);
-    findFarmRepo.by_id.mockResolvedValue(createFarmMocked);
-    deleteFarmRepo.by_id.mockResolvedValue();
-    deleteFarmRepo.by_user.mockResolvedValue();
+    findUserRepoMock.by_id.mockResolvedValue(userModelMocked);
+    findFarmRepoMock.by_id.mockResolvedValue(createFarmMocked);
+    deleteFarmRepoMock.by_id.mockResolvedValue();
+    deleteFarmRepoMock.by_user.mockResolvedValue();
   });
 
   it('shoud be service and repo to be defined', async () => {
-    expect(findUserRepo).toBeDefined();
-    expect(findFarmRepo).toBeDefined();
-    expect(deleteFarmRepo).toBeDefined();
+    expect(findUserRepoMock).toBeDefined();
+    expect(findFarmRepoMock).toBeDefined();
+    expect(deleteFarmRepoMock).toBeDefined();
 
     expect(service).toBeDefined();
   });
@@ -97,7 +74,7 @@ describe('Get All Farms By User Service Unit', () => {
 
   // Test del by user
   it('should be findUserRepo.by_id to have been called with data valid', async () => {
-    const spy = jest.spyOn(findUserRepo, 'by_id');
+    const spy = jest.spyOn(findUserRepoMock, 'by_id');
     await service.start({
       user_id: 'user',
       userType: 'MASTER',
@@ -107,7 +84,7 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should throw error if findUserRepo.by_id to return an error ', async () => {
-    findUserRepo.by_id.mockRejectedValueOnce(new Error('QUERY_ERROR'));
+    findUserRepoMock.by_id.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start({
       user_id: 'soil',
       userType: 'MASTER',
@@ -116,7 +93,7 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should be service throw user not find if findUserRepo.by_id not find users ', async () => {
-    findUserRepo.by_id.mockResolvedValueOnce(null);
+    findUserRepoMock.by_id.mockResolvedValueOnce(null);
     const response = service.start({
       user_id: 'soil',
       userType: 'MASTER',
@@ -134,7 +111,7 @@ describe('Get All Farms By User Service Unit', () => {
 
   // Test del by id
   it('should be findFarm.by_id to have been called with data valid', async () => {
-    const spy = jest.spyOn(findFarmRepo, 'by_id');
+    const spy = jest.spyOn(findFarmRepoMock, 'by_id');
     await service.start({
       farm_id: 'soil',
       userType: 'MASTER',
@@ -144,7 +121,7 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should throw error if findFarmRepo.by_id to return an error ', async () => {
-    findFarmRepo.by_id.mockRejectedValueOnce(new Error('QUERY_ERROR'));
+    findFarmRepoMock.by_id.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start({
       farm_id: 'soil',
       userType: 'MASTER',
@@ -153,7 +130,7 @@ describe('Get All Farms By User Service Unit', () => {
   });
 
   it('should be service throw user not find if findFarmRepo.by_id not find farm ', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce(null);
+    findFarmRepoMock.by_id.mockResolvedValueOnce(null);
     const response = service.start({
       farm_id: 'soil',
       userType: 'MASTER',

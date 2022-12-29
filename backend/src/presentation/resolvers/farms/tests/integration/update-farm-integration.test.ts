@@ -14,6 +14,7 @@ import {
   updateFarmMock,
 } from '@testRoot/mocks';
 import { NotFoundError } from '@root/shared/errors';
+import { FARM_CONTROLLER, FARM_REPO, FARM_SERVICE } from '@root/shared';
 
 describe('Update Farm Integration', () => {
   let app: INestApplication;
@@ -30,14 +31,12 @@ describe('Update Farm Integration', () => {
   });
 
   it('should be defined this respective providers of service', async () => {
-    const service = await app.resolve<IUpdateFarmService>('IUpdateFarmService');
+    const service = await app.resolve<IUpdateFarmService>(FARM_SERVICE.UPDATE);
     const controller = await app.resolve<IUpdateFarmController>(
-      'IUpdateFarmController',
+      FARM_CONTROLLER.UPDATE,
     );
-    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
-    const createFarmRepo = await app.resolve<IUpdateFarmRepo>(
-      'IUpdateFarmRepo',
-    );
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>(FARM_REPO.FIND);
+    const createFarmRepo = await app.resolve<IUpdateFarmRepo>(FARM_REPO.UPDATE);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

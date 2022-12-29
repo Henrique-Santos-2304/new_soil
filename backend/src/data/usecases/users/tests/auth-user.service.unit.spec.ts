@@ -1,63 +1,48 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule } from '@root/core';
-import { IEncrypterData, IFindUserRepo } from '@root/domain';
-import { IAuthUserService } from '@root/domain/usecases/users/auth-user.service.domain';
-import { ITokenService } from '@root/domain/validators/token.domain';
-import { USER_REPO, VALIDATORS_SERVICE } from '@root/shared';
-import { userModelMocked } from '@testRoot/mocks';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { IAuthUserService } from '@contracts/index';
 import { AuthUserService } from '../auth-user.service';
+import {
+  encrypterMock,
+  encrypterMockProvider,
+  loggerMockProvider,
+  tokenMock,
+  tokenMockProvider,
+  findUserRepoMock,
+  findUserRepoMockProvider,
+  prismaProviderMock,
+  userModelMocked,
+} from '@testRoot/mocks';
 
 describe('Auth User Service Unit', () => {
   const loginUser = { login: 'soil', password: '1234' };
   let service: IAuthUserService;
-  let findUserRepo: MockProxy<IFindUserRepo>;
-  let encrypter: MockProxy<IEncrypterData>;
-  let token: MockProxy<ITokenService>;
-  let logger: MockProxy<Logger>;
 
   beforeEach(async () => {
-    findUserRepo = mock();
-    logger = mock();
-    encrypter = mock();
-    token = mock();
-
-    const findProvider = { provide: USER_REPO.FIND, useValue: findUserRepo };
-    const loggerProvider = { provide: Logger, useValue: logger };
-    const tokenProvider = {
-      provide: VALIDATORS_SERVICE.TOKEN,
-      useValue: token,
-    };
-
-    const encrypterProvider = {
-      provide: VALIDATORS_SERVICE.ENCRYPTER,
-      useValue: encrypter,
-    };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
       providers: [
         AuthUserService,
-        findProvider,
-        loggerProvider,
-        encrypterProvider,
-        tokenProvider,
+        findUserRepoMockProvider,
+        loggerMockProvider,
+        encrypterMockProvider,
+        tokenMockProvider,
+        prismaProviderMock,
       ],
     }).compile();
 
     service = module.get<IAuthUserService>(AuthUserService);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { login, ...rest } = userModelMocked;
-    findUserRepo.without_login.mockResolvedValue(rest);
-    token.generate.mockResolvedValue({ token: 'tokenValid' });
-    encrypter.compare.mockResolvedValue(true);
+    findUserRepoMock.without_login.mockResolvedValue(rest);
+    tokenMock.generate.mockResolvedValue({ token: 'tokenValid' });
+    encrypterMock.compare.mockResolvedValue(true);
   });
 
-  // Test findUserRepo.without_login to have been called with data valids
+  // Test findUserRepoMockProvider.without_login to have been called with data valids
 
   it('should findUserRepo.without_login to have been called with data valids', async () => {
-    const spy = jest.spyOn(findUserRepo, 'without_login');
+    const spy = jest.spyOn(findUserRepoMock, 'without_login');
 
     await service.start(loginUser);
 
@@ -67,7 +52,9 @@ describe('Auth User Service Unit', () => {
 
   // Test service to throw if findUserRepo.with_login ocurred an error
   it('should service to throw if findUserRepo.with_login ocurred an error', async () => {
-    findUserRepo.without_login.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findUserRepoMock.without_login.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     const response = service.start(loginUser);
 
@@ -76,7 +63,7 @@ describe('Auth User Service Unit', () => {
 
   // Test service to throw "Invalid Credentials" if findUserRepo.with_login not find user
   it('should service to throw if findUserRepo.with_login ocurred an error', async () => {
-    findUserRepo.without_login.mockResolvedValueOnce(null);
+    findUserRepoMock.without_login.mockResolvedValueOnce(null);
 
     const response = service.start(loginUser);
 
@@ -85,7 +72,7 @@ describe('Auth User Service Unit', () => {
 
   // Test encrypt.compare to have been called with data valids
   it('should encrypt.compare to have been called with data valids', async () => {
-    const spy = jest.spyOn(encrypter, 'compare');
+    const spy = jest.spyOn(encrypterMock, 'compare');
     await service.start(loginUser);
 
     expect(spy).toBeCalledTimes(1);
@@ -98,7 +85,7 @@ describe('Auth User Service Unit', () => {
 
   // Test service to throw "ENCRYP ERROR" if ocurred an error in encrypt.compare
   it('should service to throw "ENCRYPT ERROR" if ocurred an error in encrypt.compare', async () => {
-    encrypter.compare.mockRejectedValueOnce(new Error('ENCRYPT ERROR'));
+    encrypterMock.compare.mockRejectedValueOnce(new Error('ENCRYPT ERROR'));
 
     const response = service.start(loginUser);
 
@@ -107,7 +94,7 @@ describe('Auth User Service Unit', () => {
 
   // Test service to throw "Invalid Credentials" if password not valid
   it('should service to throw "Invalid Credentials" if password not valid', async () => {
-    encrypter.compare.mockResolvedValueOnce(false);
+    encrypterMock.compare.mockResolvedValueOnce(false);
 
     const response = service.start(loginUser);
 
@@ -116,7 +103,7 @@ describe('Auth User Service Unit', () => {
 
   //  Tests Jwt Token to have been called with data valids
   it('should Jwt Token to have been called with data valids', async () => {
-    const spy = jest.spyOn(token, 'generate');
+    const spy = jest.spyOn(tokenMock, 'generate');
     await service.start(loginUser);
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
@@ -128,13 +115,13 @@ describe('Auth User Service Unit', () => {
   // Test service to throw "JWT TOKEN ERROR" if ocurred erro in at generated token
 
   it('should service to Throw if ocurred error in at generated Jwt Token', async () => {
-    token.generate.mockRejectedValueOnce(new Error('TOKEN ERROR'));
+    tokenMock.generate.mockRejectedValueOnce(new Error('TOKEN ERROR'));
     const response = service.start(loginUser);
     await expect(response).rejects.toThrow('TOKEN ERROR');
   });
 
   it('should service to Throw "TOKEN NOT PROVIDED" if Token return null', async () => {
-    token.generate.mockResolvedValueOnce(null);
+    tokenMock.generate.mockResolvedValueOnce(null);
     const response = service.start(loginUser);
     await expect(response).rejects.toThrow('TOKEN DOES NOT PROVIDED');
   });

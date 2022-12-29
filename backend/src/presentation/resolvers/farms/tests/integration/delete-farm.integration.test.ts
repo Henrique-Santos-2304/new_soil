@@ -10,6 +10,12 @@ import {
   IFindUserRepo,
 } from '@contracts/index';
 import { createFarmMocked, createUserMocked } from '@testRoot/mocks';
+import {
+  FARM_CONTROLLER,
+  FARM_REPO,
+  FARM_SERVICE,
+  USER_REPO,
+} from '@root/shared';
 
 describe('Create Farm Integration', () => {
   let app: INestApplication;
@@ -24,13 +30,13 @@ describe('Create Farm Integration', () => {
   });
 
   it('should be defined this respective providers of service', async () => {
-    const service = await app.resolve<IDeleteFarmService>('IDeleteFarmService');
+    const service = await app.resolve<IDeleteFarmService>(FARM_SERVICE.DELETE);
     const controller = await app.resolve<IDeleteFarmController>(
-      'IDeleteFarmController',
+      FARM_CONTROLLER.DELETE,
     );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
-    const delFarmRepo = await app.resolve<IDeleteFarmRepo>('IDeleteFarmRepo');
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>(FARM_REPO.FIND);
+    const delFarmRepo = await app.resolve<IDeleteFarmRepo>(FARM_REPO.DELETE);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

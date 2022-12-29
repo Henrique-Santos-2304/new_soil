@@ -13,6 +13,12 @@ import { createUserMocked, createUserRequestMocked } from '@testRoot/mocks';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { mutationCreateUser } from '@testRoot/mocks/gql/users';
 import { AlreadyExistsError } from '@root/shared/errors';
+import {
+  USER_CONTROLLER,
+  USER_REPO,
+  USER_SERVICE,
+  VALIDATORS_SERVICE,
+} from '@root/shared';
 
 describe('Create User Integration', () => {
   let app: INestApplication;
@@ -32,17 +38,17 @@ describe('Create User Integration', () => {
 
   it('should be defined this respective providers of service', async () => {
     const createUserController = await app.resolve<ICreateUserController>(
-      'ICreateUserController',
+      USER_CONTROLLER.CREATE,
     );
     const createUserService = await app.resolve<ICreateUserService>(
-      'ICreateUserService',
+      USER_SERVICE.CREATE,
     );
-    const encrypterData = await app.resolve<IEncrypterData>('IEncrypterData');
+    const encrypterData = await app.resolve<IEncrypterData>(
+      VALIDATORS_SERVICE.ENCRYPTER,
+    );
 
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const createUserRepo = await app.resolve<ICreateUserRepo>(
-      'ICreateUserRepo',
-    );
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const createUserRepo = await app.resolve<ICreateUserRepo>(USER_REPO.CREATE);
 
     expect(createUserController).toBeDefined();
     expect(createUserService).toBeDefined();

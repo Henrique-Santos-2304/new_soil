@@ -15,6 +15,12 @@ import {
   getUserMasterId,
 } from '@testRoot/mocks';
 import { AlreadyExistsError, NotFoundError } from '@root/shared/errors';
+import {
+  FARM_CONTROLLER,
+  FARM_REPO,
+  FARM_SERVICE,
+  USER_REPO,
+} from '@root/shared';
 
 describe('Create Farm Integration', () => {
   let app: INestApplication;
@@ -31,15 +37,13 @@ describe('Create Farm Integration', () => {
   });
 
   it('should be defined this respective providers of service', async () => {
-    const service = await app.resolve<ICreateFarmService>('ICreateFarmService');
+    const service = await app.resolve<ICreateFarmService>(FARM_SERVICE.CREATE);
     const controller = await app.resolve<ICreateFarmController>(
-      'ICreateFarmController',
+      FARM_CONTROLLER.CREATE,
     );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
-    const createFarmRepo = await app.resolve<ICreateFarmRepo>(
-      'ICreateFarmRepo',
-    );
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>(FARM_REPO.FIND);
+    const createFarmRepo = await app.resolve<ICreateFarmRepo>(FARM_REPO.CREATE);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

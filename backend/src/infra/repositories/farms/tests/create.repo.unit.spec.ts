@@ -1,36 +1,34 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICreateFarmRepo } from '@root/domain';
-import { PrismaService } from '@root/infra/config_acess_db';
-import { DatabaseError, QueryError } from '@root/shared/errors';
-import { createFarmMocked } from '@testRoot/mocks';
 import { CreateFarmRepo } from '../create.repo';
+import { DatabaseError, QueryError } from '@utils/errors';
+import {
+  createFarmMocked,
+  loggerMock,
+  loggerMockProvider,
+  prismaProviderMock,
+  prismaServiceMock,
+} from '@testRoot/mocks';
 
 describe('Create Farm Repo Unit', () => {
   let repo: ICreateFarmRepo;
-  let prisma: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
-    const loggerProvider = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CreateFarmRepo, PrismaService, loggerProvider],
+      providers: [CreateFarmRepo, prismaProviderMock, loggerMockProvider],
     }).compile();
 
     repo = module.get<ICreateFarmRepo>(CreateFarmRepo);
-    prisma = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
 
-    prisma.farm.create = jest
-      .fn()
-      .mockReturnValueOnce({ farm_id: createFarmMocked.farm_id });
+    prismaServiceMock.farm.create.mockReturnValue({
+      farm_id: createFarmMocked.farm_id,
+    });
   });
 
   it('should be defined', () => {
     expect(repo).toBeDefined();
+    expect(prismaServiceMock).toBeDefined();
+    expect(loggerMock).toBeDefined();
   });
 
   it('should repo.create to have been called with data válids', async () => {
@@ -44,9 +42,9 @@ describe('Create Farm Repo Unit', () => {
   it('should prisma.user.create to have been called with data válids', async () => {
     await repo.create(createFarmMocked);
 
-    expect(prisma.farm.create).toHaveBeenCalled();
-    expect(prisma.farm.create).toHaveBeenCalledTimes(1);
-    expect(prisma.farm.create).toHaveBeenCalledWith({
+    expect(prismaServiceMock.farm.create).toHaveBeenCalled();
+    expect(prismaServiceMock.farm.create).toHaveBeenCalledTimes(1);
+    expect(prismaServiceMock.farm.create).toHaveBeenCalledWith({
       data: createFarmMocked,
       select: { farm_id: true },
     });
@@ -59,25 +57,25 @@ describe('Create Farm Repo Unit', () => {
   });
 
   it('should to throw "QUERY ERROR" when database return erro', async () => {
-    prisma.farm.create = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.farm.create.mockRejectedValueOnce(new Error());
     const value = repo.create(createFarmMocked);
     await expect(value).rejects.toThrow(new QueryError());
   });
 
   it('should log an erro when database return error', async () => {
-    prisma.farm.create = jest.fn().mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.farm.create.mockRejectedValueOnce(new DatabaseError());
 
     const response = repo.create(createFarmMocked);
 
     // method log
     await expect(response).rejects.toThrow();
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao criar fazenda no banco de dados...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

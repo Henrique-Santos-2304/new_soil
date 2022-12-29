@@ -1,36 +1,34 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ICreateAuthorizeRepo } from '@root/domain/repositories/authorize/create-authorize.domain';
-import { PrismaService } from '@root/infra/config_acess_db';
-import { DatabaseError, QueryError } from '@root/shared/errors';
-import { createAuthorizeMock } from '@testRoot/mocks';
+import { ICreateAuthorizeRepo } from '@contracts/index';
 import { CreateAuthorizeRepo } from '../create-authorize.repo';
+import { DatabaseError, QueryError } from '@utils/errors';
+import {
+  createAuthorizeMock,
+  loggerMock,
+  loggerMockProvider,
+  prismaProviderMock,
+  prismaServiceMock,
+} from '@testRoot/mocks';
 
 describe('Create Authorize Repo Unit', () => {
   let repo: ICreateAuthorizeRepo;
-  let prisma: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
-    const loggerProvider = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CreateAuthorizeRepo, PrismaService, loggerProvider],
+      providers: [CreateAuthorizeRepo, prismaProviderMock, loggerMockProvider],
     }).compile();
 
     repo = module.get<ICreateAuthorizeRepo>(CreateAuthorizeRepo);
-    prisma = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
 
-    prisma.authorize.create = jest
-      .fn()
-      .mockReturnValueOnce({ authorize_id: 'fake_id' });
+    prismaServiceMock.authorize.create.mockReturnValue({
+      authorize_id: 'fake_id',
+    });
   });
 
   it('should be defined', () => {
     expect(repo).toBeDefined();
+    expect(prismaServiceMock).toBeDefined();
+    expect(loggerMock).toBeDefined();
   });
 
   it('should repo.create to have been called with data válids', async () => {
@@ -44,9 +42,9 @@ describe('Create Authorize Repo Unit', () => {
   it('should prisma.authorize.create to have been called with data válids', async () => {
     await repo.create(createAuthorizeMock);
 
-    expect(prisma.authorize.create).toHaveBeenCalled();
-    expect(prisma.authorize.create).toHaveBeenCalledTimes(1);
-    expect(prisma.authorize.create).toHaveBeenCalledWith({
+    expect(prismaServiceMock.authorize.create).toHaveBeenCalled();
+    expect(prismaServiceMock.authorize.create).toHaveBeenCalledTimes(1);
+    expect(prismaServiceMock.authorize.create).toHaveBeenCalledWith({
       data: createAuthorizeMock,
       select: { authorize_id: true },
     });
@@ -59,13 +57,13 @@ describe('Create Authorize Repo Unit', () => {
   });
 
   it('should to throw "QUERY ERROR" when database return erro', async () => {
-    prisma.authorize.create = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.authorize.create.mockRejectedValueOnce(new Error());
     const value = repo.create(createAuthorizeMock);
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database return error', async () => {
-    prisma.authorize.create = jest
+    prismaServiceMock.authorize.create = jest
       .fn()
       .mockRejectedValueOnce(new DatabaseError());
 
@@ -73,13 +71,13 @@ describe('Create Authorize Repo Unit', () => {
 
     // method log
     await expect(response).rejects.toThrow();
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao criar nova authorização...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

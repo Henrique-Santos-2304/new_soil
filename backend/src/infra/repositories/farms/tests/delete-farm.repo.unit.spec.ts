@@ -1,37 +1,33 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IDeleteFarmRepo } from '@contracts/index';
-import { PrismaService } from '@db/config_acess_db';
-import { DatabaseError, QueryError } from '@utils/errors';
-import { createFarmMocked } from '@testRoot/mocks';
 import { DeleteFarmRepo } from '../delete-farm.repo';
+import { DatabaseError, QueryError } from '@utils/errors';
+import {
+  createFarmMocked,
+  loggerMock,
+  loggerMockProvider,
+  prismaProviderMock,
+  prismaServiceMock,
+} from '@testRoot/mocks';
 
 describe('Delete Farms Repo Unit', () => {
   let repo: IDeleteFarmRepo;
-  let prisma: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
-    const loggerProvider = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DeleteFarmRepo, PrismaService, loggerProvider],
+      providers: [DeleteFarmRepo, prismaProviderMock, loggerMockProvider],
     }).compile();
 
     repo = module.get<IDeleteFarmRepo>(DeleteFarmRepo);
-    prisma = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
 
-    prisma.farm.delete = jest.fn().mockReturnValue(1);
-    prisma.farm.deleteMany = jest.fn().mockReturnValue(1);
+    prismaServiceMock.farm.delete = jest.fn().mockReturnValue(1);
+    prismaServiceMock.farm.deleteMany.mockReturnValue(1);
   });
 
   it('should be defined', () => {
     expect(repo).toBeDefined();
-    expect(prisma).toBeDefined();
-    expect(logger).toBeDefined();
+    expect(prismaServiceMock).toBeDefined();
+    expect(loggerMock).toBeDefined();
   });
 
   /*
@@ -47,7 +43,7 @@ describe('Delete Farms Repo Unit', () => {
   });
 
   it('should prisma.farm.delete have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.farm, 'delete');
+    const spy = jest.spyOn(prismaServiceMock.farm, 'delete');
     await repo.by_id({ farm_id: createFarmMocked.farm_id });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -62,21 +58,21 @@ describe('Delete Farms Repo Unit', () => {
   });
 
   it('should log an erro when database find_by_id return error', async () => {
-    prisma.farm.delete = jest.fn().mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.farm.delete.mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_id({ farm_id: createFarmMocked.farm_id });
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('Erro ao deletar fazenda...');
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith('Erro ao deletar fazenda...');
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_id return erro', async () => {
-    prisma.farm.delete = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.farm.delete.mockRejectedValueOnce(new Error());
     const value = repo.by_id({ farm_id: createFarmMocked.farm_id });
     await expect(value).rejects.toThrow(new QueryError().message);
   });
@@ -94,7 +90,7 @@ describe('Delete Farms Repo Unit', () => {
   });
 
   it('should prisma.farm.deleteMany have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.farm, 'deleteMany');
+    const spy = jest.spyOn(prismaServiceMock.farm, 'deleteMany');
     await repo.by_user({ user_id: createFarmMocked.farm_id });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -109,23 +105,23 @@ describe('Delete Farms Repo Unit', () => {
   });
 
   it('should log an erro when database find_by_id return error', async () => {
-    prisma.farm.deleteMany = jest
+    prismaServiceMock.farm.deleteMany = jest
       .fn()
       .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_user({ user_id: createFarmMocked.farm_id });
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('Erro ao deletar fazenda...');
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith('Erro ao deletar fazenda...');
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_id return erro', async () => {
-    prisma.farm.deleteMany = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.farm.deleteMany.mockRejectedValueOnce(new Error());
     const value = repo.by_user({ user_id: createFarmMocked.farm_id });
     await expect(value).rejects.toThrow(new QueryError().message);
   });

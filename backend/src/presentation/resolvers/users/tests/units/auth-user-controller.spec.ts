@@ -1,17 +1,18 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IAuthUserController, IAuthUserService } from '@root/domain';
-import { USER_SERVICE } from '@root/shared';
+import { IAuthUserController } from '@root/domain';
 import { messageRequest } from '@root/shared/usecases/logs-request';
-import { authUserRequestMocked } from '@testRoot/mocks';
-import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
-import { mock, MockProxy } from 'jest-mock-extended';
 import { AuthUserResolver } from '../../auth-user-controller.resolver';
+import {
+  authUserRequestMocked,
+  authUserServiceMock,
+  authUserServiceMockProvider,
+  loggerMock,
+  loggerMockProvider,
+} from '@testRoot/mocks';
 
 describe('Auth User Controller Unit', () => {
   let controller: IAuthUserController;
-  let service: MockProxy<IAuthUserService>;
-  let logger: Logger;
+
   const ctx = {
     userDS: {
       handleResponse: jest
@@ -21,18 +22,19 @@ describe('Auth User Controller Unit', () => {
   };
 
   beforeEach(async () => {
-    service = mock();
-    const createUserService = {
-      provide: USER_SERVICE.AUTH,
-      useValue: service,
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthUserResolver, createUserService, loggerMock],
+      providers: [
+        AuthUserResolver,
+        authUserServiceMockProvider,
+        loggerMockProvider,
+      ],
     }).compile();
 
     controller = module.get<IAuthUserController>(AuthUserResolver);
-    logger = module.get<Logger>(Logger);
-    service.start.mockResolvedValue({ status: 'Sucess', token: 'token_valid' });
+    authUserServiceMock.start.mockResolvedValue({
+      status: 'Sucess',
+      token: 'token_valid',
+    });
   });
 
   it('should create.user to have been called', async () => {
@@ -46,7 +48,7 @@ describe('Auth User Controller Unit', () => {
   });
 
   it('should service to have not been called', async () => {
-    const spy = jest.spyOn(service, 'start');
+    const spy = jest.spyOn(authUserServiceMock, 'start');
 
     await controller.authUser(ctx, authUserRequestMocked);
     expect(spy).toHaveBeenCalled();
@@ -55,7 +57,7 @@ describe('Auth User Controller Unit', () => {
   });
 
   it('should be to log init request', async () => {
-    const spy = jest.spyOn(logger, 'log');
+    const spy = jest.spyOn(loggerMock, 'log');
 
     await controller.authUser(ctx, authUserRequestMocked);
 
@@ -63,7 +65,7 @@ describe('Auth User Controller Unit', () => {
     expect(spy).toHaveBeenCalledWith('Autenticando Usuario...');
   });
   it('should controller return status "Fail" and error message if an error ocurred in service', async () => {
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    authUserServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = await controller.authUser(ctx, authUserRequestMocked);
     expect(response).toHaveProperty('status', 'Fail');
@@ -72,10 +74,10 @@ describe('Auth User Controller Unit', () => {
   });
 
   it('should be logger the error received', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
-    const spyErr = jest.spyOn(logger, 'error');
+    const spyLog = jest.spyOn(loggerMock, 'log');
+    const spyErr = jest.spyOn(loggerMock, 'error');
 
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    authUserServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     await controller.authUser(ctx, authUserRequestMocked);
     expect(spyLog).toHaveBeenCalledTimes(2);
@@ -100,7 +102,7 @@ describe('Auth User Controller Unit', () => {
   });
 
   it('should be logger message sucess request', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
+    const spyLog = jest.spyOn(loggerMock, 'log');
 
     await controller.authUser(ctx, authUserRequestMocked);
     expect(spyLog).toHaveBeenCalledTimes(2);

@@ -1,38 +1,35 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IGetAllUserService, IGetUserController } from '@root/domain';
-import { USER_SERVICE } from '@root/shared';
+import { IGetUserController } from '@root/domain';
 import { messageRequest } from '@root/shared/usecases/logs-request';
-import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
-import { mock, MockProxy } from 'jest-mock-extended';
 import { GetUsersResolver } from '../../get-users.resolver';
+import {
+  getAllUserServiceMock,
+  getAllUserServiceMockProvider,
+  loggerMock,
+  loggerMockProvider,
+} from '@testRoot/index';
 
 describe('Get Users Controller Unit', () => {
   let controller: IGetUserController;
-  let service: MockProxy<IGetAllUserService>;
-  let logger: Logger;
 
   beforeEach(async () => {
-    service = mock();
-    const getUserService = {
-      provide: USER_SERVICE.GET_ALL,
-      useValue: service,
-    };
-
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GetUsersResolver, getUserService, loggerMock],
+      providers: [
+        GetUsersResolver,
+        getAllUserServiceMockProvider,
+        loggerMockProvider,
+      ],
     }).compile();
 
     controller = module.get(GetUsersResolver);
-    logger = module.get(Logger);
-    service.start.mockResolvedValue([
+    getAllUserServiceMock.start.mockResolvedValue([
       { login: `soil1`, user_id: `1`, userType: 'MASTER' },
       { login: `soil2`, user_id: `2`, userType: 'MASTER' },
     ]);
   });
 
   it('should service and controller to be defined', async () => {
-    expect(service).toBeDefined();
+    expect(getAllUserServiceMock).toBeDefined();
     expect(controller).toBeDefined();
   });
 
@@ -47,7 +44,7 @@ describe('Get Users Controller Unit', () => {
   });
 
   it('should service to have been called', async () => {
-    const spy = jest.spyOn(service, 'start');
+    const spy = jest.spyOn(getAllUserServiceMock, 'start');
 
     await controller.getUsers();
     expect(spy).toHaveBeenCalled();
@@ -56,7 +53,7 @@ describe('Get Users Controller Unit', () => {
   });
 
   it('should be to log init request', async () => {
-    const spy = jest.spyOn(logger, 'log');
+    const spy = jest.spyOn(loggerMock, 'log');
 
     await controller.getUsers();
 
@@ -65,7 +62,7 @@ describe('Get Users Controller Unit', () => {
   });
 
   it('should controller return status "Fail" and error message if an error ocurred in service', async () => {
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    getAllUserServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = await controller.getUsers();
     expect(response).toHaveProperty('status', 'Fail');
@@ -73,10 +70,10 @@ describe('Get Users Controller Unit', () => {
   });
 
   it('should be logger the error received', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
-    const spyErr = jest.spyOn(logger, 'error');
+    const spyLog = jest.spyOn(loggerMock, 'log');
+    const spyErr = jest.spyOn(loggerMock, 'error');
 
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    getAllUserServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     await controller.getUsers();
     expect(spyLog).toHaveBeenCalledTimes(2);
@@ -99,7 +96,7 @@ describe('Get Users Controller Unit', () => {
   });
 
   it('should be logger message sucess request', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
+    const spyLog = jest.spyOn(loggerMock, 'log');
 
     await controller.getUsers();
     expect(spyLog).toHaveBeenCalledTimes(2);

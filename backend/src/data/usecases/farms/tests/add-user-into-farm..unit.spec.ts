@@ -1,35 +1,24 @@
-import { Global, Logger, Module, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule, UserModule } from '@root/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 import { AddUserIntoFarmService } from '../add-user-into-farm.service';
-import {
-  FARM_REPO,
-  NotFoundError,
-  USER_REPO,
-  USER_SERVICE,
-} from '@root/shared';
-import {
-  IAddUserIntoFarmService,
-  ICreateUserRepo,
-  ICreateUserService,
-  IFindFarmsRepo,
-  IFindUserRepo,
-  IUpdateFarmRepo,
-} from '@contracts/index';
+import { NotFoundError } from '@root/shared';
+import { IAddUserIntoFarmService } from '@contracts/index';
 import {
   createFarmMocked3,
+  createUserServiceMock,
+  createUserServiceMockProvider,
+  findFarmRepoMock,
+  findFarmRepoMockProvider,
+  loggerMockProvider,
+  prismaProviderMock,
   serviceAddUserIntoFarmMock,
   serviceUpdateFarmMock,
+  updateFarmRepoMock,
+  updateFarmRepoMockProvider,
 } from '@testRoot/index';
+
 describe('Add User Into Farm Farm Service Unit', () => {
   let service: IAddUserIntoFarmService;
-  let updateFarmRepo: MockProxy<IUpdateFarmRepo>;
-  let createUserService: MockProxy<ICreateUserService>;
-  let findUserRepo: MockProxy<IFindUserRepo>;
-  let findFarmRepo: MockProxy<IFindFarmsRepo>;
-
-  let logger: MockProxy<Logger>;
 
   const dataFarm = {
     ...createFarmMocked3,
@@ -37,58 +26,33 @@ describe('Add User Into Farm Farm Service Unit', () => {
   };
 
   beforeEach(async () => {
-    updateFarmRepo = mock();
-    findFarmRepo = mock();
-    findUserRepo = mock();
-    createUserService = mock();
-    logger = mock();
-
-    const findFarmProvider = {
-      provide: FARM_REPO.FIND,
-      useValue: findFarmRepo,
-    };
-
-    const updateProvider = {
-      provide: FARM_REPO.UPDATE,
-      useValue: updateFarmRepo,
-    };
-
-    const createUserProvider = {
-      provide: USER_SERVICE.CREATE,
-      useValue: createUserService,
-    };
-
-    const loggerProvider = { provide: Logger, useValue: logger };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
       providers: [
         AddUserIntoFarmService,
-        findFarmProvider,
-        updateProvider,
-        loggerProvider,
-        createUserProvider,
+        findFarmRepoMockProvider,
+        updateFarmRepoMockProvider,
+        loggerMockProvider,
+        createUserServiceMockProvider,
+        prismaProviderMock,
       ],
     }).compile();
 
     service = module.get<IAddUserIntoFarmService>(AddUserIntoFarmService);
 
-    findFarmRepo.by_id.mockResolvedValue(dataFarm);
-
-    createUserService.start.mockResolvedValue({
+    findFarmRepoMock.by_id.mockResolvedValue(dataFarm);
+    createUserServiceMock.start.mockResolvedValue({
       user_id: 'new_user',
       status: 'Sucess',
     });
-
-    updateFarmRepo.addOrDeleteUser.mockResolvedValue({
+    updateFarmRepoMock.addOrDeleteUser.mockResolvedValue({
       farm_id: serviceAddUserIntoFarmMock.farm_id,
     });
   });
 
   it('should be providers is defined', () => {
     expect(service).toBeDefined();
-    expect(updateFarmRepo).toBeDefined();
-    expect(findFarmRepo).toBeDefined();
+    expect(updateFarmRepoMock).toBeDefined();
+    expect(findFarmRepoMock).toBeDefined();
   });
 
   it('should be service to have been called with data valids', async () => {
@@ -103,7 +67,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   // Test FindFarmRepo
 
   it('should be findFarm.by_id to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(findFarmRepo, 'by_id');
+    const spy = jest.spyOn(findFarmRepoMock, 'by_id');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -114,7 +78,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be throw "Farm not found" if not exists farm with farm_id received', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce(null);
+    findFarmRepoMock.by_id.mockResolvedValueOnce(null);
 
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -122,7 +86,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be throw a QUERY ERROR if findFarmrepo throw error', async () => {
-    findFarmRepo.by_id.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findFarmRepoMock.by_id.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -131,7 +95,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
 
   // Auth User
   it('should be throw Unauthorized if userType is USER and not exists in table DEALERS or ADMINS', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
+    findFarmRepoMock.by_id.mockResolvedValueOnce({
       ...dataFarm,
       dealers: [],
       admins: [],
@@ -149,7 +113,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   // Test Create User Repo
 
   it('should be createuserService to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(createUserService, 'start');
+    const spy = jest.spyOn(createUserServiceMock, 'start');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -161,7 +125,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be throw a QUERY ERROR if createUserService throw error', async () => {
-    createUserService.start.mockRejectedValueOnce(new Error('ERROR'));
+    createUserServiceMock.start.mockRejectedValueOnce(new Error('ERROR'));
 
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -171,7 +135,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   // Tests Update User Repo
 
   it('should be UpdateFarmRepo to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(updateFarmRepo, 'addOrDeleteUser');
+    const spy = jest.spyOn(updateFarmRepoMock, 'addOrDeleteUser');
 
     await service.start({ ...serviceAddUserIntoFarmMock });
 
@@ -183,7 +147,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be throw a QUERY ERROR if UpdateFarmRepo throw error', async () => {
-    updateFarmRepo.addOrDeleteUser.mockRejectedValueOnce(
+    updateFarmRepoMock.addOrDeleteUser.mockRejectedValueOnce(
       new Error('QUERY ERROR'),
     );
 
@@ -193,14 +157,14 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should useCase return "User not added into farm" if db return null', async () => {
-    updateFarmRepo.addOrDeleteUser.mockResolvedValueOnce(null);
+    updateFarmRepoMock.addOrDeleteUser.mockResolvedValueOnce(null);
     const response = service.start({ ...serviceAddUserIntoFarmMock });
 
     await expect(response).rejects.toThrow('User not added into farm');
   });
 
   it('should be useCases return data valids if not ocurred an error in table admin', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
+    findFarmRepoMock.by_id.mockResolvedValueOnce({
       ...dataFarm,
       dealers: [serviceAddUserIntoFarmMock.auth.user_id],
     });
@@ -224,7 +188,7 @@ describe('Add User Into Farm Farm Service Unit', () => {
   });
 
   it('should be useCases return data valids if not ocurred an error', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
+    findFarmRepoMock.by_id.mockResolvedValueOnce({
       ...dataFarm,
       admins: [serviceAddUserIntoFarmMock.auth.user_id],
     });

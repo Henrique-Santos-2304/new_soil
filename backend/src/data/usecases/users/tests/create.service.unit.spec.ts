@@ -1,66 +1,42 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule } from '@root/core';
-import {
-  ICreateUserRepo,
-  ICreateUserService,
-  IEncrypterData,
-  IFindUserRepo,
-} from '@root/domain';
+import { ICreateUserService } from '@contracts/index';
+import { CreateUserService } from '../create.service';
+import { NotCreatedError, AlreadyExistsError } from '@utils/errors';
 import {
   createUserMocked,
   createUserRequestMocked,
+  prismaProviderMock,
   userModelMocked,
+  createUserRepoMock,
+  createUserRepoMockProvider,
+  findUserRepoMock,
+  findUserRepoMockProvider,
+  encrypterMock,
+  encrypterMockProvider,
+  loggerMockProvider,
 } from '@testRoot/index';
-import { CreateUserService } from '../create.service';
-import { AlreadyExistsError } from '@root/shared/errors';
-import { NotCreatedError } from '@root/shared/errors/not-created';
-import { USER_REPO, VALIDATORS_SERVICE } from '@root/shared';
 
 describe('Create User Service Unit', () => {
   let service: ICreateUserService;
-  let createUserrepo: MockProxy<ICreateUserRepo>;
-  let findUserRepo: MockProxy<IFindUserRepo>;
-  let encrypter: MockProxy<IEncrypterData>;
-  let logger: MockProxy<Logger>;
 
   beforeEach(async () => {
-    createUserrepo = mock();
-    findUserRepo = mock();
-    encrypter = mock();
-    logger = mock();
-
-    const finProvider = { provide: USER_REPO.FIND, useValue: findUserRepo };
-
-    const createProvider = {
-      provide: USER_REPO.CREATE,
-      useValue: createUserrepo,
-    };
-
-    const encryptProvider = {
-      provide: VALIDATORS_SERVICE.ENCRYPTER,
-      useValue: encrypter,
-    };
-
-    const loggerProvider = { provide: Logger, useValue: logger };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
       providers: [
         CreateUserService,
-        finProvider,
-        createProvider,
-        encryptProvider,
-        loggerProvider,
+        findUserRepoMockProvider,
+        createUserRepoMockProvider,
+        encrypterMockProvider,
+        loggerMockProvider,
+        prismaProviderMock,
       ],
     }).compile();
 
     service = module.get<ICreateUserService>(CreateUserService);
 
-    createUserrepo.create.mockResolvedValue(userModelMocked);
-    findUserRepo.by_login.mockResolvedValue(null);
-    encrypter.encrypt.mockResolvedValue('encrypted_password');
+    createUserRepoMock.create.mockResolvedValue(userModelMocked);
+    findUserRepoMock.by_login.mockResolvedValue(null);
+    encrypterMock.encrypt.mockResolvedValue('encrypted_password');
   });
 
   // Test usecase to have be defined
@@ -89,7 +65,7 @@ describe('Create User Service Unit', () => {
 
   // Test find user to have been called with data válid
   it('should find user to have been called with data válids', async () => {
-    const spy = jest.spyOn(findUserRepo, 'by_login');
+    const spy = jest.spyOn(findUserRepoMock, 'by_login');
     await service.start(createUserRequestMocked);
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -98,7 +74,7 @@ describe('Create User Service Unit', () => {
 
   // Test find user return "QUERY_ERROR" if db to throw
   it('should find user return "QUERY_ERROR" if db to throw', async () => {
-    findUserRepo.by_login.mockRejectedValueOnce(new Error('QUERY_ERROR'));
+    findUserRepoMock.by_login.mockRejectedValueOnce(new Error('QUERY_ERROR'));
 
     const response = service.start(createUserRequestMocked);
     await expect(response).rejects.toThrow(new Error('QUERY_ERROR'));
@@ -106,7 +82,7 @@ describe('Create User Service Unit', () => {
 
   // Test findUserRepo return user already exists if db return an user
   it('should findUserRepo return user already exists if db return an user', async () => {
-    findUserRepo.by_login.mockResolvedValueOnce(userModelMocked);
+    findUserRepoMock.by_login.mockResolvedValueOnce(userModelMocked);
 
     const response = service.start(createUserRequestMocked);
     await expect(response).rejects.toThrow(
@@ -116,7 +92,7 @@ describe('Create User Service Unit', () => {
 
   // Test encrypter to have been called with password received
   it('should encrypter to have been called with password received ', async () => {
-    const spy = jest.spyOn(encrypter, 'encrypt');
+    const spy = jest.spyOn(encrypterMock, 'encrypt');
     await service.start(createUserRequestMocked);
 
     expect(spy).toHaveBeenCalledTimes(1);
@@ -125,7 +101,7 @@ describe('Create User Service Unit', () => {
 
   // Test encrypter return error if not encrypted password
   it('should encrypter throw "ENCRYPT ERROR" if an error ocurred', async () => {
-    encrypter.encrypt.mockRejectedValueOnce(new Error('ENCRYPT ERROR'));
+    encrypterMock.encrypt.mockRejectedValueOnce(new Error('ENCRYPT ERROR'));
     const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow('ENCRYPT ERROR');
@@ -133,7 +109,7 @@ describe('Create User Service Unit', () => {
 
   // Test createUserRepo to have been called with data received and password encrypted
   it('should createUserRepo to have been called with data received and password encrypted', async () => {
-    const spy = jest.spyOn(createUserrepo, 'create');
+    const spy = jest.spyOn(createUserRepoMock, 'create');
     await service.start(createUserRequestMocked);
 
     expect(spy).toHaveBeenCalledTimes(1);
@@ -145,7 +121,7 @@ describe('Create User Service Unit', () => {
 
   // Test createUserRepo return "QUERY_ERROR" if db ocurred an error
   it('should createUserRepo throw "QUERY_ERROR" if db ocurred an error and log error', async () => {
-    createUserrepo.create.mockRejectedValueOnce(new Error('QUERY_ERROR'));
+    createUserRepoMock.create.mockRejectedValueOnce(new Error('QUERY_ERROR'));
     const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow('QUERY_ERROR');
@@ -153,7 +129,7 @@ describe('Create User Service Unit', () => {
 
   // Test useCase return User not created if db not return a new user
   it('should useCase return User not created if db not return a new user', async () => {
-    createUserrepo.create.mockResolvedValueOnce(null);
+    createUserRepoMock.create.mockResolvedValueOnce(null);
     const response = service.start(createUserRequestMocked);
 
     await expect(response).rejects.toThrow(new NotCreatedError('User').message);

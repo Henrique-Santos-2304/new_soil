@@ -14,7 +14,14 @@ import {
   serviceAddUserIntoFarmMock,
 } from '@testRoot/index';
 import { mutationAddUserIntoFarm } from '@testRoot/mocks/gql';
-import { AlreadyExistsError, NotFoundError } from '@root/shared';
+import {
+  AlreadyExistsError,
+  FARM_CONTROLLER,
+  FARM_REPO,
+  FARM_SERVICE,
+  NotFoundError,
+  USER_REPO,
+} from '@root/shared';
 
 describe('Add User Into Farm Integration', () => {
   let app: INestApplication;
@@ -45,19 +52,15 @@ describe('Add User Into Farm Integration', () => {
 
   it('should be defined this respective providers of service', async () => {
     const service = await app.resolve<IAddUserIntoFarmService>(
-      'IAddUserIntoFarmService',
+      FARM_SERVICE.ADD_USER,
     );
     const controller = await app.resolve<IAddUserIntoFarmController>(
-      'IAddUserIntoFarmController',
+      FARM_CONTROLLER.ADD_USER,
     );
-    const findFarmRepo = await app.resolve<IFindFarmsRepo>('IFindFarmsRepo');
-    const updateFarmRepo = await app.resolve<IUpdateFarmRepo>(
-      'IUpdateFarmRepo',
-    );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const createUserRepo = await app.resolve<ICreateUserRepo>(
-      'ICreateUserRepo',
-    );
+    const findFarmRepo = await app.resolve<IFindFarmsRepo>(FARM_REPO.FIND);
+    const updateFarmRepo = await app.resolve<IUpdateFarmRepo>(FARM_REPO.UPDATE);
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const createUserRepo = await app.resolve<ICreateUserRepo>(USER_REPO.CREATE);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

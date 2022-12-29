@@ -1,35 +1,34 @@
-import { Logger } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
-import { IFindUserRepo } from '@root/domain';
-import { PrismaService } from '@root/infra/config_acess_db';
-import { DatabaseError, QueryError } from '@root/shared/errors';
-import { userModelMocked, createUserMocked } from '@testRoot/index';
+import { IFindUserRepo } from '@contracts/index';
 import { FindUserRepo } from '../find.repo';
+import { DatabaseError, QueryError } from '@utils/errors';
+import {
+  userModelMocked,
+  createUserMocked,
+  prismaProviderMock,
+  loggerMockProvider,
+  prismaServiceMock,
+  loggerMock,
+} from '@testRoot/index';
 
 describe('Find User Repo Unit', () => {
   let repo: IFindUserRepo;
-  let prisma: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
-    const loggerProvider = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FindUserRepo, PrismaService, loggerProvider],
+      providers: [FindUserRepo, prismaProviderMock, loggerMockProvider],
     }).compile();
 
     repo = module.get<IFindUserRepo>(FindUserRepo);
-    prisma = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
 
-    prisma.user.findFirst = jest.fn().mockResolvedValue(userModelMocked);
-    prisma.user.findMany = jest.fn().mockResolvedValue([userModelMocked]);
+    prismaServiceMock.user.findFirst.mockResolvedValue(userModelMocked);
+    prismaServiceMock.user.findMany.mockResolvedValue([userModelMocked]);
   });
 
   it('should be defined', () => {
     expect(repo).toBeDefined();
+    expect(prismaServiceMock).toBeDefined();
+    expect(loggerMock).toBeDefined();
   });
 
   /*
@@ -42,10 +41,10 @@ describe('Find User Repo Unit', () => {
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ login: createUserMocked.login });
-  });
+  }, 600000);
 
   it('should prisma.user.findFist in fin_by_login to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.user, 'findFirst');
+    const spy = jest.spyOn(prismaServiceMock.user, 'findFirst');
     await repo.by_login({ login: createUserMocked.login });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -64,32 +63,31 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to return a null with fin_by_login not find user', async () => {
-    jest.spyOn(repo, 'by_login');
-    prisma.user.findFirst = jest.fn().mockResolvedValueOnce(null);
+    prismaServiceMock.user.findFirst = jest.fn().mockResolvedValueOnce(null);
     const value = await repo.by_login({ login: userModelMocked.login });
     expect(value).toBe(null);
   });
 
   it('should log an erro when database find_by_login return error', async () => {
-    prisma.user.findFirst = jest
+    prismaServiceMock.user.findFirst = jest
       .fn()
       .mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar usuario no banco de dados...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_login return erro', async () => {
-    prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.user.findFirst.mockRejectedValueOnce(new Error());
     const value = repo.by_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow(new QueryError().message);
   });
@@ -107,7 +105,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should prisma.user.findFist in fin_by_id to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.user, 'findFirst');
+    const spy = jest.spyOn(prismaServiceMock.user, 'findFirst');
     await repo.by_id({ user_id: userModelMocked.user_id });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -126,35 +124,32 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to return a null with fin_by_id not find user', async () => {
-    jest.spyOn(repo, 'by_id');
-    prisma.user.findFirst = jest.fn().mockResolvedValueOnce(null);
+    prismaServiceMock.user.findFirst = jest.fn().mockResolvedValueOnce(null);
     const value = await repo.by_id({ user_id: userModelMocked.user_id });
     expect(value).toBe(null);
   });
 
   it('should to to throw "QUERY ERROR" when database find_by_login return erro', async () => {
-    prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.user.findFirst.mockRejectedValueOnce(new Error());
     const value = repo.by_id({ user_id: userModelMocked.user_id });
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database find_by_id return error', async () => {
-    prisma.user.findFirst = jest
-      .fn()
-      .mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.user.findFirst.mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.by_id({ user_id: userModelMocked.user_id });
     await expect(value).rejects.toThrow();
 
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar usuario no banco de dados...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   /*
@@ -170,7 +165,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should prisma.user.findFist in without_login to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.user, 'findFirst');
+    const spy = jest.spyOn(prismaServiceMock.user, 'findFirst');
     await repo.without_login({ login: createUserMocked.login });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -181,7 +176,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to return a user_id and userType and password of user when without_login not return an error', async () => {
-    prisma.user.findFirst = jest.fn().mockResolvedValueOnce({
+    prismaServiceMock.user.findFirst = jest.fn().mockResolvedValueOnce({
       user_id: 'soil_id',
       userType: 'MASTER',
       password: '1234',
@@ -197,8 +192,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to return a null with without_login not find user', async () => {
-    jest.spyOn(repo, 'without_login');
-    prisma.user.findFirst = jest.fn().mockResolvedValueOnce(null);
+    prismaServiceMock.user.findFirst = jest.fn().mockResolvedValueOnce(null);
     const value = await repo.without_login({
       login: userModelMocked.login,
     });
@@ -206,27 +200,25 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to to throw "QUERY ERROR" when database without_login return erro', async () => {
-    prisma.user.findFirst = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.user.findFirst.mockRejectedValueOnce(new Error());
     const value = repo.without_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database without_login return error', async () => {
-    prisma.user.findFirst = jest
-      .fn()
-      .mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.user.findFirst.mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.without_login({ login: userModelMocked.login });
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar usuario no banco de dados...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   // all
@@ -239,7 +231,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should prisma.user.findFist in all to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.user, 'findMany');
+    const spy = jest.spyOn(prismaServiceMock.user, 'findMany');
     await repo.all();
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
@@ -249,7 +241,7 @@ describe('Find User Repo Unit', () => {
   });
 
   it('should to return list users if not exists users in db', async () => {
-    prisma.user.findMany = jest.fn().mockResolvedValueOnce([
+    prismaServiceMock.user.findMany = jest.fn().mockResolvedValueOnce([
       {
         user_id: 'soil_id',
         login: 'soil',
@@ -269,30 +261,30 @@ describe('Find User Repo Unit', () => {
 
   it('should to return an empty list  not find user', async () => {
     jest.spyOn(repo, 'all');
-    prisma.user.findMany = jest.fn().mockResolvedValueOnce([]);
+    prismaServiceMock.user.findMany = jest.fn().mockResolvedValueOnce([]);
     const value = await repo.all();
     expect(value).toEqual([]);
   });
 
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
-    prisma.user.findMany = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.user.findMany.mockRejectedValueOnce(new Error());
     const value = repo.all();
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database without_login return error', async () => {
-    prisma.user.findMany = jest.fn().mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.user.findMany.mockRejectedValueOnce(new DatabaseError());
 
     const value = repo.all();
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar usuarios no banco de dados...',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

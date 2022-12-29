@@ -1,78 +1,58 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
-import { PrismaModule } from '@root/core';
-import {
-  IFindFarmsRepo,
-  IUpdateFarmRepo,
-  IUpdateFarmService,
-} from '@root/domain';
+import { IUpdateFarmService } from '@contracts/index';
 import {
   AlreadyExistsError,
-  FARM_REPO,
   NotCreatedError,
   NotFoundError,
 } from '@root/shared';
 import { AmbiguousData } from '@utils/index';
 import {
   createFarmMocked,
+  findFarmRepoMock,
+  findFarmRepoMockProvider,
+  loggerMockProvider,
+  prismaProviderMock,
   serviceUpdateFarmMock,
   updateFarmMock,
+  updateFarmRepoMock,
+  updateFarmRepoMockProvider,
 } from '@testRoot/index';
-import { mock, MockProxy } from 'jest-mock-extended';
 import { UpdateFarmService } from '../update-farm.service';
 
 describe('Update Farm Service Unit', () => {
   let service: IUpdateFarmService;
-  let updateFarmRepo: MockProxy<IUpdateFarmRepo>;
-  let findFarmRepo: MockProxy<IFindFarmsRepo>;
-
-  let logger: MockProxy<Logger>;
 
   beforeEach(async () => {
-    updateFarmRepo = mock();
-    findFarmRepo = mock();
-    logger = mock();
-    const findFarmProvider = {
-      provide: FARM_REPO.FIND,
-      useValue: findFarmRepo,
-    };
-
-    const updateProvider = {
-      provide: FARM_REPO.UPDATE,
-      useValue: updateFarmRepo,
-    };
-
-    const loggerProvider = { provide: Logger, useValue: logger };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
       providers: [
         UpdateFarmService,
-        findFarmProvider,
-        updateProvider,
-        loggerProvider,
+        findFarmRepoMockProvider,
+        updateFarmRepoMockProvider,
+        loggerMockProvider,
+        prismaProviderMock,
       ],
     }).compile();
 
     service = module.get<IUpdateFarmService>(UpdateFarmService);
 
-    findFarmRepo.by_id.mockResolvedValue({
+    findFarmRepoMock.by_id.mockResolvedValue({
       ...createFarmMocked,
       owner_id: serviceUpdateFarmMock.user.user_id,
     });
-    updateFarmRepo.put.mockResolvedValue({
+    updateFarmRepoMock.put.mockResolvedValue({
       farm_id: createFarmMocked.farm_id,
     });
   });
 
   it('should be providers is defined', () => {
     expect(service).toBeDefined();
-    expect(updateFarmRepo).toBeDefined();
-    expect(findFarmRepo).toBeDefined();
+    expect(updateFarmRepoMock).toBeDefined();
+    expect(findFarmRepoMock).toBeDefined();
   });
 
   it('should be service to have been called with data valids', async () => {
-    findFarmRepo.by_id
+    findFarmRepoMock.by_id
       .mockResolvedValueOnce({
         ...createFarmMocked,
         owner_id: serviceUpdateFarmMock.user.user_id,
@@ -89,14 +69,14 @@ describe('Update Farm Service Unit', () => {
   // Test FindFarmRepo
 
   it('should be findFarm.by_id to have been called once time and with data valids', async () => {
-    findFarmRepo.by_id
+    findFarmRepoMock.by_id
       .mockResolvedValueOnce({
         ...createFarmMocked,
         owner_id: serviceUpdateFarmMock.user.user_id,
       })
       .mockResolvedValueOnce(null);
 
-    const spy = jest.spyOn(findFarmRepo, 'by_id');
+    const spy = jest.spyOn(findFarmRepoMock, 'by_id');
 
     await service.start({ ...serviceUpdateFarmMock });
 
@@ -111,7 +91,7 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be throw "Farm not found" if not exists farm with farm_id received', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce(null);
+    findFarmRepoMock.by_id.mockResolvedValueOnce(null);
 
     const response = service.start({ ...serviceUpdateFarmMock });
 
@@ -119,7 +99,7 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be throw a QUERY ERROR if findFarmrepo throw error', async () => {
-    findFarmRepo.by_id.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findFarmRepoMock.by_id.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = service.start({ ...serviceUpdateFarmMock });
 
@@ -129,7 +109,7 @@ describe('Update Farm Service Unit', () => {
   // Test authorize for update data
 
   it('should be throw Unauthorized if user_id not is OWNER or MASTER or DEALER and equal ADMIN', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
+    findFarmRepoMock.by_id.mockResolvedValueOnce({
       ...createFarmMocked,
       dealers: [],
       admins: [serviceUpdateFarmMock.user.user_id],
@@ -144,7 +124,7 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be throw Unauthorized if user_id not is OWNER or MASTER or DEALER and equal USER', async () => {
-    findFarmRepo.by_id.mockResolvedValueOnce({
+    findFarmRepoMock.by_id.mockResolvedValueOnce({
       ...createFarmMocked,
       dealers: [],
       users: [serviceUpdateFarmMock.user.user_id],
@@ -159,7 +139,7 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be throw "AMBIGUOUS DATA" if all data is equal a farm of db', async () => {
-    findFarmRepo.by_id.mockResolvedValue({
+    findFarmRepoMock.by_id.mockResolvedValue({
       ...createFarmMocked,
       owner_id: serviceUpdateFarmMock.user.user_id,
       farm_name: updateFarmMock.farm_name,
@@ -180,7 +160,7 @@ describe('Update Farm Service Unit', () => {
   });
 
   it('should be throw farm already exists if new farm_id updated exist in db', async () => {
-    findFarmRepo.by_id
+    findFarmRepoMock.by_id
       .mockResolvedValueOnce({
         ...createFarmMocked,
         owner_id: serviceUpdateFarmMock.user.user_id,
@@ -201,7 +181,7 @@ describe('Update Farm Service Unit', () => {
   // Update Farm Repo
 
   it('should be updateFarmRepo to have been called once time and with data valids', async () => {
-    findFarmRepo.by_id
+    findFarmRepoMock.by_id
       .mockResolvedValueOnce({
         ...createFarmMocked,
         owner_id: '',
@@ -209,7 +189,7 @@ describe('Update Farm Service Unit', () => {
       })
       .mockResolvedValueOnce(null);
 
-    const spy = jest.spyOn(updateFarmRepo, 'put');
+    const spy = jest.spyOn(updateFarmRepoMock, 'put');
 
     await service.start({
       ...serviceUpdateFarmMock,
@@ -231,8 +211,70 @@ describe('Update Farm Service Unit', () => {
     });
   });
 
+  it('should be throw "Farm Not Create" if not exists farm with farm_id received', async () => {
+    findFarmRepoMock.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+        owner_id: serviceUpdateFarmMock.user.user_id,
+      })
+      .mockResolvedValueOnce(null);
+    updateFarmRepoMock.put.mockResolvedValueOnce(null);
+
+    const response = service.start({
+      ...serviceUpdateFarmMock,
+      newFarm: {
+        ...updateFarmMock,
+        farm_id: 'new_farm_id',
+      },
+    });
+
+    await expect(response).rejects.toThrow(new NotCreatedError('Farm'));
+  });
+
+  it('should be throw a QUERY ERROR if findFarmrepo throw error', async () => {
+    findFarmRepoMock.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+        owner_id: serviceUpdateFarmMock.user.user_id,
+      })
+      .mockResolvedValueOnce(null);
+    updateFarmRepoMock.put.mockRejectedValueOnce(new Error('QUERY ERROR'));
+
+    const response = service.start({
+      ...serviceUpdateFarmMock,
+      newFarm: {
+        ...updateFarmMock,
+        farm_id: 'new_farm_id',
+      },
+    });
+
+    await expect(response).rejects.toThrow('QUERY ERROR');
+  });
+
+  it('should be return farm_id if farm is updated with sucessfuly', async () => {
+    findFarmRepoMock.by_id
+      .mockResolvedValueOnce({
+        ...createFarmMocked,
+      })
+      .mockResolvedValueOnce(null);
+
+    updateFarmRepoMock.put.mockResolvedValue({
+      farm_id: 'new_farm_id',
+    });
+
+    const response = await service.start({
+      ...serviceUpdateFarmMock,
+      newFarm: {
+        ...updateFarmMock,
+        farm_id: 'new_farm_id',
+      },
+    });
+
+    expect(response).toHaveProperty('farm_id', 'new_farm_id');
+  });
+
   it('should be updateFarmRepo to have been called without farm_id, farm_name and farm_city', async () => {
-    findFarmRepo.by_id
+    findFarmRepoMock.by_id
       .mockResolvedValueOnce({
         ...createFarmMocked,
         owner_id: '',
@@ -240,7 +282,7 @@ describe('Update Farm Service Unit', () => {
       })
       .mockResolvedValueOnce(null);
 
-    const spy = jest.spyOn(updateFarmRepo, 'put');
+    const spy = jest.spyOn(updateFarmRepoMock, 'put');
 
     await service.start({
       ...serviceUpdateFarmMock,
@@ -262,67 +304,5 @@ describe('Update Farm Service Unit', () => {
         updated_by: serviceUpdateFarmMock.user.user_id,
       },
     });
-  });
-
-  it('should be throw "Farm Not Create" if not exists farm with farm_id received', async () => {
-    findFarmRepo.by_id
-      .mockResolvedValueOnce({
-        ...createFarmMocked,
-        owner_id: serviceUpdateFarmMock.user.user_id,
-      })
-      .mockResolvedValueOnce(null);
-    updateFarmRepo.put.mockResolvedValueOnce(null);
-
-    const response = service.start({
-      ...serviceUpdateFarmMock,
-      newFarm: {
-        ...updateFarmMock,
-        farm_id: 'new_farm_id',
-      },
-    });
-
-    await expect(response).rejects.toThrow(new NotCreatedError('Farm'));
-  });
-
-  it('should be throw a QUERY ERROR if findFarmrepo throw error', async () => {
-    findFarmRepo.by_id
-      .mockResolvedValueOnce({
-        ...createFarmMocked,
-        owner_id: serviceUpdateFarmMock.user.user_id,
-      })
-      .mockResolvedValueOnce(null);
-    updateFarmRepo.put.mockRejectedValueOnce(new Error('QUERY ERROR'));
-
-    const response = service.start({
-      ...serviceUpdateFarmMock,
-      newFarm: {
-        ...updateFarmMock,
-        farm_id: 'new_farm_id',
-      },
-    });
-
-    await expect(response).rejects.toThrow('QUERY ERROR');
-  });
-
-  it('should be return farm_id if farm is updated with sucessfuly', async () => {
-    findFarmRepo.by_id
-      .mockResolvedValueOnce({
-        ...createFarmMocked,
-      })
-      .mockResolvedValueOnce(null);
-
-    updateFarmRepo.put.mockResolvedValue({
-      farm_id: 'new_farm_id',
-    });
-
-    const response = await service.start({
-      ...serviceUpdateFarmMock,
-      newFarm: {
-        ...updateFarmMock,
-        farm_id: 'new_farm_id',
-      },
-    });
-
-    expect(response).toHaveProperty('farm_id', 'new_farm_id');
   });
 });

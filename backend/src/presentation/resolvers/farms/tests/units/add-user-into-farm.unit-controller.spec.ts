@@ -1,33 +1,32 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IAddUserIntoFarmService } from '@root/domain';
 import { IAddUserIntoFarmController } from '@root/domain/controllers/farms/add-user-into-farm.controller.domain';
-import { FARM_SERVICE, messageRequest } from '@root/shared';
-import { createFarmMocked, serviceAddUserIntoFarmMock } from '@testRoot/index';
-import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { messageRequest } from '@root/shared';
+import {
+  addUserIntoFarmServiceMock,
+  addUserIntoFarmServiceMockProvider,
+  createFarmMocked,
+  loggerMock,
+  loggerMockProvider,
+  serviceAddUserIntoFarmMock,
+} from '@testRoot/index';
 import { AddUserIntoFarmResolver } from '../../add-user-into-farm.controller.resolver';
 
 describe('Add User Into Farm Controller Unit', () => {
   let controller: IAddUserIntoFarmController;
-  let service: MockProxy<IAddUserIntoFarmService>;
-  let logger: Logger;
 
   beforeEach(async () => {
-    service = mock();
-    const updateFarmService = {
-      provide: FARM_SERVICE.ADD_USER,
-      useValue: service,
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AddUserIntoFarmResolver, updateFarmService, loggerMock],
+      providers: [
+        AddUserIntoFarmResolver,
+        addUserIntoFarmServiceMockProvider,
+        loggerMockProvider,
+      ],
     }).compile();
 
     controller = module.get<IAddUserIntoFarmController>(
       AddUserIntoFarmResolver,
     );
-    logger = module.get<Logger>(Logger);
-    service.start.mockResolvedValue({
+    addUserIntoFarmServiceMock.start.mockResolvedValue({
       farm_id: serviceAddUserIntoFarmMock.farm_id,
       user_id: createFarmMocked.owner_id,
     });
@@ -44,7 +43,7 @@ describe('Add User Into Farm Controller Unit', () => {
   });
 
   it('should be to log init request', async () => {
-    const spy = jest.spyOn(logger, 'log');
+    const spy = jest.spyOn(loggerMock, 'log');
 
     await controller.addUserIntoFarm({ ...serviceAddUserIntoFarmMock });
 
@@ -55,7 +54,9 @@ describe('Add User Into Farm Controller Unit', () => {
   });
 
   it('should controller return status "Fail" and error message if an error ocurred in service', async () => {
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    addUserIntoFarmServiceMock.start.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     const response = await controller.addUserIntoFarm({
       ...serviceAddUserIntoFarmMock,
@@ -65,10 +66,12 @@ describe('Add User Into Farm Controller Unit', () => {
   });
 
   it('should be logger the error received', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
-    const spyErr = jest.spyOn(logger, 'error');
+    const spyLog = jest.spyOn(loggerMock, 'log');
+    const spyErr = jest.spyOn(loggerMock, 'error');
 
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    addUserIntoFarmServiceMock.start.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     await controller.addUserIntoFarm({ ...serviceAddUserIntoFarmMock });
     expect(spyLog).toHaveBeenCalledTimes(2);
@@ -102,7 +105,7 @@ describe('Add User Into Farm Controller Unit', () => {
   });
 
   it('should be logger message sucess request', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
+    const spyLog = jest.spyOn(loggerMock, 'log');
 
     await controller.addUserIntoFarm({ ...serviceAddUserIntoFarmMock });
     expect(spyLog).toHaveBeenCalledTimes(2);

@@ -9,6 +9,11 @@ import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { gql } from 'apollo-server-express';
 import { queriesFindAuthorization } from '@testRoot/mocks/gql';
 import { getUserMasterId } from '@testRoot/index';
+import {
+  AUTHORIZE_CONTROLLER,
+  AUTHORIZE_REPO,
+  AUTHORIZE_SERVICE,
+} from '@root/shared';
 
 describe('Get All Authorizations Integration', () => {
   let app: INestApplication;
@@ -23,13 +28,13 @@ describe('Get All Authorizations Integration', () => {
 
   it('should be defined this respective providers of service', async () => {
     const service = await app.resolve<IFindAllAuthorizeService>(
-      'IFindAllAuthorizeService',
+      AUTHORIZE_SERVICE.FIND,
     );
     const controller = await app.resolve<IGetAuthorizationsController>(
-      'IGetAuthorizationsController',
+      AUTHORIZE_CONTROLLER.FIND,
     );
     const findAuthorizeRepo = await app.resolve<IFindAuthorizeRepo>(
-      'IFindAuthorizeRepo',
+      AUTHORIZE_REPO.FIND,
     );
 
     expect(controller).toBeDefined();

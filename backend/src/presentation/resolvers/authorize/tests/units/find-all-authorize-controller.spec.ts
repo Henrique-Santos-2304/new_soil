@@ -1,48 +1,38 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  IFindAllAuthorizeService,
-  IGetAuthorizationsController,
-} from '@root/domain';
-import { AUTHORIZE_SERVICE } from '@root/shared';
-import { messageRequest } from '@root/shared/usecases/logs-request';
-import { authorizeModelMock } from '@testRoot/index';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { IGetAuthorizationsController } from '@root/domain';
 import { GetAuthorizationsResolver } from '../../find-all-authorize.resolver';
+import { messageRequest } from '@root/shared/usecases/logs-request';
+import {
+  authorizeModelMock,
+  findAuthorizeServiceMock,
+  findAuthorizeServiceMockProvider,
+  loggerMock,
+  loggerMockProvider,
+} from '@testRoot/index';
 
 describe('Get Authorization Controller Unit', () => {
   let controller: IGetAuthorizationsController;
-  let service: MockProxy<IFindAllAuthorizeService>;
-  let logger: Logger;
-
   beforeEach(async () => {
-    service = mock();
-
-    const getAuthorizeService = {
-      provide: AUTHORIZE_SERVICE.FIND,
-      useValue: service,
-    };
-    const loggerMock = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn(), warn: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GetAuthorizationsResolver, getAuthorizeService, loggerMock],
+      providers: [
+        GetAuthorizationsResolver,
+        findAuthorizeServiceMockProvider,
+        loggerMockProvider,
+      ],
     }).compile();
 
     controller = module.get<IGetAuthorizationsController>(
       GetAuthorizationsResolver,
     );
-    logger = module.get<Logger>(Logger);
 
-    service.start.mockResolvedValue({
+    findAuthorizeServiceMock.start.mockResolvedValue({
       status: 'Sucess',
       authorize: [authorizeModelMock],
     });
   });
 
   it('should service and controller to be defined', async () => {
-    expect(service).toBeDefined();
+    expect(findAuthorizeServiceMock).toBeDefined();
     expect(controller).toBeDefined();
   });
 
@@ -56,7 +46,7 @@ describe('Get Authorization Controller Unit', () => {
   });
 
   it('should be to log init request', async () => {
-    const spy = jest.spyOn(logger, 'log');
+    const spy = jest.spyOn(loggerMock, 'log');
 
     await controller.getAuthorizations();
 
@@ -65,7 +55,7 @@ describe('Get Authorization Controller Unit', () => {
   });
 
   it('should service to have been called', async () => {
-    const spy = jest.spyOn(service, 'start');
+    const spy = jest.spyOn(findAuthorizeServiceMock, 'start');
 
     await controller.getAuthorizations();
 
@@ -74,7 +64,9 @@ describe('Get Authorization Controller Unit', () => {
   });
 
   it('should controller return status "Fail" and error message if an error ocurred in service', async () => {
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findAuthorizeServiceMock.start.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     const response = await controller.getAuthorizations();
     expect(response).toHaveProperty('status', 'Fail');
@@ -82,10 +74,12 @@ describe('Get Authorization Controller Unit', () => {
   });
 
   it('should be logger the error received', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
-    const spyErr = jest.spyOn(logger, 'error');
+    const spyLog = jest.spyOn(loggerMock, 'log');
+    const spyErr = jest.spyOn(loggerMock, 'error');
 
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findAuthorizeServiceMock.start.mockRejectedValueOnce(
+      new Error('QUERY ERROR'),
+    );
 
     await controller.getAuthorizations();
     expect(spyLog).toHaveBeenCalledTimes(2);
@@ -104,7 +98,7 @@ describe('Get Authorization Controller Unit', () => {
   });
 
   it('should be logger message sucess request', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
+    const spyLog = jest.spyOn(loggerMock, 'log');
 
     await controller.getAuthorizations();
     expect(spyLog).toHaveBeenCalledTimes(2);

@@ -21,6 +21,7 @@ const dropDatabase = async () => {
 
 beforeAll(async () => {
   console.log('Iniciando configuração de jest...');
+  await prismaTest.$connect();
   await integrationTestManager.beforeAll();
   const app: INestApplication = integrationTestManager.getApp();
 

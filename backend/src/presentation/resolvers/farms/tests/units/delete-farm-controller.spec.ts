@@ -1,32 +1,28 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IDeleteFarmController, IDeleteFarmService } from '@contracts/index';
-import { messageRequest } from '@utils/usecases/logs-request';
-import { createFarmMocked } from '@testRoot/mocks';
-import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { IDeleteFarmController } from '@contracts/index';
 import { DeleteFarmResolver } from '@resolvers/index';
-import { FARM_SERVICE } from '@root/shared';
+import { messageRequest } from '@utils/usecases/logs-request';
+import {
+  deleteFarmServiceMock,
+  deleteFarmServiceMockProvider,
+  loggerMock,
+  loggerMockProvider,
+} from '@testRoot/mocks';
 
 describe('Create Farm Controller Unit', () => {
   let controller: IDeleteFarmController;
-  let service: MockProxy<IDeleteFarmService>;
-  let logger: Logger;
 
   beforeEach(async () => {
-    service = mock();
-    const deleteFarmService = {
-      provide: FARM_SERVICE.DELETE,
-      useValue: service,
-    };
-
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DeleteFarmResolver, deleteFarmService, loggerMock],
+      providers: [
+        DeleteFarmResolver,
+        deleteFarmServiceMockProvider,
+        loggerMockProvider,
+      ],
     }).compile();
 
     controller = module.get<IDeleteFarmController>(DeleteFarmResolver);
-    logger = module.get<Logger>(Logger);
-    service.start.mockResolvedValue();
+    deleteFarmServiceMock.start.mockResolvedValue();
   });
 
   it('should delete.farm to have been called', async () => {
@@ -39,7 +35,7 @@ describe('Create Farm Controller Unit', () => {
   });
 
   it('should service to have been called', async () => {
-    const spy = jest.spyOn(service, 'start');
+    const spy = jest.spyOn(deleteFarmServiceMock, 'start');
 
     await controller.delFarm({ userType: 'MASTER', user_id: 'soil' });
 
@@ -48,7 +44,7 @@ describe('Create Farm Controller Unit', () => {
   });
 
   it('should be to log init request', async () => {
-    const spy = jest.spyOn(logger, 'log');
+    const spy = jest.spyOn(loggerMock, 'log');
 
     await controller.delFarm({ userType: 'MASTER', user_id: 'soil' });
 
@@ -57,7 +53,7 @@ describe('Create Farm Controller Unit', () => {
   });
 
   it('should controller return status "Fail" and error message if an error ocurred in service', async () => {
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    deleteFarmServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = await controller.delFarm({
       userType: 'MASTER',
@@ -69,10 +65,10 @@ describe('Create Farm Controller Unit', () => {
   });
 
   it('should be logger the error received', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
-    const spyErr = jest.spyOn(logger, 'error');
+    const spyLog = jest.spyOn(loggerMock, 'log');
+    const spyErr = jest.spyOn(loggerMock, 'error');
 
-    service.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    deleteFarmServiceMock.start.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     await controller.delFarm({
       userType: 'MASTER',
@@ -104,7 +100,7 @@ describe('Create Farm Controller Unit', () => {
   });
 
   it('should be logger message sucess request', async () => {
-    const spyLog = jest.spyOn(logger, 'log');
+    const spyLog = jest.spyOn(loggerMock, 'log');
 
     await controller.delFarm({
       userType: 'MASTER',

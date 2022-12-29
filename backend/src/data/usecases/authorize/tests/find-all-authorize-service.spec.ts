@@ -1,36 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule } from '@root/core';
-import { IFindAuthorizeRepo } from '@root/domain';
-import { IFindAllAuthorizeService } from '@root/domain/usecases/authorize/find-all-authorize-service.domain';
-import { authorizeModelMock } from '@testRoot/mocks';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { IFindAllAuthorizeService } from '@contracts/index';
 import { FindAuthorizeService } from '../find_all_authorize.service';
+import {
+  authorizeModelMock,
+  findAuthorizeRepoMock,
+  findAuthorizeRepoMockProvider,
+  prismaProviderMock,
+} from '@testRoot/mocks';
 
 describe('Find Authorize Service Unit', () => {
   let service: IFindAllAuthorizeService;
-  let findAuthorizeRepo: MockProxy<IFindAuthorizeRepo>;
 
   beforeEach(async () => {
-    findAuthorizeRepo = mock();
-
-    const findAuthorizeRepoProvider = {
-      provide: 'IFindAuthorizeRepo',
-      useValue: findAuthorizeRepo,
-    };
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
-      providers: [FindAuthorizeService, findAuthorizeRepoProvider],
+      providers: [
+        FindAuthorizeService,
+        findAuthorizeRepoMockProvider,
+        prismaProviderMock,
+      ],
     }).compile();
 
     service = module.get<IFindAllAuthorizeService>(FindAuthorizeService);
 
-    findAuthorizeRepo.all.mockResolvedValue([authorizeModelMock]);
+    findAuthorizeRepoMock.all.mockResolvedValue([authorizeModelMock]);
   });
 
   it('should providers to be defined', () => {
     expect(service).toBeDefined();
-    expect(findAuthorizeRepo).toBeDefined();
+    expect(findAuthorizeRepoMock).toBeDefined();
   });
 
   it('should be service to have been called once time and with data valids', async () => {
@@ -45,7 +42,7 @@ describe('Find Authorize Service Unit', () => {
   // // Test FindAuthorizeRepo
 
   it('should be FindAuthorizeRepo.all to have been called once time and with data valids', async () => {
-    const spy = jest.spyOn(findAuthorizeRepo, 'all');
+    const spy = jest.spyOn(findAuthorizeRepoMock, 'all');
 
     await service.start();
 
@@ -54,7 +51,7 @@ describe('Find Authorize Service Unit', () => {
   });
 
   it('shoul be throw a QUERY ERROR if FindAuthorizeRepo.by_farm throw error', async () => {
-    findAuthorizeRepo.all.mockRejectedValueOnce(new Error('QUERY ERROR'));
+    findAuthorizeRepoMock.all.mockRejectedValueOnce(new Error('QUERY ERROR'));
 
     const response = service.start();
 
@@ -62,7 +59,7 @@ describe('Find Authorize Service Unit', () => {
   });
 
   it('shoul be an empty list if not exists authorize in db', async () => {
-    findAuthorizeRepo.all.mockResolvedValueOnce([]);
+    findAuthorizeRepoMock.all.mockResolvedValueOnce([]);
 
     const response = await service.start();
 

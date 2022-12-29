@@ -1,40 +1,38 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IFindAuthorizeRepo } from '@root/domain';
-import { PrismaService } from '@root/infra/config_acess_db';
-import { DatabaseError, QueryError } from '@root/shared/errors';
-import { createAuthorizeMock } from '@testRoot/mocks';
+import { IFindAuthorizeRepo } from '@contracts/index';
 import { FindAuthorizeRepo } from '../find-authorize.repo';
+import { DatabaseError, QueryError } from '@utils/errors';
+import {
+  createAuthorizeMock,
+  loggerMock,
+  loggerMockProvider,
+  prismaProviderMock,
+  prismaServiceMock,
+} from '@testRoot/mocks';
 
 describe('Find Authorize Repo Unit', () => {
   let repo: IFindAuthorizeRepo;
-  let prisma: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
-    const loggerProvider = {
-      provide: Logger,
-      useValue: { log: jest.fn(), error: jest.fn() },
-    };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FindAuthorizeRepo, PrismaService, loggerProvider],
+      providers: [FindAuthorizeRepo, prismaProviderMock, loggerMockProvider],
     }).compile();
 
     repo = module.get<IFindAuthorizeRepo>(FindAuthorizeRepo);
-    prisma = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
 
-    prisma.authorize.findMany = jest
-      .fn()
-      .mockResolvedValue([createAuthorizeMock]);
+    prismaServiceMock.authorize.findMany.mockResolvedValue([
+      createAuthorizeMock,
+    ]);
 
-    prisma.authorize.findFirst = jest
-      .fn()
-      .mockResolvedValue(createAuthorizeMock);
+    prismaServiceMock.authorize.findFirst.mockResolvedValue(
+      createAuthorizeMock,
+    );
   });
 
   it('should be defined', () => {
     expect(repo).toBeDefined();
+    expect(prismaServiceMock).toBeDefined();
+    expect(loggerMock).toBeDefined();
   });
 
   /*
@@ -50,7 +48,7 @@ describe('Find Authorize Repo Unit', () => {
   });
 
   it('should prisma.authorize.findMany in all to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.authorize, 'findMany');
+    const spy = jest.spyOn(prismaServiceMock.authorize, 'findMany');
     await repo.all();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith();
@@ -67,34 +65,33 @@ describe('Find Authorize Repo Unit', () => {
   });
 
   it('should to return a null with all not find farm', async () => {
-    jest.spyOn(repo, 'all');
-    prisma.authorize.findMany = jest.fn().mockResolvedValueOnce([]);
+    prismaServiceMock.authorize.findMany.mockResolvedValueOnce([]);
     const value = await repo.all();
     expect(value).toHaveLength(0);
   });
 
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
-    prisma.authorize.findMany = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.authorize.findMany.mockRejectedValueOnce(new Error());
     const value = repo.all();
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
-    prisma.authorize.findMany = jest
-      .fn()
-      .mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.authorize.findMany.mockRejectedValueOnce(
+      new DatabaseError(),
+    );
 
     const value = repo.all();
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar autorizações no banco de dados',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 
   /*
@@ -110,7 +107,7 @@ describe('Find Authorize Repo Unit', () => {
   });
 
   it('should prisma.authorize.findMany in all to have been called with data válids', async () => {
-    const spy = jest.spyOn(prisma.authorize, 'findFirst');
+    const spy = jest.spyOn(prismaServiceMock.authorize, 'findFirst');
     await repo.by_farm(createAuthorizeMock.farm_id);
 
     expect(spy).toHaveBeenCalledTimes(1);
@@ -127,35 +124,34 @@ describe('Find Authorize Repo Unit', () => {
   });
 
   it('should to return a null with all not find farm', async () => {
-    jest.spyOn(repo, 'by_farm');
-    prisma.authorize.findFirst = jest.fn().mockResolvedValueOnce(null);
+    prismaServiceMock.authorize.findFirst.mockResolvedValueOnce(null);
     const value = await repo.by_farm(createAuthorizeMock.farm_id);
     expect(value).toEqual(null);
   });
 
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
-    prisma.authorize.findFirst = jest.fn().mockRejectedValueOnce(new Error());
+    prismaServiceMock.authorize.findFirst.mockRejectedValueOnce(new Error());
     const value = repo.by_farm(createAuthorizeMock.farm_id);
 
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
-    prisma.authorize.findFirst = jest
-      .fn()
-      .mockRejectedValueOnce(new DatabaseError());
+    prismaServiceMock.authorize.findFirst.mockRejectedValueOnce(
+      new DatabaseError(),
+    );
 
     const value = repo.by_farm(createAuthorizeMock.farm_id);
 
     await expect(value).rejects.toThrow();
     // method log
-    expect(logger.log).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+    expect(loggerMock.log).toHaveBeenCalledWith(
       'Erro ao buscar autorização no banco de dados',
     );
 
     //method error
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error).toHaveBeenCalledWith(new DatabaseError().message);
+    expect(loggerMock.error).toHaveBeenCalledTimes(1);
+    expect(loggerMock.error).toHaveBeenCalledWith(new DatabaseError().message);
   });
 });

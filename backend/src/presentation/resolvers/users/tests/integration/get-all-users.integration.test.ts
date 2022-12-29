@@ -9,6 +9,7 @@ import { integrationTestManager, prismaTest } from '@testRoot/setup';
 import { gql } from 'apollo-server-express';
 import { createUserStub } from '@testRoot/stub';
 import { mutationGetAllUsers } from '@testRoot/mocks/gql/users';
+import { USER_CONTROLLER, USER_REPO, USER_SERVICE } from '@root/shared';
 
 describe('Get All Users Integration', () => {
   let app: INestApplication;
@@ -22,11 +23,11 @@ describe('Get All Users Integration', () => {
   });
 
   it('should be defined this respective providers of service', async () => {
-    const service = await app.resolve<IGetAllUserService>('IGetAllUserService');
+    const service = await app.resolve<IGetAllUserService>(USER_SERVICE.GET_ALL);
     const controller = await app.resolve<IGetUserController>(
-      'IGetUserController',
+      USER_CONTROLLER.GET,
     );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();

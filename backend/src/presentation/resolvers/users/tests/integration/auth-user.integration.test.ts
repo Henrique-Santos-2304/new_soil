@@ -13,6 +13,12 @@ import {
   mutationAuthUser,
   mutationCreateUser,
 } from '@testRoot/mocks/gql/users';
+import {
+  USER_CONTROLLER,
+  USER_REPO,
+  USER_SERVICE,
+  VALIDATORS_SERVICE,
+} from '@root/shared';
 
 describe('Auth User Integration', () => {
   let app: INestApplication;
@@ -22,13 +28,17 @@ describe('Auth User Integration', () => {
   });
 
   it('should be defined this respective providers of service', async () => {
-    const service = await app.resolve<IAuthUserService>('IAuthUserService');
+    const service = await app.resolve<IAuthUserService>(USER_SERVICE.AUTH);
     const controller = await app.resolve<IAuthUserController>(
-      'IAuthUserController',
+      USER_CONTROLLER.AUTH,
     );
-    const findUserRepo = await app.resolve<IFindUserRepo>('IFindUserRepo');
-    const encrypter = await app.resolve<IEncrypterData>('IEncrypterData');
-    const tokenService = await app.resolve<ITokenService>('ITokenService');
+    const findUserRepo = await app.resolve<IFindUserRepo>(USER_REPO.FIND);
+    const encrypter = await app.resolve<IEncrypterData>(
+      VALIDATORS_SERVICE.ENCRYPTER,
+    );
+    const tokenService = await app.resolve<ITokenService>(
+      VALIDATORS_SERVICE.TOKEN,
+    );
 
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
