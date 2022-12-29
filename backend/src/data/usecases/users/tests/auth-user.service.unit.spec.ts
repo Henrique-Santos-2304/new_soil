@@ -4,7 +4,7 @@ import { PrismaModule } from '@root/core';
 import { IEncrypterData, IFindUserRepo } from '@root/domain';
 import { IAuthUserService } from '@root/domain/usecases/users/auth-user.service.domain';
 import { ITokenService } from '@root/domain/validators/token.domain';
-import { USER_REPO } from '@root/shared';
+import { USER_REPO, VALIDATORS_SERVICE } from '@root/shared';
 import { userModelMocked } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { AuthUserService } from '../auth-user.service';
@@ -25,10 +25,13 @@ describe('Auth User Service Unit', () => {
 
     const findProvider = { provide: USER_REPO.FIND, useValue: findUserRepo };
     const loggerProvider = { provide: Logger, useValue: logger };
-    const tokenProvider = { provide: 'ITokenService', useValue: token };
+    const tokenProvider = {
+      provide: VALIDATORS_SERVICE.TOKEN,
+      useValue: token,
+    };
 
     const encrypterProvider = {
-      provide: 'IEncrypterData',
+      provide: VALIDATORS_SERVICE.ENCRYPTER,
       useValue: encrypter,
     };
 

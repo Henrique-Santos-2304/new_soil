@@ -16,7 +16,7 @@ import {
 import { CreateUserService } from '../create.service';
 import { AlreadyExistsError } from '@root/shared/errors';
 import { NotCreatedError } from '@root/shared/errors/not-created';
-import { USER_REPO } from '@root/shared';
+import { USER_REPO, VALIDATORS_SERVICE } from '@root/shared';
 
 describe('Create User Service Unit', () => {
   let service: ICreateUserService;
@@ -38,7 +38,10 @@ describe('Create User Service Unit', () => {
       useValue: createUserrepo,
     };
 
-    const encryptProvider = { provide: 'IEncrypterData', useValue: encrypter };
+    const encryptProvider = {
+      provide: VALIDATORS_SERVICE.ENCRYPTER,
+      useValue: encrypter,
+    };
 
     const loggerProvider = { provide: Logger, useValue: logger };
 

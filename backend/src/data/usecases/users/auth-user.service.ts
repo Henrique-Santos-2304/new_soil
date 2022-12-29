@@ -6,7 +6,7 @@ import {
   ITokenService,
   UserModel,
 } from '@contracts/index';
-import { USER_REPO } from '@root/shared';
+import { USER_REPO, VALIDATORS_SERVICE } from '@root/shared';
 
 @Injectable()
 class AuthUserService implements IAuthUserService {
@@ -15,8 +15,10 @@ class AuthUserService implements IAuthUserService {
 
   constructor(
     @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
-    @Inject('IEncrypterData') private readonly encrypter: IEncrypterData,
-    @Inject('ITokenService') private readonly tokenService: ITokenService,
+    @Inject(VALIDATORS_SERVICE.ENCRYPTER)
+    private readonly encrypter: IEncrypterData,
+    @Inject(VALIDATORS_SERVICE.TOKEN)
+    private readonly tokenService: ITokenService,
   ) {}
 
   async checkUserAlreadyExists(login: string): Promise<void> {
