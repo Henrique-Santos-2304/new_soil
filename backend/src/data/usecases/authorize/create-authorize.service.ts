@@ -5,13 +5,14 @@ import {
   IFindAuthorizeRepo,
 } from '@contracts/index';
 import { Inject } from '@nestjs/common';
+import { AUTHORIZE_REPO } from '@root/shared';
 import { AlreadyExistsError, NotCreatedError } from '@root/shared/errors';
 
 class CreateAuthorizeService implements ICreateAuthorizeService {
   constructor(
-    @Inject('IFindAuthorizeRepo')
+    @Inject(AUTHORIZE_REPO.FIND)
     private readonly findAuthorizeRepo: IFindAuthorizeRepo,
-    @Inject('ICreateAuthorizeRepo')
+    @Inject(AUTHORIZE_REPO.CREATE)
     private readonly createAuthorizeRepo: ICreateAuthorizeRepo,
   ) {}
 

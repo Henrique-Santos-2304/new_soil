@@ -5,6 +5,7 @@ import {
   IFindAllAuthorizeService,
   IGetAuthorizationsController,
 } from '@root/domain';
+import { AUTHORIZE_SERVICE } from '@root/shared';
 import {
   logFinishRequestFind,
   logInitRequest,
@@ -14,7 +15,7 @@ import {
 class GetAuthorizationsResolver implements IGetAuthorizationsController {
   constructor(
     private readonly logger: Logger,
-    @Inject('IFindAllAuthorizeService')
+    @Inject(AUTHORIZE_SERVICE.FIND)
     private readonly findAuthorizeService: IFindAllAuthorizeService,
   ) {}
 

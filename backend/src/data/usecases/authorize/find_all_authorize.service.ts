@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthorizeModel, IFindAuthorizeRepo } from '@root/domain';
 import { IFindAllAuthorizeService } from '@root/domain/usecases/authorize/find-all-authorize-service.domain';
+import { AUTHORIZE_REPO } from '@root/shared';
 
 @Injectable()
 class FindAuthorizeService implements IFindAllAuthorizeService {
   constructor(
-    @Inject('IFindAuthorizeRepo')
+    @Inject(AUTHORIZE_REPO.FIND)
     private readonly findAuthorizes: IFindAuthorizeRepo,
   ) {}
 

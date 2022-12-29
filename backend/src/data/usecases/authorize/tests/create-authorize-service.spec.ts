@@ -7,6 +7,7 @@ import {
   ICreateAuthorizeService,
   IFindAuthorizeRepo,
 } from '@root/domain';
+import { AUTHORIZE_REPO } from '@root/shared';
 import { AlreadyExistsError, NotCreatedError } from '@root/shared/errors';
 import { createAuthorizeMock } from '@testRoot/mocks';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -30,12 +31,12 @@ describe('Create Authorize Service Unit', () => {
     logger = mock();
 
     const findAuthorizeRepoProvider = {
-      provide: 'IFindAuthorizeRepo',
+      provide: AUTHORIZE_REPO.FIND,
       useValue: findAuthorizeRepo,
     };
 
     const createAuthorizeRepoProvider = {
-      provide: 'ICreateAuthorizeRepo',
+      provide: AUTHORIZE_REPO.CREATE,
       useValue: createAuthorizeRepo,
     };
 

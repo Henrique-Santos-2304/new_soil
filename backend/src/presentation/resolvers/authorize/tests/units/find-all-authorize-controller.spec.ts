@@ -4,6 +4,7 @@ import {
   IFindAllAuthorizeService,
   IGetAuthorizationsController,
 } from '@root/domain';
+import { AUTHORIZE_SERVICE } from '@root/shared';
 import { messageRequest } from '@root/shared/usecases/logs-request';
 import { authorizeModelMock } from '@testRoot/index';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -18,7 +19,7 @@ describe('Get Authorization Controller Unit', () => {
     service = mock();
 
     const getAuthorizeService = {
-      provide: 'IFindAllAuthorizeService',
+      provide: AUTHORIZE_SERVICE.FIND,
       useValue: service,
     };
     const loggerMock = {
