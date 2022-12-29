@@ -4,29 +4,23 @@ import {
   CreateUserDto,
   FarmModel,
   IAddUserIntoFarmService,
-  ICreateUserRepo,
+  ICreateUserService,
   IFindFarmsRepo,
-  IFindUserRepo,
   IUpdateFarmRepo,
   UserModel,
 } from '@contracts/index';
-import {
-  AlreadyExistsError,
-  NotCreatedError,
-  NotFoundError,
-} from '@root/shared';
+import { NotFoundError } from '@root/shared';
 
 @Injectable()
 class AddUserIntoFarmService implements IAddUserIntoFarmService {
   private farmData: FarmModel;
-  private userData: UserModel;
   private add_user_id: UserModel['user_id'];
 
   constructor(
     @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
     @Inject('IUpdateFarmRepo') private readonly updateFarmRepo: IUpdateFarmRepo,
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
-    @Inject('ICreateUserRepo') private readonly createUserRepo: ICreateUserRepo,
+    @Inject('ICreateUserService')
+    private readonly createUserRepo: ICreateUserService,
   ) {}
 
   async checkFarmExist(farm_id: CreateFarmDTO['farm_id']): Promise<void> {
@@ -51,14 +45,11 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
       throw new UnauthorizedException();
   }
 
-  async checkUserAlreadyExists(login: UserModel['login']): Promise<void> {
-    const userExists = await this.findUserRepo.by_login({ login });
-    if (userExists) throw new AlreadyExistsError('User');
-  }
-
   async createUser(user: CreateUserDto): Promise<void> {
-    const userExists = await this.createUserRepo.create({ ...user });
-    if (!userExists) throw new NotCreatedError('User');
+    const userExists = await this.createUserRepo.start({
+      ...user,
+      internal_password: process.env.INTERNAL_PASSWORD,
+    });
     this.add_user_id = userExists.user_id;
   }
 
@@ -91,7 +82,6 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
   }: IAddUserIntoFarmService.Params): IAddUserIntoFarmService.Response {
     await this.checkFarmExist(farm_id);
     await this.checkUserToHaveAuthorize(auth.user_id, auth.userType);
-    await this.checkUserAlreadyExists(data.add_user.login);
     await this.createUser(data.add_user);
 
     const dataAddTofarm = this.checkTableAddedUser(data.table);

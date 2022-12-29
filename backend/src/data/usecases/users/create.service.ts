@@ -32,10 +32,11 @@ export class CreateUserService implements ICreateUserService {
 
   async createANewUser(
     user: Omit<ICreateUserService.Params, 'internal_password'>,
-  ): Promise<void> {
+  ): Promise<{ user_id: string }> {
     const createdUser = await this.createUserRepo.create(user);
 
     if (!createdUser) throw new NotCreatedError('User');
+    return createdUser;
   }
 
   checkPasswordInternalIsValid(password: string): void {
@@ -52,8 +53,12 @@ export class CreateUserService implements ICreateUserService {
     this.checkPasswordInternalIsValid(internal_password);
     await this.checkUserExists({ login });
     await this.encryptPassword({ value: password });
-    await this.createANewUser({ login, userType, password: this.passwordHash });
+    const user = await this.createANewUser({
+      login,
+      userType,
+      password: this.passwordHash,
+    });
 
-    return { status: 'Sucess' };
+    return { status: 'Sucess', user_id: user.user_id };
   }
 }

@@ -12,5 +12,6 @@ import { userProviders } from '../providers/modules';
     }),
   ],
   providers: userProviders,
+  exports: ['ICreateUserService'],
 })
 export class UserModule {}

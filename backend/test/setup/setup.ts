@@ -37,5 +37,5 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  jest.setTimeout(60000);
+  jest.setTimeout(30 * 1000);
 });

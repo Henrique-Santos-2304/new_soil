@@ -159,6 +159,7 @@ describe('Create User Service Unit', () => {
   it('should useCase return a new User created if haved sucess', async () => {
     const response = await service.start(createUserRequestMocked);
 
-    expect(response).toEqual({ status: 'Sucess' });
+    expect(response).toHaveProperty('user_id');
+    expect(response).toHaveProperty('status', 'Sucess');
   });
 });

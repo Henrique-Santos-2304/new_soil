@@ -42,7 +42,7 @@ model Farm {
 
   admins            String[]  @default([]) 
   dealers           String[]  @default([]) 
-  users             String[]  @default([]) 
+  users             String[]  @default([])  
 
   @@map("farms")    
 }
