@@ -6,6 +6,7 @@ import {
   ITokenService,
   UserModel,
 } from '@contracts/index';
+import { USER_REPO } from '@root/shared';
 
 @Injectable()
 class AuthUserService implements IAuthUserService {
@@ -13,7 +14,7 @@ class AuthUserService implements IAuthUserService {
   private token: string;
 
   constructor(
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
+    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
     @Inject('IEncrypterData') private readonly encrypter: IEncrypterData,
     @Inject('ITokenService') private readonly tokenService: ITokenService,
   ) {}

@@ -7,6 +7,7 @@ import {
   IFindFarmsRepo,
   IFindUserRepo,
 } from '@root/domain';
+import { USER_REPO } from '@root/shared';
 import {
   AlreadyExistsError,
   NotCreatedError,
@@ -31,7 +32,7 @@ describe('Create Farm Service Unit', () => {
     logger = mock();
 
     const findUserProvider = {
-      provide: 'IFindUserRepo',
+      provide: USER_REPO.FIND,
       useValue: findUserRepo,
     };
 

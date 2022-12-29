@@ -12,12 +12,13 @@ import {
   NotCreatedError,
   NotFoundError,
 } from '@root/shared/errors';
+import { USER_REPO } from '@root/shared';
 
 @Injectable()
 class CreateFarmService implements ICreateFarmService {
   constructor(
     @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
+    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
     @Inject('ICreateFarmRepo') private readonly createFarmRepo: ICreateFarmRepo,
   ) {}
 

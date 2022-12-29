@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaModule, UserModule } from '@root/core';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { AddUserIntoFarmService } from '../add-user-into-farm.service';
-import { NotFoundError } from '@root/shared';
+import { NotFoundError, USER_REPO, USER_SERVICE } from '@root/shared';
 import {
   IAddUserIntoFarmService,
   ICreateUserRepo,
@@ -49,13 +49,8 @@ describe('Add User Into Farm Farm Service Unit', () => {
     };
 
     const createUserProvider = {
-      provide: 'ICreateUserService',
+      provide: USER_SERVICE.CREATE,
       useValue: createUserService,
-    };
-
-    const findUserProvider = {
-      provide: 'IFindUserRepo',
-      useValue: findUserRepo,
     };
 
     const loggerProvider = { provide: Logger, useValue: logger };

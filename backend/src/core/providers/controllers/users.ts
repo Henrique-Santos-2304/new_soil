@@ -4,19 +4,20 @@ import {
   CreateUserResolver,
   GetUsersResolver,
 } from '@resolvers/index';
+import { USER_CONTROLLER } from '@root/shared';
 
 const createUserControllerProvider: Provider = {
-  provide: 'ICreateUserController',
+  provide: USER_CONTROLLER.CREATE,
   useClass: CreateUserResolver,
 };
 
 const authUserControllerProvider: Provider = {
-  provide: 'IAuthUserController',
+  provide: USER_CONTROLLER.AUTH,
   useClass: AuthUserResolver,
 };
 
 const getUsersControllerProvider: Provider = {
-  provide: 'IGetUserController',
+  provide: USER_CONTROLLER.GET,
   useClass: GetUsersResolver,
 };
 

@@ -16,6 +16,7 @@ import {
 import { CreateUserService } from '../create.service';
 import { AlreadyExistsError } from '@root/shared/errors';
 import { NotCreatedError } from '@root/shared/errors/not-created';
+import { USER_REPO } from '@root/shared';
 
 describe('Create User Service Unit', () => {
   let service: ICreateUserService;
@@ -30,10 +31,10 @@ describe('Create User Service Unit', () => {
     encrypter = mock();
     logger = mock();
 
-    const finProvider = { provide: 'IFindUserRepo', useValue: findUserRepo };
+    const finProvider = { provide: USER_REPO.FIND, useValue: findUserRepo };
 
     const createProvider = {
-      provide: 'ICreateUserRepo',
+      provide: USER_REPO.CREATE,
       useValue: createUserrepo,
     };
 

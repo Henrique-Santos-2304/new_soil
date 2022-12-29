@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import { PrismaModule } from '@root/core';
 import { IFindUserRepo, IGetAllUserService } from '@root/domain';
+import { USER_REPO } from '@root/shared';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetAllUserService } from '../get-user.service';
 
@@ -14,7 +15,7 @@ describe('Get All User Service Unit', () => {
     findUserRepo = mock();
     logger = mock();
 
-    const findProvider = { provide: 'IFindUserRepo', useValue: findUserRepo };
+    const findProvider = { provide: USER_REPO.FIND, useValue: findUserRepo };
     const loggerProvider = { provide: Logger, useValue: logger };
 
     const module: TestingModule = await Test.createTestingModule({

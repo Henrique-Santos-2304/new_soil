@@ -6,7 +6,6 @@ import {
   IUpdateFarmRepo,
   IUpdateFarmService,
   UpdatedFarmDTORepo,
-  UpdateFarmDTO,
 } from '@root/domain';
 import {
   AlreadyExistsError,

@@ -7,6 +7,7 @@ import {
   UserModel,
 } from '@contracts/index';
 import { NotFoundError } from '@root/shared/errors';
+import { USER_REPO } from '@root/shared';
 
 @Injectable()
 class GetFarmsByUser implements IGetAllFarmsByUserService {
@@ -14,7 +15,7 @@ class GetFarmsByUser implements IGetAllFarmsByUserService {
 
   constructor(
     @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
+    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
   ) {}
 
   async filterUserTypeAndGetYourFarms(userType: string): Promise<FarmModel[]> {

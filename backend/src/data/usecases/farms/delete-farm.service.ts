@@ -7,12 +7,13 @@ import {
   UserType,
 } from '@contracts/index';
 import { NotFoundError } from '@root/shared/errors';
+import { USER_REPO } from '@root/shared';
 
 @Injectable()
 class DeleteFarmService implements IDeleteFarmService {
   constructor(
     @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
+    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
     @Inject('IDeleteFarmRepo') private readonly delFarmRepo: IDeleteFarmRepo,
   ) {}
 

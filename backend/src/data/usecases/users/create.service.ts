@@ -7,6 +7,7 @@ import {
   IFindUserRepo,
   NEncrypt,
 } from '@root/domain';
+import { USER_REPO } from '@root/shared';
 import { AlreadyExistsError } from '@root/shared/errors';
 import { NotCreatedError } from '@root/shared/errors/not-created';
 
@@ -15,8 +16,8 @@ export class CreateUserService implements ICreateUserService {
   private passwordHash: string;
 
   constructor(
-    @Inject('IFindUserRepo') private readonly findUserRepo: IFindUserRepo,
-    @Inject('ICreateUserRepo') private readonly createUserRepo: ICreateUserRepo,
+    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
+    @Inject(USER_REPO.CREATE) private readonly createUserRepo: ICreateUserRepo,
     @Inject('IEncrypterData') private readonly encrypter: IEncrypterData,
   ) {}
 
