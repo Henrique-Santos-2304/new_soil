@@ -9,6 +9,7 @@ import {
 } from '@root/domain';
 import {
   AlreadyExistsError,
+  FARM_REPO,
   NotCreatedError,
   NotFoundError,
 } from '@root/shared';
@@ -21,8 +22,8 @@ class UpdateFarmService implements IUpdateFarmService {
   private dataFarmNotEqual: UpdatedFarmDTORepo;
 
   constructor(
-    @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
-    @Inject('IUpdateFarmRepo') private readonly updateFarmRepo: IUpdateFarmRepo,
+    @Inject(FARM_REPO.FIND) private readonly findFarmRepo: IFindFarmsRepo,
+    @Inject(FARM_REPO.UPDATE) private readonly updateFarmRepo: IUpdateFarmRepo,
   ) {}
 
   async checkFarmExist(farm_id: CreateFarmDTO['farm_id']): Promise<FarmModel> {

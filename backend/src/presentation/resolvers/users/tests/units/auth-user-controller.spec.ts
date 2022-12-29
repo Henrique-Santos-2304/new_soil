@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IAuthUserController, IAuthUserService } from '@root/domain';
+import { USER_SERVICE } from '@root/shared';
 import { messageRequest } from '@root/shared/usecases/logs-request';
 import { authUserRequestMocked } from '@testRoot/mocks';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
@@ -22,7 +23,7 @@ describe('Auth User Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const createUserService = {
-      provide: 'IAuthUserService',
+      provide: USER_SERVICE.AUTH,
       useValue: service,
     };
     const module: TestingModule = await Test.createTestingModule({

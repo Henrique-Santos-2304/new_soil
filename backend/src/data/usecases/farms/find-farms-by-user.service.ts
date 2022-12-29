@@ -7,14 +7,14 @@ import {
   UserModel,
 } from '@contracts/index';
 import { NotFoundError } from '@root/shared/errors';
-import { USER_REPO } from '@root/shared';
+import { FARM_REPO, USER_REPO } from '@root/shared';
 
 @Injectable()
 class GetFarmsByUser implements IGetAllFarmsByUserService {
   private user_id: string;
 
   constructor(
-    @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
+    @Inject(FARM_REPO.FIND) private readonly findFarmRepo: IFindFarmsRepo,
     @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
   ) {}
 

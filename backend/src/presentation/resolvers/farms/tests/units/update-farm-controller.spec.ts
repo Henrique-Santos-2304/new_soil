@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IUpdateFarmController, IUpdateFarmService } from '@root/domain';
+import { FARM_SERVICE } from '@root/shared';
 import { messageRequest } from '@root/shared/usecases/logs-request';
 import { createFarmMocked, updateFarmMock } from '@testRoot/mocks';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
@@ -15,7 +16,7 @@ describe('Update Farm Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const updateFarmService = {
-      provide: 'IUpdateFarmService',
+      provide: FARM_SERVICE.UPDATE,
       useValue: service,
     };
     const module: TestingModule = await Test.createTestingModule({

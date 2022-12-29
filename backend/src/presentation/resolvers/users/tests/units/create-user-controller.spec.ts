@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICreateUserController, ICreateUserService } from '@root/domain';
+import { USER_SERVICE } from '@root/shared';
 import { messageRequest } from '@root/shared/usecases/logs-request';
 import { createUserRequestMocked } from '@testRoot/mocks';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
@@ -15,7 +16,7 @@ describe('Create User Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const createUserService = {
-      provide: 'ICreateUserService',
+      provide: USER_SERVICE.CREATE,
       useValue: service,
     };
     const module: TestingModule = await Test.createTestingModule({

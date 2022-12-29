@@ -4,6 +4,7 @@ import {
 } from '@contracts/index';
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
+import { FARM_SERVICE } from '@root/shared';
 import {
   logFinishRequestFind,
   logInitRequest,
@@ -12,7 +13,7 @@ import {
 class GetFarmsResolver implements IGetFarmsController {
   constructor(
     private readonly logger: Logger,
-    @Inject('IGetAllFarmsByUserService')
+    @Inject(FARM_SERVICE.FIND)
     private readonly findFarmsByUserService: IGetAllFarmsByUserService,
   ) {}
   @Query()

@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IGetAllUserService, IGetUserController } from '@root/domain';
+import { USER_SERVICE } from '@root/shared';
 import { messageRequest } from '@root/shared/usecases/logs-request';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -14,7 +15,7 @@ describe('Get Users Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const getUserService = {
-      provide: 'IGetAllUserService',
+      provide: USER_SERVICE.GET_ALL,
       useValue: service,
     };
 

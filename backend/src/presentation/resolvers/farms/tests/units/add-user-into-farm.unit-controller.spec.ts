@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IAddUserIntoFarmService } from '@root/domain';
 import { IAddUserIntoFarmController } from '@root/domain/controllers/farms/add-user-into-farm.controller.domain';
-import { messageRequest } from '@root/shared';
+import { FARM_SERVICE, messageRequest } from '@root/shared';
 import { createFarmMocked, serviceAddUserIntoFarmMock } from '@testRoot/index';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -16,7 +16,7 @@ describe('Add User Into Farm Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const updateFarmService = {
-      provide: 'IAddUserIntoFarmService',
+      provide: FARM_SERVICE.ADD_USER,
       useValue: service,
     };
     const module: TestingModule = await Test.createTestingModule({

@@ -7,14 +7,14 @@ import {
   UserType,
 } from '@contracts/index';
 import { NotFoundError } from '@root/shared/errors';
-import { USER_REPO } from '@root/shared';
+import { FARM_REPO, USER_REPO } from '@root/shared';
 
 @Injectable()
 class DeleteFarmService implements IDeleteFarmService {
   constructor(
-    @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
+    @Inject(FARM_REPO.FIND) private readonly findFarmRepo: IFindFarmsRepo,
     @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
-    @Inject('IDeleteFarmRepo') private readonly delFarmRepo: IDeleteFarmRepo,
+    @Inject(FARM_REPO.DELETE) private readonly delFarmRepo: IDeleteFarmRepo,
   ) {}
 
   async checkAuthorizeForDeleteFarm(userType: UserType) {

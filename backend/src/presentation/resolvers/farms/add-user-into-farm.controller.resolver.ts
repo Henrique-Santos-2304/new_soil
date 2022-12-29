@@ -2,13 +2,17 @@ import { IAddUserIntoFarmService } from '@contracts/index';
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IAddUserIntoFarmController } from '@root/domain/controllers/farms/add-user-into-farm.controller.domain';
-import { logFinishRequestUpdate, logInitRequest } from '@utils/index';
+import {
+  FARM_SERVICE,
+  logFinishRequestUpdate,
+  logInitRequest,
+} from '@utils/index';
 
 @Resolver()
 class AddUserIntoFarmResolver implements IAddUserIntoFarmController {
   constructor(
     private readonly logger: Logger,
-    @Inject('IAddUserIntoFarmService')
+    @Inject(FARM_SERVICE.ADD_USER)
     private readonly addUserIntoFarmService: IAddUserIntoFarmService,
   ) {}
 

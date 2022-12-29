@@ -9,7 +9,7 @@ import {
   IUpdateFarmRepo,
   UserModel,
 } from '@contracts/index';
-import { NotFoundError, USER_SERVICE } from '@root/shared';
+import { FARM_REPO, NotFoundError, USER_SERVICE } from '@root/shared';
 
 @Injectable()
 class AddUserIntoFarmService implements IAddUserIntoFarmService {
@@ -17,8 +17,8 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
   private add_user_id: UserModel['user_id'];
 
   constructor(
-    @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
-    @Inject('IUpdateFarmRepo') private readonly updateFarmRepo: IUpdateFarmRepo,
+    @Inject(FARM_REPO.FIND) private readonly findFarmRepo: IFindFarmsRepo,
+    @Inject(FARM_REPO.UPDATE) private readonly updateFarmRepo: IUpdateFarmRepo,
     @Inject(USER_SERVICE.CREATE)
     private readonly createUserRepo: ICreateUserService,
   ) {}

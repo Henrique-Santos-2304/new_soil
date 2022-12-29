@@ -12,14 +12,14 @@ import {
   NotCreatedError,
   NotFoundError,
 } from '@root/shared/errors';
-import { USER_REPO } from '@root/shared';
+import { FARM_REPO, USER_REPO } from '@root/shared';
 
 @Injectable()
 class CreateFarmService implements ICreateFarmService {
   constructor(
-    @Inject('IFindFarmsRepo') private readonly findFarmRepo: IFindFarmsRepo,
+    @Inject(FARM_REPO.FIND) private readonly findFarmRepo: IFindFarmsRepo,
     @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
-    @Inject('ICreateFarmRepo') private readonly createFarmRepo: ICreateFarmRepo,
+    @Inject(FARM_REPO.CREATE) private readonly createFarmRepo: ICreateFarmRepo,
   ) {}
 
   async verifyDealersAdminUsersExists(

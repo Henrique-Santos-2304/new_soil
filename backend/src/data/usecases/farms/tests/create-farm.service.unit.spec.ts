@@ -7,7 +7,7 @@ import {
   IFindFarmsRepo,
   IFindUserRepo,
 } from '@root/domain';
-import { USER_REPO } from '@root/shared';
+import { FARM_REPO, USER_REPO } from '@root/shared';
 import {
   AlreadyExistsError,
   NotCreatedError,
@@ -37,12 +37,12 @@ describe('Create Farm Service Unit', () => {
     };
 
     const findFarmProvider = {
-      provide: 'IFindFarmsRepo',
+      provide: FARM_REPO.FIND,
       useValue: findFarmRepo,
     };
 
     const createProvider = {
-      provide: 'ICreateFarmRepo',
+      provide: FARM_REPO.CREATE,
       useValue: createFarmRepo,
     };
 

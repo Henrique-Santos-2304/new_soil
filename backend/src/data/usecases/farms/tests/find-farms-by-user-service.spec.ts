@@ -6,7 +6,7 @@ import {
   IFindUserRepo,
   IGetAllFarmsByUserService,
 } from '@root/domain';
-import { USER_REPO } from '@root/shared';
+import { FARM_REPO, USER_REPO } from '@root/shared';
 import { NotFoundError } from '@root/shared/errors';
 import { createFarmMocked, userModelMocked } from '@testRoot/index';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -28,7 +28,7 @@ describe('Get All Farms By User Service Unit', () => {
       useValue: findUserRepo,
     };
     const findFarmProvider = {
-      provide: 'IFindFarmsRepo',
+      provide: FARM_REPO.FIND,
       useValue: findFarmRepo,
     };
 

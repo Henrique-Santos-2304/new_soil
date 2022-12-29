@@ -9,6 +9,7 @@ import { createFarmMocked } from '@testRoot/mocks';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { GetFarmsResolver } from '@resolvers/index';
+import { FARM_SERVICE } from '@root/shared';
 
 describe('Create Farm Controller Unit', () => {
   let controller: IGetFarmsController;
@@ -18,7 +19,7 @@ describe('Create Farm Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const getFarmService = {
-      provide: 'IGetAllFarmsByUserService',
+      provide: FARM_SERVICE.FIND,
       useValue: service,
     };
 

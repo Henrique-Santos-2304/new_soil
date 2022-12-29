@@ -1,6 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ICreateFarmController, ICreateFarmService } from '@root/domain';
+import { FARM_SERVICE } from '@root/shared';
 import {
   logFinishRequestCreate,
   logInitRequest,
@@ -10,7 +11,7 @@ import {
 class CreateFarmResolver implements ICreateFarmController {
   constructor(
     private readonly logger: Logger,
-    @Inject('ICreateFarmService')
+    @Inject(FARM_SERVICE.CREATE)
     private readonly createFarmService: ICreateFarmService,
   ) {}
 

@@ -1,6 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IDeleteFarmController, IDeleteFarmService } from '@root/domain';
+import { FARM_SERVICE } from '@root/shared';
 import {
   logFinishRequestDelete,
   logInitRequest,
@@ -10,7 +11,7 @@ import {
 class DeleteFarmResolver implements IDeleteFarmController {
   constructor(
     private readonly logger: Logger,
-    @Inject('IDeleteFarmService')
+    @Inject(FARM_SERVICE.DELETE)
     private readonly delFarmService: IDeleteFarmService,
   ) {}
 

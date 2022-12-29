@@ -6,6 +6,7 @@ import { createFarmMocked } from '@testRoot/mocks';
 import { loggerMock } from '@testRoot/mocks/utils/logger-mock';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { DeleteFarmResolver } from '@resolvers/index';
+import { FARM_SERVICE } from '@root/shared';
 
 describe('Create Farm Controller Unit', () => {
   let controller: IDeleteFarmController;
@@ -15,7 +16,7 @@ describe('Create Farm Controller Unit', () => {
   beforeEach(async () => {
     service = mock();
     const deleteFarmService = {
-      provide: 'IDeleteFarmService',
+      provide: FARM_SERVICE.DELETE,
       useValue: service,
     };
 

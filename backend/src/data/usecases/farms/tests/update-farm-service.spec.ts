@@ -8,6 +8,7 @@ import {
 } from '@root/domain';
 import {
   AlreadyExistsError,
+  FARM_REPO,
   NotCreatedError,
   NotFoundError,
 } from '@root/shared';
@@ -32,12 +33,12 @@ describe('Update Farm Service Unit', () => {
     findFarmRepo = mock();
     logger = mock();
     const findFarmProvider = {
-      provide: 'IFindFarmsRepo',
+      provide: FARM_REPO.FIND,
       useValue: findFarmRepo,
     };
 
     const updateProvider = {
-      provide: 'IUpdateFarmRepo',
+      provide: FARM_REPO.UPDATE,
       useValue: updateFarmRepo,
     };
 
