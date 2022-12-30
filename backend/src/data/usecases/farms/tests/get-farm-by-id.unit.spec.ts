@@ -1,18 +1,14 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import { IGetFarmByIdService, IGetUserByIdService } from '@root/domain';
+import { IGetFarmByIdService } from '@root/domain';
 import { NotFoundError } from '@root/shared';
-
+import { GetFarmByIdService } from '../find-farm-by-id.service';
 import {
   createFarmMocked,
   findFarmRepoMock,
   findFarmRepoMockProvider,
-  findUserRepoMock,
-  findUserRepoMockProvider,
   loggerMockProvider,
   prismaProviderMock,
-  userModelMocked,
 } from '@testRoot/index';
-import { GetFarmByIdService } from '../find-farm-by-id.service';
 
 describe('Get Farm By Id Service Unit', () => {
   let service: IGetFarmByIdService;
@@ -59,7 +55,6 @@ describe('Get Farm By Id Service Unit', () => {
     const response = await service.start({ farm_id: 'test' });
 
     expect(response).toHaveProperty('farm_id');
-    expect(response).toHaveProperty('user_id');
     expect(response).toHaveProperty('farm_name');
     expect(response).toHaveProperty('farm_lat');
     expect(response).toHaveProperty('farm_lng');
