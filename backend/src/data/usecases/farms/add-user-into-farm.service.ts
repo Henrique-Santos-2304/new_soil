@@ -10,6 +10,7 @@ import {
   UserModel,
 } from '@contracts/index';
 import { FARM_REPO, NotFoundError, USER_SERVICE } from '@root/shared';
+import { checkUserToHaveAuthorize } from '../utils';
 
 @Injectable()
 class AddUserIntoFarmService implements IAddUserIntoFarmService {
@@ -27,22 +28,6 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
     this.farmData = await this.findFarmRepo.by_id({ farm_id });
 
     if (!this.farmData) throw new NotFoundError('Farm');
-  }
-
-  async checkUserToHaveAuthorize(
-    user_id: UserModel['user_id'],
-    userType: UserModel['userType'],
-  ) {
-    const userIsMaster = userType === 'MASTER';
-    const userIsOwner = this.farmData.owner_id === user_id;
-    const userIsDealer =
-      this.farmData &&
-      this.farmData.dealers.some((dealer) => dealer === user_id);
-    const userIsAdmin =
-      this.farmData && this.farmData.admins.some((admin) => admin === user_id);
-
-    if (!userIsMaster && !userIsOwner && !userIsDealer && !userIsAdmin)
-      throw new UnauthorizedException();
   }
 
   async createUser(user: CreateUserDto): Promise<void> {
@@ -81,7 +66,10 @@ class AddUserIntoFarmService implements IAddUserIntoFarmService {
     data,
   }: IAddUserIntoFarmService.Params): IAddUserIntoFarmService.Response {
     await this.checkFarmExist(farm_id);
-    await this.checkUserToHaveAuthorize(auth.user_id, auth.userType);
+    await checkUserToHaveAuthorize({
+      farm: this.farmData,
+      user: { user_id: auth.user_id, userType: auth.userType },
+    });
     await this.createUser(data.add_user);
 
     const dataAddTofarm = this.checkTableAddedUser(data.table);
