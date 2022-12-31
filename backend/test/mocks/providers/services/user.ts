@@ -4,15 +4,22 @@ import {
   IAuthUserService,
   ICreateUserService,
   IGetAllUserService,
+  IGetUserByIdService,
 } from '@root/domain';
 
 const createUserServiceMock: MockProxy<ICreateUserService> = mock();
 const authUserServiceMock: MockProxy<IAuthUserService> = mock();
 const getAllUserServiceMock: MockProxy<IGetAllUserService> = mock();
+const getUserByIdServiceMock: MockProxy<IGetUserByIdService> = mock();
 
 const createUserServiceMockProvider = {
   provide: USER_SERVICE.CREATE,
   useValue: createUserServiceMock,
+};
+
+const getUserByIdServiceMockProvider = {
+  provide: USER_SERVICE.FIND_BY_ID,
+  useValue: getUserByIdServiceMock,
 };
 
 const authUserServiceMockProvider = {
@@ -32,4 +39,6 @@ export {
   authUserServiceMockProvider,
   getAllUserServiceMock,
   getAllUserServiceMockProvider,
+  getUserByIdServiceMockProvider,
+  getUserByIdServiceMock,
 };
