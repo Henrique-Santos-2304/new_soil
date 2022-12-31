@@ -20,7 +20,7 @@ class GetFarmsByUser implements IGetAllFarmsByUserService {
 
   async filterUserTypeAndGetYourFarms(userType: string): Promise<FarmModel[]> {
     if (userType === 'MASTER') return await this.getAllFarmsOfMaster();
-    else return await this.getAllByRole(userType);
+    else return await this.getAllByRole();
   }
 
   async getAllFarmsOfMaster(): Promise<FarmModel[]> {
@@ -30,9 +30,8 @@ class GetFarmsByUser implements IGetAllFarmsByUserService {
     return farms;
   }
 
-  async getAllByRole(userType: string): Promise<FarmModel[]> {
+  async getAllByRole(): Promise<FarmModel[]> {
     const farms = await this.findFarmRepo.by_role({
-      role: userType,
       user_id: this.user_id,
     });
 

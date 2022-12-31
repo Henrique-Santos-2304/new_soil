@@ -89,7 +89,7 @@ describe('Get All Farms By User Service Unit', () => {
     await service.start({ user_id: userModelMocked.user_id });
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ role: 'DEALER', user_id });
+    expect(spy).toHaveBeenCalledWith({ user_id });
   });
 
   it('should be findFarmRepo.by_role to have been called if user is ADMIN', async () => {
@@ -102,7 +102,7 @@ describe('Get All Farms By User Service Unit', () => {
     await service.start({ user_id: userModelMocked.user_id });
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ role: 'ADMIN', user_id });
+    expect(spy).toHaveBeenCalledWith({ user_id });
   });
 
   it('should be findFarmRepo.by_role to have been called if user is USER', async () => {
@@ -115,7 +115,7 @@ describe('Get All Farms By User Service Unit', () => {
     await service.start({ user_id: userModelMocked.user_id });
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ role: 'USER', user_id });
+    expect(spy).toHaveBeenCalledWith({ user_id });
   });
 
   it('should throw error if findFarmRepo.by_role to return an error ', async () => {

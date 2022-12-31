@@ -4,14 +4,17 @@ import {
   IFindFarmById,
   IFindFarmsRepo,
   IFindUserRepo,
+  IGetUserByIdService,
 } from '@root/domain';
-import { FARM_REPO, FARM_SERVICE, USER_REPO } from '@root/shared';
+import { FARM_REPO, FARM_SERVICE, USER_REPO, USER_SERVICE } from '@root/shared';
 
 @Injectable()
 class DeleteUserService implements IDeleteUserService {
   constructor(
-    @Inject(USER_REPO.FIND) private readonly findUserRepo: IFindUserRepo,
-    @Inject(FARM_REPO.FIND) private readonly findFarmService: IFindFarmsRepo,
+    @Inject(USER_SERVICE.FIND_BY_ID)
+    private readonly findUserByIdService: IGetUserByIdService,
+    @Inject(FARM_SERVICE.FIND_BY_ID)
+    private readonly findFarmService: IFindFarmsRepo,
 
     @Inject(USER_REPO.DELETE) private readonly deleteUserRepo: any,
   ) {}
@@ -20,7 +23,7 @@ class DeleteUserService implements IDeleteUserService {
     user_id,
     auth,
   }: IDeleteUserService.Params): IDeleteUserService.Response {
-    throw new Error('Method not implemented.');
+    await this.findUserByIdService.start({ user_id });
   }
 }
 

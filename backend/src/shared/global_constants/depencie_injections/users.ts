@@ -13,6 +13,7 @@ const USER_CONTROLLER = {
 
 const USER_SERVICE = {
   AUTH: 'IAuthUserService',
+  FIND_BY_ID: 'IFindUserByIdService',
   CREATE: 'ICreateUserService',
   GET_ALL: 'IGetAllUserService',
 };

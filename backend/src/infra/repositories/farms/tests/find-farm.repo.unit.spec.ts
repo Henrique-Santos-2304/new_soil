@@ -229,38 +229,30 @@ describe('Find Farms Repo Unit', () => {
 
   it('should repo.by_role to have been called with data válids', async () => {
     const spy = jest.spyOn(repo, 'by_role');
-    await repo.by_role({ role: 'ADMIN', user_id: '' });
+    await repo.by_role({ user_id: '' });
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ role: 'ADMIN', user_id: '' });
+    expect(spy).toHaveBeenCalledWith({ user_id: '' });
   });
 
   it('should prisma.farms.findMany in by_role to have been called with data válids when role is ADMIN', async () => {
     const spy = jest.spyOn(prismaServiceMock.farm, 'findMany');
-    await repo.by_role({ role: 'ADMIN', user_id: '' });
+    await repo.by_role({ user_id: '' });
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ where: { admins: { hasSome: '' } } });
-  });
-
-  it('should prisma.farms.findMany in by_role to have been called with data válids when role is DEALER', async () => {
-    const spy = jest.spyOn(prismaServiceMock.farm, 'findMany');
-    await repo.by_role({ role: 'DEALER', user_id: '' });
-    expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ where: { dealers: { hasSome: '' } } });
-  });
-
-  it('should prisma.farms.findMany in by_role to have been called with data válids when role is USER', async () => {
-    const spy = jest.spyOn(prismaServiceMock.farm, 'findMany');
-    await repo.by_role({ role: 'USER', user_id: '' });
-    expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ where: { users: { hasSome: '' } } });
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        OR: [
+          { dealers: { hasSome: '' } },
+          { admins: { hasSome: '' } },
+          { users: { hasSome: '' } },
+        ],
+      },
+    });
   });
 
   it('should to return a user_id and userType and password of user when all not return an error', async () => {
-    const value = await repo.by_role({ role: 'ADMIN', user_id: '' });
+    const value = await repo.by_role({ user_id: '' });
     expect(value[0]).toHaveProperty('farm_id', createFarmMocked.farm_id);
     expect(value[0]).toHaveProperty('farm_city', createFarmMocked.farm_city);
     expect(value[0]).toHaveProperty('farm_name', createFarmMocked.farm_name);
@@ -273,20 +265,20 @@ describe('Find Farms Repo Unit', () => {
 
   it('should to return a null with all not find farm', async () => {
     prismaServiceMock.farm.findMany.mockResolvedValueOnce(null);
-    const value = await repo.by_role({ role: 'ADMIN', user_id: '' });
+    const value = await repo.by_role({ user_id: '' });
     expect(value).toBe(null);
   });
 
   it('should to to throw "QUERY ERROR" when database all return erro', async () => {
     prismaServiceMock.farm.findMany.mockRejectedValueOnce(new Error());
-    const value = repo.by_role({ role: 'ADMIN', user_id: '' });
+    const value = repo.by_role({ user_id: '' });
     await expect(value).rejects.toThrow(new QueryError().message);
   });
 
   it('should log an erro when database all return error', async () => {
     prismaServiceMock.farm.findMany.mockRejectedValueOnce(new DatabaseError());
 
-    const value = repo.by_role({ role: 'ADMIN', user_id: '' });
+    const value = repo.by_role({ user_id: '' });
     await expect(value).rejects.toThrow();
     // method log
     expect(loggerMock.log).toHaveBeenCalledTimes(1);

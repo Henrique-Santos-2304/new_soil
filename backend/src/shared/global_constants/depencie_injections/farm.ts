@@ -9,6 +9,7 @@ const FARM_SERVICE = {
   ADD_USER: 'IAddUserIntoFarmService',
   CREATE: 'ICreateFarmService',
   FIND: 'IFindFarmService',
+  FIND_BY_ID: 'IFindFarmByIdService',
   UPDATE: 'IUpdateFarmService',
   DELETE: 'IDeleteFarmService',
   DELETE_USER: 'IDeleteUserOfFarmService',

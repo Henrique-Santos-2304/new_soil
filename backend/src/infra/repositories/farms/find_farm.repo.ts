@@ -1,15 +1,13 @@
 import {
-  FarmModel,
   IFindFarmById,
   IFindFarmsByRole,
   IFindFarmsByUser,
   IFindFarmsRepo,
   IGetAllFarms,
-  UserType,
 } from '@contracts/index';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@root/infra';
-import { QueryError } from '@root/shared/errors';
+import { QueryError } from '@utils/errors';
 
 @Injectable()
 class FindFarmRepo implements IFindFarmsRepo {
@@ -17,20 +15,19 @@ class FindFarmRepo implements IFindFarmsRepo {
     private readonly prisma: PrismaService,
     private readonly logger: Logger,
   ) {}
-  handleRoleQuery(query: IFindFarmsByRole.Params) {
-    if (query.role === 'DEALER') {
-      return { dealers: { hasSome: query.user_id } };
-    } else if (query.role === 'ADMIN') {
-      return { admins: { hasSome: query.user_id } };
-    } else {
-      return { users: { hasSome: query.user_id } };
-    }
-  }
 
-  async by_role(query: IFindFarmsByRole.Params): IFindFarmsByRole.Response {
+  async by_role({
+    user_id,
+  }: IFindFarmsByRole.Params): IFindFarmsByRole.Response {
     try {
       return await this.prisma.farm.findMany({
-        where: this.handleRoleQuery(query),
+        where: {
+          OR: [
+            { dealers: { hasSome: user_id } },
+            { admins: { hasSome: user_id } },
+            { users: { hasSome: user_id } },
+          ],
+        },
       });
     } catch (err) {
       this.logger.log('Erro ao buscar fazenda no banco de dados...');

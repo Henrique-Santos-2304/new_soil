@@ -31,7 +31,7 @@ interface IFindFarmsRepo {
 }
 
 namespace IFindFarmsByRole {
-  export type Params = { role: Omit<UserType, 'MASTER'>; user_id: string };
+  export type Params = { user_id: string };
   export type Response = Promise<FarmModel[]>;
 }
 
