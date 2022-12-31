@@ -48,7 +48,7 @@ describe('Delete Farm Service Unit', () => {
 
     getUserByIdServiceMock.start.mockResolvedValue(userModelMocked);
     findFarmRepoMock.by_role.mockResolvedValue([
-      { ...createFarmMocked, admins: ['id'] },
+      { ...createFarmMocked, admins: [callUserService.user_id] },
     ]);
     updateFarmRepoMock.addOrDeleteUser.mockResolvedValue({ farm_id: 'test' });
   });
@@ -62,11 +62,11 @@ describe('Delete Farm Service Unit', () => {
   });
 
   // Tests find User
-  it('should be find User service ro have been called with user id valid ', async () => {
+  it('should be find User service to have been called with user id valid ', async () => {
     const spy = jest.spyOn(getUserByIdServiceMock, 'start');
     await service.start({ ...callUserService });
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ ...callUserService });
+    expect(spy).toHaveBeenCalledWith({ user_id: callUserService.user_id });
   });
 
   it('should be throw error if get user service return error ', async () => {
@@ -112,17 +112,18 @@ describe('Delete Farm Service Unit', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
       farm_id: createFarmMocked.farm_id,
-      admins: [],
+      data: { admins: [] },
     });
   });
 
   it('should be update farm repo to have been called two times if exists in two farm', async () => {
-    findFarmRepoMock.by_role.mockResolvedValue([
-      { ...createFarmMocked, admins: ['id'] },
-      { ...createFarmMocked, users: ['id'] },
+    const spy = jest.spyOn(updateFarmRepoMock, 'addOrDeleteUser');
+
+    findFarmRepoMock.by_role.mockResolvedValueOnce([
+      { ...createFarmMocked, admins: [callUserService.user_id] },
+      { ...createFarmMocked, users: [callUserService.user_id] },
     ]);
 
-    const spy = jest.spyOn(updateFarmRepoMock, 'addOrDeleteUser');
     await service.start({ ...callUserService });
     expect(spy).toHaveBeenCalledTimes(2);
   });
