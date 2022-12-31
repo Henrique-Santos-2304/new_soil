@@ -18,8 +18,6 @@ describe('Delete Farms Repo Unit', () => {
     }).compile();
 
     repo = module.get<IDeleteUserRepo>(DeleteUserRepo);
-
-    prismaServiceMock.user.delete.mockReturnValue(1);
   });
 
   it('should be defined', () => {
@@ -51,7 +49,7 @@ describe('Delete Farms Repo Unit', () => {
 
   it('should to return a void if not ocurred an error', async () => {
     const value = await repo.by_id({ user_id: 'id' });
-    expect(value).toBe(1);
+    expect(value).toBeUndefined();
   });
 
   it('should log an erro when database find_by_id return error', async () => {
