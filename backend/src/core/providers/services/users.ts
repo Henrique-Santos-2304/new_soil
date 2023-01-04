@@ -3,7 +3,9 @@ import { USER_SERVICE } from '@root/shared';
 import {
   AuthUserService,
   CreateUserService,
+  DeleteUserService,
   GetAllUserService,
+  GetUserByIdService,
 } from '@usecases/index';
 
 const createUserServiceProvider: Provider = {
@@ -21,8 +23,20 @@ const getUsersServiceProvider: Provider = {
   useClass: GetAllUserService,
 };
 
+const getUserByIdServiceMock: Provider = {
+  provide: USER_SERVICE.FIND_BY_ID,
+  useClass: GetUserByIdService,
+};
+
+const deleteUserServiceMock: Provider = {
+  provide: USER_SERVICE.DELETE,
+  useClass: DeleteUserService,
+};
+
 export {
   createUserServiceProvider,
   authUserServiceProvider,
   getUsersServiceProvider,
+  getUserByIdServiceMock,
+  deleteUserServiceMock,
 };

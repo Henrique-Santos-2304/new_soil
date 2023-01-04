@@ -1,4 +1,4 @@
 type Query {
   getUserByLogin(login: String): User!
-  getUsers: ResponseGetUsers!
+  getUsers: UserWithoutPassword!
 }

@@ -9,6 +9,7 @@ import {
 import {
   authUserServiceProvider,
   createUserServiceProvider,
+  getUserByIdServiceMock,
   getUsersServiceProvider,
 } from '../services';
 import {
@@ -34,6 +35,7 @@ const allServicesUserProviders: Provider[] = [
   createUserServiceProvider,
   authUserServiceProvider,
   getUsersServiceProvider,
+  getUserByIdServiceMock,
 ];
 
 const allUtilsUserProviders: Provider[] = [

@@ -6,13 +6,14 @@ import {
   logFinishRequestFind,
   logInitRequest,
 } from '@root/shared/usecases/logs-request';
+import { USER_SERVICE } from '@root/shared';
 
 @Resolver()
 class GetUsersResolver implements IGetUserController {
   constructor(
     private readonly logger: Logger,
 
-    @Inject('IGetAllUserService')
+    @Inject(USER_SERVICE.GET_ALL)
     private readonly getAllUserService: IGetAllUserService,
   ) {}
 

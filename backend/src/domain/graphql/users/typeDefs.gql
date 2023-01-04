@@ -33,3 +33,10 @@ type User {
 
   userType: UserType!
 }
+
+type UserWithoutPassword {
+  user_id: ID!
+  login: String!
+
+  userType: UserType!
+}

@@ -4,6 +4,8 @@
 /node_modules
 /backend/node_modules
 
+/frontend/.next
+/frontend/lib
 
 # Logs
 /backend/logs

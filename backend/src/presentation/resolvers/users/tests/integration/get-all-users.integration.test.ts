@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import {
   IFindUserRepo,
   IGetAllUserService,
+  IGetUserByIdService,
   IGetUserController,
 } from '@root/domain';
 import { integrationTestManager, prismaTest } from '@testRoot/setup';
@@ -22,7 +23,7 @@ describe('Get All Users Integration', () => {
     token = (await integrationTestManager.authUser()).token;
   });
 
-  it('should be defined this respective providers of service', async () => {
+  it('---GET_ALL--- should be defined this respective providers of service', async () => {
     const service = await app.resolve<IGetAllUserService>(USER_SERVICE.GET_ALL);
     const controller = await app.resolve<IGetUserController>(
       USER_CONTROLLER.GET,
@@ -34,7 +35,7 @@ describe('Get All Users Integration', () => {
     expect(findUserRepo).toBeDefined();
   });
 
-  it('should be "{ error}" if received params into query', async () => {
+  it('---GET_ALL--- should be "{ error}" if received params into query', async () => {
     const { errors } = await request(app.getHttpServer()).query(gql`
       query GET_ALL_USERS {
         getUsers(data: "login") {
@@ -52,7 +53,7 @@ describe('Get All Users Integration', () => {
     );
   });
 
-  it('should be return users if query sucess', async () => {
+  it('---GET_ALL--- should be return users if query sucess', async () => {
     const { data }: any = await request(app.getHttpServer())
       .set('authorization', `Bearer ${token}`)
       .query(mutationGetAllUsers);
@@ -62,7 +63,7 @@ describe('Get All Users Integration', () => {
     expect(data.getUsers.users).toHaveLength(2);
   });
 
-  it('should be return list empty if not exists users', async () => {
+  it('---GET_ALL--- should be return list empty if not exists users', async () => {
     await prismaTest.user.deleteMany();
 
     const { data }: any = await request(app.getHttpServer())

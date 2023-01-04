@@ -16,6 +16,7 @@ class GetFarmsResolver implements IGetFarmsController {
     @Inject(FARM_SERVICE.FIND)
     private readonly findFarmsByUserService: IGetAllFarmsByUserService,
   ) {}
+
   @Query()
   async getFarmByUser(
     @Args('data') data: IGetFarmsController.Params,
