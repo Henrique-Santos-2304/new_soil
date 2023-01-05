@@ -1,21 +1,9 @@
 'use client'
 import { ThemeProvider } from '@mui/material'
 import { Box } from '@mui/system'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { darkTheme, lightTheme } from '@/shared/index'
-
-export interface IThemeContextData {
-  themeName: 'light' | 'dark'
-  toggleTheme: () => void
-}
-
-type ChildrenProps = { children: React.ReactNode }
+import { IThemeContextData, ChildrenProps } from '@/domain/types'
 
 const AppThemeContext = createContext({} as IThemeContextData)
 
@@ -24,8 +12,7 @@ function useThemeContext(): IThemeContextData {
 }
 
 const AppThemeProvider = ({ children }: ChildrenProps): JSX.Element => {
-  const [themeName, setThemeName] =
-    useState<IThemeContextData['themeName']>('dark')
+  const [themeName, setThemeName] = useState<IThemeContextData['themeName']>('dark')
 
   const toggleTheme: IThemeContextData['toggleTheme'] = useCallback(() => {
     setThemeName(themeName === 'light' ? 'dark' : 'light')
