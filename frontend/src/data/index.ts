@@ -1,0 +1,4 @@
+/*
+  Services of application
+*/
+export {};
