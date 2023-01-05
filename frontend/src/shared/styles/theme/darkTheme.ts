@@ -1,40 +1,54 @@
 import { green, grey, purple, teal } from '@mui/material/colors'
 import { createTheme, Theme } from '@mui/material/styles'
-import myCustomColors from './myColors'
+import AppFonts from './custom/my-fonts'
+import appColors from './custom/myColors'
 
 const darkTheme: Theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: myCustomColors.green,
+      main: appColors.green,
       dark: green['800'],
       light: green['300'],
-      contrastText: myCustomColors.white
+      contrastText: appColors.white
     },
     secondary: {
-      main: myCustomColors.white,
+      main: appColors.white,
       dark: grey['500'],
       light: purple['400'],
-      contrastText: myCustomColors.green
+      contrastText: appColors.green
     },
     background: {
-      default: myCustomColors.green
+      default: appColors.green
     }
+  },
+  typography: {
+    fontFamily: AppFonts.monteserrat,
+    fontWeightBold: 'bold',
+    fontSize: 2
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: myCustomColors.white,
+          backgroundColor: appColors.white,
           color: teal['900'],
 
           ':hover': {
-            backgroundColor: myCustomColors.white,
+            backgroundColor: appColors.white,
             opacity: 0.7,
             transition: 'all 0.4s ease-in-out'
           }
         },
-        textPrimary: myCustomColors.green
+        textPrimary: appColors.green
+      }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: AppFonts.monteserrat,
+          fontWeight: '900'
+        }
       }
     }
   }

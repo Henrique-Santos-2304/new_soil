@@ -49,14 +49,3 @@ services:
         - new_soil_backend
       extra_hosts:
         - "host.docker.internal:172.17.0.1"
-  new_soil_storybook:
-      build: ./frontend
-      container_name: new_soil_storybook
-      restart: always
-      env_file:
-        - ./frontend/.env
-      command: "yarn storybook"
-      ports:
-        - 6010:6006
-      extra_hosts:
-        - "host.docker.internal:172.17.0.1"

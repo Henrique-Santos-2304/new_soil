@@ -20,7 +20,6 @@
     "test:ci": "NODE_ENV=test npm test -c -- --coverage",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
-
   },
   "dependencies": {
     "@emotion/cache": "^11.10.5",
@@ -28,6 +27,7 @@
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.3",
     "@next/font": "13.1.1",
     "@types/node": "18.11.18",

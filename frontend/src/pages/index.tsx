@@ -1,14 +1,7 @@
-'use client'
-import { Button, Typography, useTheme } from '@mui/material'
-import { useThemeContext } from '@/core/context'
 import Head from 'next/head'
+import { Header } from '@/presentation/components/header'
 
 export default function Home(): JSX.Element {
-  const {
-    palette: { secondary }
-  } = useTheme()
-
-  const { toggleTheme } = useThemeContext()
   return (
     <>
       <Head>
@@ -18,12 +11,11 @@ export default function Home(): JSX.Element {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <>
-        <Typography variant="h1" fontSize="1.8rem" marginBottom="2rem">
-          Welcome to the Boillerplate Next Js
-        </Typography>
-        <Button variant="outlined" onClick={toggleTheme}>
-          Confirmar
-        </Button>
+        <Header
+          title="Pivô 1"
+          subTitle="Ultima Atualização: "
+          contentSubTitle="05/01/2023 09:02:40"
+        />
       </>
     </>
   )

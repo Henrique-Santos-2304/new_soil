@@ -30,8 +30,6 @@ const AppThemeProvider = ({ children }: ChildrenProps): JSX.Element => {
           height="100vh"
           bgcolor={theme.palette.background.default}
           display="flex"
-          alignItems="center"
-          justifyContent="center"
           flexDirection="column"
         >
           {children}
