@@ -31,3 +31,32 @@ services:
       - db_new_soil
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+
+  new_soil_frontend:
+      build: ./frontend
+      container_name: new_soil_frontend
+      command: "yarn dev"
+      restart: always
+      env_file:
+        - ./frontend/.env
+      ports:
+        - 3004:3000
+      volumes:
+        - ./frontend:/usr/new_soil/frontend
+      links:
+        - new_soil_backend
+      depends_on:
+        - new_soil_backend
+      extra_hosts:
+        - "host.docker.internal:172.17.0.1"
+  new_soil_storybook:
+      build: ./frontend
+      container_name: new_soil_storybook
+      restart: always
+      env_file:
+        - ./frontend/.env
+      command: "yarn storybook"
+      ports:
+        - 6010:6006
+      extra_hosts:
+        - "host.docker.internal:172.17.0.1"
