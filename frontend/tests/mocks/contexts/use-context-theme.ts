@@ -1,4 +1,4 @@
-import { IThemeContextData } from '@/core/context'
+import { IThemeContextData } from '@/domain/types'
 
 const themeContextMock = (defaultTheme: 'light' | 'dark'): IThemeContextData => {
   const themeContext: IThemeContextData = {

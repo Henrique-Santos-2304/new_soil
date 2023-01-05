@@ -1,57 +1,44 @@
-import { screen } from '@testing-library/react'
-import { Header } from '../index'
 import '@testing-library/jest-dom'
-import { renderThemeMock, themeContextMock } from '@/tests/index'
+import { renderThemeMock } from '@/tests/index'
+import { Header } from '..'
 
 describe('Header Component', () => {
   it('should render component and write snapshot', () => {
     const { container } = renderThemeMock(<Header title="Olá" />)
+    expect(container).toBeInTheDocument()
+
     expect(container).toMatchSnapshot()
   })
-  it('should expected header to have heading with title received', () => {
-    themeContextMock('light')
-    renderThemeMock(<Header title="Olá" />)
 
-    const heading = screen.getByRole('heading', {
-      level: 1,
-      name: /Olá/i
-    })
+  it('should expected title header component to be this', () => {
+    const { container } = renderThemeMock(<Header title="Olá" />)
+
+    const heading = container.querySelector('header[id="header-of-application"]')
 
     expect(heading).toBeInTheDocument()
   })
 
-  it('should expected header to have heading with subtitle received', () => {
-    themeContextMock('light')
-    renderThemeMock(<Header title="Olá" subTitle="send-subtitle" />)
+  it('should expected title header component to be this', () => {
+    const { container } = renderThemeMock(<Header title="Olá" subTitle="send-content-subtitle" />)
 
-    const heading = screen.getByRole('heading', {
-      level: 4,
-      name: /send-subtitle/i
-    })
+    const heading = container.querySelector('div[id="titulo e subtitulo da página"]')
 
     expect(heading).toBeInTheDocument()
   })
 
-  it('should expected header to have heading with content-subtitle received', () => {
-    themeContextMock('light')
-    renderThemeMock(<Header title="Olá" subTitle="send-content-subtitle" />)
+  it('should expected toogle theme button component to be this', () => {
+    const { container } = renderThemeMock(<Header title="Olá" subTitle="send-content-subtitle" />)
 
-    const heading = screen.getByRole('heading', {
-      level: 4,
-      name: /send-content-subtitle/i
-    })
+    const heading = container.querySelector('button[id="btn-theme-container"]')
 
     expect(heading).toBeInTheDocument()
   })
 
-  it('should expected header to have button logout', () => {
-    themeContextMock('light')
-    renderThemeMock(<Header title="Olá" subTitle="send-content-subtitle" />)
+  it('should expected logout user button component to be this', () => {
+    const { container } = renderThemeMock(<Header title="Olá" />)
 
-    const heading = screen.getByRole('button', { name: 'Sair' })
+    const heading = container.querySelector('button[id="btn-logout"]')
 
-    expect(heading.id).toBe('btn-logout')
-    expect(heading.ariaLabel).toBe('botão para fazer logout na aplicação')
     expect(heading).toBeInTheDocument()
   })
 })

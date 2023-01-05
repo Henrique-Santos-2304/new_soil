@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Header Component should render component and write snapshot 1`] = `
+exports[`Home renders a this component to be defined 1`] = `
 <div>
   <div
     class="MuiBox-root css-imz5j4"
@@ -48,8 +48,23 @@ exports[`Header Component should render component and write snapshot 1`] = `
             aria-label="Título da página"
             class="MuiTypography-root MuiTypography-h1 css-7inatm-MuiTypography-root"
           >
-            Olá
+            Pivô 1
           </h1>
+          <div
+            aria-label="Sub-Título da página"
+            class="MuiBox-root css-ny6if"
+          >
+            <h4
+              class="MuiTypography-root MuiTypography-h4 css-10sbftd-MuiTypography-root"
+            >
+              Ultima Atualização: 
+            </h4>
+            <h4
+              class="MuiTypography-root MuiTypography-h4 css-tb5xb8-MuiTypography-root"
+            >
+              05/01/2023 09:02:40
+            </h4>
+          </div>
         </div>
         <button
           class="MuiBox-root css-13q49m9"

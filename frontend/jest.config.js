@@ -11,10 +11,10 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const customJestConfig = {
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.ts',
-    '!<rootDir>/src/domain/*.ts',
-    '!<rootDir>/tests/*.ts',
-    '!<rootDir>/src/shared/styles/**/*.ts'
+    '<rootDir>/src/**/*.@(ts|tsx|js|jsx)',
+    '!<rootDir>/src/domain/*.@(ts|tsx|js|jsx)',
+    '!<rootDir>/tests/*.@(ts|tsx|js|jsx)',
+    '!<rootDir>/src/shared/styles/**/*.@(ts|tsx|js|jsx)'
   ],
   coverageDirectory: 'coverage',
   moduleDirectories: ['node_modules', '<rootDir>/'],

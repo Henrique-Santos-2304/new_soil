@@ -1,27 +1,20 @@
-import { screen } from '@testing-library/react'
 import Home from '@/pages/index'
 import '@testing-library/jest-dom'
 import { renderThemeMock } from '../mocks'
-import { themeContextMock } from '@/tests/index'
 
 describe('Home', () => {
-  it('renders a heading welcome with the text valids', () => {
-    themeContextMock('light')
-    renderThemeMock(<Home />)
+  it('renders a this component to be defined', () => {
+    const { container } = renderThemeMock(<Home />)
 
-    const heading = screen.getByRole('heading', {
-      name: /Welcome to the Boillerplate Next Js/i
-    })
-
-    expect(heading).toBeInTheDocument()
+    expect(container).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
   })
 
-  it('renders a button confirm with the text valid', () => {
-    themeContextMock('light')
-    renderThemeMock(<Home />)
+  it('should expect to have header component ', () => {
+    const { container } = renderThemeMock(<Home />)
 
-    const button = screen.getByRole('button', { name: 'Confirmar' })
+    const header = container.querySelector('header[id="header-of-application')
 
-    expect(button).toBeInTheDocument()
+    expect(header).toBeInTheDocument()
   })
 })

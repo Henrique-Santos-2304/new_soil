@@ -24,20 +24,19 @@ const darkTheme: Theme = createTheme({
   },
   typography: {
     fontFamily: AppFonts.monteserrat,
-    fontWeightBold: 'bold',
-    fontSize: 2
+    fontWeightBold: 'bold'
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: appColors.white,
-          color: teal['900'],
-
+          backgroundColor: appColors.green,
+          color: appColors.white,
           ':hover': {
-            backgroundColor: appColors.white,
-            opacity: 0.7,
-            transition: 'all 0.4s ease-in-out'
+            backgroundColor: appColors.green,
+            color: appColors.white,
+            opacity: 0.8,
+            transition: 'all 0.4s linear'
           }
         },
         textPrimary: appColors.green

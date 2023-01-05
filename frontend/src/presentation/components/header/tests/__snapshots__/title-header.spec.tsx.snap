@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Title Header Component should render component and write snapshot 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-imz5j4"
+  >
+    <div
+      class="MuiBox-root css-49rcs4"
+      id="titulo e subtitulo da página"
+    >
+      <h1
+        aria-label="Título da página"
+        class="MuiTypography-root MuiTypography-h1 css-7inatm-MuiTypography-root"
+      >
+        Olá
+      </h1>
+    </div>
+  </div>
+</div>
+`;
