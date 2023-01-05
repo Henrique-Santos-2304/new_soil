@@ -1,4 +1,4 @@
-import { green, grey, purple } from '@mui/material/colors'
+import { green, grey, purple, teal } from '@mui/material/colors'
 import { createTheme, Theme } from '@mui/material/styles'
 import myCustomColors from './myColors'
 
@@ -19,6 +19,23 @@ const darkTheme: Theme = createTheme({
     },
     background: {
       default: myCustomColors.green
+    }
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: myCustomColors.white,
+          color: teal['900'],
+
+          ':hover': {
+            backgroundColor: myCustomColors.white,
+            opacity: 0.7,
+            transition: 'all 0.4s ease-in-out'
+          }
+        },
+        textPrimary: myCustomColors.green
+      }
     }
   }
 })
